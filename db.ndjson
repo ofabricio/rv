@@ -1,0 +1,22 @@
+// Este arquivo é o "banco de dados".
+// Cada linha é um JSON que representa uma operação de ações.
+// ----------------------------------------------------------
+// Esses são os campos suportados no JSON:
+// Campos que são comuns a todas as operações:
+//     "ID":     Identificador único da operação. Cada linha deve ter um ID diferente, que deve ser sequencial e começar em 1.
+//     "PID":    Identificador da operação "pai". Deve apontar para o ID anterior.
+//     "Ticker": Código da ação (ex. PETR4, VALE3).
+//     "Tipo":   Tipo da operação (COMPRA, VENDA, BONIFICAÇÃO, DESDOBRAMENTO, GRUPAMENTO, LEILÃO FRAÇÃO, DIVIDENDOS, JSCP, REND. TRIB., RED. CAP., SUBSCRIÇÃO COMPRA, SUBSCRIÇÃO VENDA, SUBSCRIÇÃO EXERCÍCIO).
+//     "Data":   Data da operação no formato AAAA-MM-DD.
+// Campos que são específicos para cada tipo de operação:
+//     "Qtd":    Quantidade de ações envolvidas nas operações de COMPRA, VENDA, BONIFICAÇÃO e LEILÃO FRAÇÃO.
+//     "ValorUnitario": Valor unitário da ação nas operações de COMPRA, VENDA, BONIFICAÇÃO, LEILÃO FRAÇÃO e RED. CAP. (ex. 10.4).
+//     "Fator":  Fator de BONIFICAÇÃO, DESDOBRAMENTO, GRUPAMENTO e REDUÇÃO DE CAPITAL. (ex. 0.1, 1.5, 2).
+//     "Taxas":  Taxas associadas às operações de COMPRA, VENDA, SUBSCRIÇÃO COMPRA e SUBSCRIÇÃO VENDA. (ex. 2.30).
+// ----------------------------------------------------------
+
+{"Settings":{"AcaoEmolumentosB3":"0.00005","AcaoLiquidacaoB3":"0.000275","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}}
+{"ID":1,"PID":0,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"10","ValorUnitario":"31.47","Taxas":"1.15"}
+{"ID":2,"PID":1,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-02","Qtd":"20","ValorUnitario":"32.12","Taxas":"2.30"}
+{"ID":3,"PID":0,"Ticker":"VALE3","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"20","ValorUnitario":"60.04","Taxas":"1.40"}
+{"ID":4,"PID":3,"Ticker":"VALE3","Tipo":"VENDA","Data":"2025-01-03","Qtd":"10","ValorUnitario":"61.25","Taxas":"1.30"}

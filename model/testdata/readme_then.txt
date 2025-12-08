@@ -1,68 +1,3 @@
-# rv
-
-Esta ferramenta faz o controle de operações de ações do mercado brasileiro, gerando as guias de declaração de IR (Bens e Direitos, Operações Comuns/Day Trade, etc.)
-
-Se deseja usá-la **é por sua conta e risco**. :warning:
-
-Operações suportadas:
-
-- Ações
-  - Compra
-  - Venda
-  - Bonificação
-  - Grupamento
-  - Desdobramento
-  - Dividendos
-  - JSCP
-  - Leilão de Fração
-  - Redução de Capital
-  - Rend. Trib.
-  - Subscrição
-
-## Build & Run
-
-Se tiver Go [instalado](https://go.dev/dl):
-
-```sh
-git clone --depth 1 https://github.com/ofabricio/rv.git ; cd rv
-GOEXPERIMENT=jsonv2 go run .
-```
-
-**Nota:** para gerar um executável use `go build` em vez de `go run .`
-
----
-
-Se tiver docker [instalado](https://www.docker.com):
-
-```sh
-git clone --depth 1 https://github.com/ofabricio/rv.git ; cd rv
-docker run --rm -v $PWD:/src -w /src -e GOEXPERIMENT=jsonv2 golang:alpine go run .
-```
-
-**Nota:** para gerar um executável adicione `-e GOOS=darwin -e GOARCH=amd64` e altere os [valores](https://go.dev/doc/install/source#environment) conforme seu sistema operacional.
-
-## Como usar
-
-Basta adicionar as operações e acompanhar a evolução.
-
-No momento só é possível adicionar as operações editando manualmente o arquivo [db.ndjson](/db.ndjson), que fica na raiz do projeto. No futuro será criado uma interface no terminal ou no navegador para facilitar isso.
-
-Para visualizar todas as operações:
-
-```sh
-./rv
-```
-
-Para visualizar os comandos disponíveis:
-
-```sh
-./rv -h
-```
-
-## Exemplo de output
-
-```
-$ ./rv
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                                         OPERAÇÕES COM AÇÕES                                                          │
 ├────┬────────┬────────────┬───────────────┬─────┬──────────┬──────────┬───────┬─────────┬──────────────┬───────┬───────────┬──────────┤
@@ -109,4 +44,3 @@ $ ./rv
 ├───────┼──────────┼───────────┼──────────┤
 │ Total │ 11520.00 │      0.00 │  1728.00 │
 └───────┴──────────┴───────────┴──────────┘
-```
