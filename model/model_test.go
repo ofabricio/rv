@@ -18,6 +18,10 @@ func TestStateLoad(t *testing.T) {
 			Then: "testdata/_me_then.txt",
 		},
 		{
+			Give: "testdata/opcoes_give.ndjson",
+			Then: "testdata/opcoes_then.txt",
+		},
+		{
 			Give: "testdata/bens_e_direitos_give.ndjson",
 			Then: "testdata/bens_e_direitos_then.txt",
 		},

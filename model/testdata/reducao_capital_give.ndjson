@@ -1,4 +1,4 @@
-{"Settings":{"AcaoEmolumentosB3":"0.00005","AcaoLiquidacaoB3":"0.000275","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}}
+{"Settings":{"AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}}
 // * [Caso de teste] tirado de https://www.youtube.com/watch?v=CdMy-CGv57A
 // - No video é dito que redução de capital pode gerar lucro ou prejuízo.
 // - Apresenta um cálculo complexo considerando a porcentagem e valor unitário da redução de capital.

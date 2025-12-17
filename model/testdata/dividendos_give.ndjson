@@ -1,4 +1,4 @@
-{"Settings":{"AcaoEmolumentosB3":"0.00005","AcaoLiquidacaoB3":"0.000275","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}}
+{"Settings":{"AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}}
 {"ID":1,"PID":0,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"1000","ValorUnitario":"10"}
 {"ID":2,"PID":1,"Ticker":"PETR4","Tipo":"DIVIDENDOS","Data":"2025-01-02","Lucro":"1000"}
 {"ID":3,"PID":2,"Ticker":"PETR4","Tipo":"DIVIDENDOS","Data":"2025-02-02","Lucro":"500"}

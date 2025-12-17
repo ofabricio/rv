@@ -55,7 +55,7 @@ func (s *State) PrintOperacoesAcoes(w io.Writer) {
 	for _, v := range s.Operacoes {
 		t.AddRow(
 			fmt.Sprint(v.ID),
-			v.Ticker,
+			fmt.Sprintf("%s% 12s", v.Ticker, v.Opcao),
 			v.Data.Format("2006-01-02"),
 			string(v.Tipo),
 			s.fracOrInt(v.Qtd)+s.sprintFracao(v),
@@ -76,9 +76,10 @@ func (s *State) PrintBensDireitos(w io.Writer) {
 
 	for _, bens := range s.BensDireitos() {
 		t := table.New(w)
+		t.SetColumnMaxWidth(100)
 		t.SetHeaderColSpans(0, 4)
 		t.SetHeaderAlignment(table.AlignCenter)
-		t.AddHeaders("BENS E DIREITOS ── Grupo 03 ── Código 01")
+		t.AddHeaders(fmt.Sprintf("BENS E DIREITOS ── Grupo %s ── Código %s", bens.Grupo, bens.Codigo))
 		t.SetAlignment(table.AlignLeft, table.AlignCenter, table.AlignCenter, table.AlignLeft)
 		t.AddHeaders(
 			"Ticker",
@@ -92,7 +93,7 @@ func (s *State) PrintBensDireitos(w io.Writer) {
 				ticker.Ticker,
 				s.formatDecimal(ticker.SituacaoAnterior),
 				s.formatDecimal(ticker.SituacaoCorrente),
-				ticker.Discriminacao(),
+				ticker.Discriminacao,
 			)
 		}
 		t.Render()
@@ -149,15 +150,21 @@ func (s *State) PrintOperacoesComunsDayTrade(w io.Writer) {
 	for _, r := range s.OperacoesComunsDayTrade() {
 		t := table.New(w)
 		t.SetRowLines(false)
-		t.SetHeaderColSpans(0, 1, 3)
+		t.SetHeaderColSpans(0, 1, 4)
 		t.AddHeaders(fmt.Sprintf("%s %d", r.Ticker, r.Ano), "OPERAÇÕES COMUNS/DAY-TRADE")
-		t.AddHeaders("Mês", "Lucro", "Lucro Ac.", "IR (15%)")
-		t.SetAlignment(table.AlignCenter, table.AlignRight, table.AlignRight, table.AlignRight)
+		t.AddHeaders("Mês", "Ações", "Opções", "Acumulado", "IR (15%)")
+		t.SetAlignment(table.AlignCenter, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight)
 		for _, v := range r.Meses {
-			t.AddRow(translateMonth(v.Mes), s.formatDecimal(v.Lucro), s.formatDecimal(v.LucroAc), s.formatDecimal(v.IR))
+			t.AddRow(
+				translateMonth(v.Mes),
+				s.formatDecimal(v.Lucro),
+				s.formatDecimal(v.LucroOp),
+				s.formatDecimal(v.LucroAc),
+				s.formatDecimal(v.IR),
+			)
 		}
-		t.SetFooterAlignment(table.AlignCenter, table.AlignRight, table.AlignRight, table.AlignRight)
-		t.AddFooters("Total", s.formatDecimal(r.Total), s.formatDecimal(r.TotalAc), s.formatDecimal(r.TotalIR))
+		t.SetFooterAlignment(table.AlignCenter, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight)
+		t.AddFooters("Total", s.formatDecimal(r.Total), s.formatDecimal(r.TotalOp), s.formatDecimal(r.TotalAc), s.formatDecimal(r.TotalIR))
 		t.Render()
 	}
 }

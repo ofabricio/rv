@@ -42,11 +42,9 @@ type Settings struct {
 	// Mostra os valores exatos.
 	MostrarValorExato bool
 
-	AcaoEmolumentosB3 decimal.Decimal
-	AcaoLiquidacaoB3  decimal.Decimal
-	AcaoSwingTradeIR  decimal.Decimal
-	AcaoDayTradeIR    decimal.Decimal
-	AcaoLimiteIsento  decimal.Decimal
+	AcaoSwingTradeIR decimal.Decimal
+	AcaoDayTradeIR   decimal.Decimal
+	AcaoLimiteIsento decimal.Decimal
 }
 
 func (s *State) Load(file string) {
@@ -85,15 +83,16 @@ func (s *State) CommandLine() {
 
 func (s *State) BensDireitos() []BensDireitos {
 
-	// Coleta todas as operações que entram na guia BENS E DIREITOS.
-	oprs := lo.Filter(s.Operacoes, func(o Operacao, _ int) bool { return tipoOprConfig[o.Tipo].IsBemDireito })
-
 	var bens []BensDireitos
+	var opcs []BensDireitos
+
 	prevYear := map[string]Operacao{}
-	for _, oprs := range oprs.PartitionByYear() {
+	for _, oprs := range s.Operacoes.PartitionByYear() {
 		bem := BensDireitos{
 			AnoAnterior: oprs[0].Data.Year() - 1,
 			AnoCorrente: oprs[0].Data.Year(),
+			Grupo:       "03",
+			Codigo:      "01",
 		}
 		currYear := map[string]Operacao{}
 		for ticker, oprs := range oprs.GroupByTicker() {
@@ -104,39 +103,57 @@ func (s *State) BensDireitos() []BensDireitos {
 			if _, ok := currYear[ticker]; !ok && prevYear[ticker].Agg.ValorTotal.IsZero() && currYear[ticker].Agg.ValorTotal.IsZero() {
 				continue // Situações zeradas no ano anterior e corrente cujo ano corrente não existe não são mostradas.
 			}
+			o := merge[ticker]
 			bem.Tickers = append(bem.Tickers, BensDireitoTicker{
 				Ticker:           ticker,
 				SituacaoAnterior: prevYear[ticker].Agg.ValorTotal,
-				SituacaoCorrente: merge[ticker].Agg.ValorTotal,
-				Qtd:              merge[ticker].Agg.Qtd,
-				PrecoMedio:       merge[ticker].Agg.PrecoMedio,
+				SituacaoCorrente: o.Agg.ValorTotal,
+				Discriminacao:    fmt.Sprintf("%s AÇÕES %s COM PREÇO MÉDIO DE R$ %s", o.Agg.Qtd.String(), ticker, s.formatDecimal(o.Agg.PrecoMedio)),
 			})
 		}
 		prevYear = merge
 		bens = append(bens, bem)
+
+		if opc := s.BensDireitosOpcoes(oprs); len(opc) > 0 {
+			opcs = append(opcs, BensDireitos{
+				AnoAnterior: oprs[0].Data.Year() - 1,
+				AnoCorrente: oprs[0].Data.Year(),
+				Grupo:       "04",
+				Codigo:      "04",
+				Tickers:     opc,
+			})
+		}
 	}
 	if len(bens)%2 == 0 && len(bens) > 0 {
 		bens = bens[1:] // Remove a primeira posição se o número de anos for par.
 	}
-	return bens
+	return append(bens, opcs...)
+}
+
+func (s *State) BensDireitosOpcoes(oprs Operacoes) []BensDireitoTicker {
+	var opc []BensDireitoTicker
+	for _, o := range lo.Filter(oprs, func(o Operacao, _ int) bool { return o.CID == 0 && (o.Tipo == PUT_COMPRA || o.Tipo == CALL_COMPRA) }) {
+		opc = append(opc, BensDireitoTicker{
+			Ticker:        o.Opcao,
+			Discriminacao: fmt.Sprintf("%s OPÇÕES COMPRADAS %s DE STRIKE R$ %s", o.Qtd.String(), o.Opcao, s.formatDecimal(o.ValorUnitario)),
+		})
+	}
+	return opc
 }
 
 type BensDireitos struct {
 	AnoAnterior int
 	AnoCorrente int
+	Grupo       string
+	Codigo      string
 	Tickers     []BensDireitoTicker
 }
 
 type BensDireitoTicker struct {
 	Ticker           string
-	Qtd              decimal.Decimal
-	PrecoMedio       decimal.Decimal
 	SituacaoAnterior decimal.Decimal
 	SituacaoCorrente decimal.Decimal
-}
-
-func (b BensDireitoTicker) Discriminacao() string {
-	return fmt.Sprintf("%s AÇÕES %s COM PREÇO MÉDIO DE R$ %s", b.Qtd.String(), b.Ticker, b.PrecoMedio.StringFixed(2))
+	Discriminacao    string
 }
 
 func (s *State) RendimentosIsentosNaoTributaveis() []RendimentosIsentosNaoTributaveis {
@@ -249,7 +266,7 @@ func (s *State) OperacoesComunsDayTrade() []RendimentosTributaveis {
 
 	var rts []RendimentosTributaveis
 
-	lucroAcumuladoAnos := decimal.Zero
+	lucroAcumuladoPelosAnos := decimal.Zero
 	for year, oprs := range s.Operacoes.GroupByYear() {
 
 		var rt RendimentosTributaveis
@@ -257,33 +274,46 @@ func (s *State) OperacoesComunsDayTrade() []RendimentosTributaveis {
 
 		for month, oprs := range oprs.GroupByMonth() {
 
-			vendaNoMes := oprs.ValorTotalAcumulado()
 			lucroNoMes := decimal.Zero
+			lucroNoMesOp := decimal.Zero
 
-			for _, o := range oprs {
-				if tipoOprConfig[o.Tipo].IsRendimentoTributavelApos20k && vendaNoMes.GreaterThan(s.Settings.AcaoLimiteIsento) && o.Lucro.IsPositive() {
-					lucroNoMes = lucroNoMes.Add(o.Lucro)
+			for _, p := range oprs.PartitionByAcaoOpcao() {
+				vendaNoMes := decimal.Zero
+				var lucro *decimal.Decimal
+				if p[0].IsOpcao() {
+					lucro = &lucroNoMesOp
+				} else {
+					vendaNoMes = p.TotalVendas()
+					lucro = &lucroNoMes
 				}
-				if tipoOprConfig[o.Tipo].IsLucroTributavel && o.Lucro.IsPositive() {
-					lucroNoMes = lucroNoMes.Add(o.Lucro)
-				}
-				if tipoOprConfig[o.Tipo].IsPrejuizoAbativel && o.Lucro.IsNegative() {
-					lucroNoMes = lucroNoMes.Add(o.Lucro)
+				for _, o := range p {
+					if tipoOprConfig[o.Tipo].IsRendimentoTributavelApos20k && vendaNoMes.GreaterThan(s.Settings.AcaoLimiteIsento) && o.Lucro.IsPositive() {
+						*lucro = lucro.Add(o.Lucro)
+					}
+					if tipoOprConfig[o.Tipo].IsLucroTributavel && o.Lucro.IsPositive() {
+						*lucro = lucro.Add(o.Lucro)
+					}
+					if tipoOprConfig[o.Tipo].IsPrejuizoAbativel && o.Lucro.IsNegative() {
+						*lucro = lucro.Add(o.Lucro)
+					}
 				}
 			}
 
-			if !lucroNoMes.IsZero() {
-				lucroAcumuladoAnos = lucroAcumuladoAnos.Add(lucroNoMes)
-				rtm := RendimentoTributavelMensal{Mes: month, Lucro: lucroNoMes, LucroAc: lucroAcumuladoAnos}
-				if lucroAcumuladoAnos.IsPositive() {
-					rtm.IR = lucroAcumuladoAnos.Mul(s.Settings.AcaoSwingTradeIR)
-					lucroAcumuladoAnos = decimal.Zero
-				}
-				rt.Meses = append(rt.Meses, rtm)
-				rt.Total = rt.Total.Add(lucroNoMes)
-				rt.TotalAc = lucroAcumuladoAnos
-				rt.TotalIR = rt.TotalIR.Add(rtm.IR)
+			if lucroNoMes.IsZero() && lucroNoMesOp.IsZero() {
+				continue
 			}
+
+			lucroAcumuladoPelosAnos = lucroAcumuladoPelosAnos.Add(lucroNoMes).Add(lucroNoMesOp)
+			rtm := RendimentoTributavelMensal{Mes: month, Lucro: lucroNoMes, LucroOp: lucroNoMesOp, LucroAc: lucroAcumuladoPelosAnos}
+			if lucroAcumuladoPelosAnos.IsPositive() {
+				rtm.IR = lucroAcumuladoPelosAnos.Mul(s.Settings.AcaoSwingTradeIR)
+				lucroAcumuladoPelosAnos = decimal.Zero
+			}
+			rt.Meses = append(rt.Meses, rtm)
+			rt.Total = rt.Total.Add(lucroNoMes)
+			rt.TotalOp = rt.TotalOp.Add(lucroNoMesOp)
+			rt.TotalAc = lucroAcumuladoPelosAnos
+			rt.TotalIR = rt.TotalIR.Add(rtm.IR)
 		}
 		if len(rt.Meses) > 0 {
 			rts = append(rts, rt)
@@ -298,6 +328,7 @@ type RendimentosTributaveis struct {
 	Ano     int
 	Meses   []RendimentoTributavelMensal
 	Total   decimal.Decimal
+	TotalOp decimal.Decimal
 	TotalAc decimal.Decimal
 	TotalIR decimal.Decimal
 }
@@ -305,6 +336,7 @@ type RendimentosTributaveis struct {
 type RendimentoTributavelMensal struct {
 	Mes     string
 	Lucro   decimal.Decimal
+	LucroOp decimal.Decimal
 	LucroAc decimal.Decimal
 	IR      decimal.Decimal
 }
@@ -342,6 +374,30 @@ func (s *State) Calculate(o *Operacao) {
 		o.CalcSubscricaoVenda(p)
 	case SUBSCRICAO_EXERCICIO:
 		o.CalcSubscricaoExercicio(p)
+	case PUT_VENDA:
+		o.CalcVendaPut(p)
+	case PUT_VENDA_EX:
+		o.CalcVendaPutExercido(p)
+	case PUT_VENDA_NE:
+		o.CalcVendaPutNaoExercido(p)
+	case PUT_COMPRA:
+		o.CalcCompraPut(p)
+	case PUT_COMPRA_EX:
+		o.CalcCompraPutExercido(p)
+	case PUT_COMPRA_NE:
+		o.CalcCompraPutNaoExercido(p)
+	case CALL_COMPRA:
+		o.CalcCompraCall(p)
+	case CALL_COMPRA_EX:
+		o.CalcCompraCallExercido(p)
+	case CALL_COMPRA_NE:
+		o.CalcCompraCallNaoExercido(p)
+	case CALL_VENDA:
+		o.CalcVendaCall(p)
+	case CALL_VENDA_EX:
+		o.CalcVendaCallExercido(p)
+	case CALL_VENDA_NE:
+		o.CalcVendaCallNaoExercido(p)
 	}
 }
 
@@ -392,8 +448,21 @@ func (o Operacoes) LucroAcumulado() decimal.Decimal {
 	}, decimal.Zero)
 }
 
+func (o Operacoes) TotalVendas() decimal.Decimal {
+	return lo.Reduce(o, func(agg decimal.Decimal, o Operacao, _ int) decimal.Decimal {
+		if o.Tipo == VENDA {
+			return agg.Add(o.ValorTotal)
+		}
+		return agg
+	}, decimal.Zero)
+}
+
 func (o Operacoes) PartitionByYear() []Operacoes {
 	return lo.PartitionBy(o, func(o Operacao) int { return o.Data.Year() })
+}
+
+func (o Operacoes) PartitionByAcaoOpcao() []Operacoes {
+	return lo.PartitionBy(o, func(o Operacao) bool { return o.IsOpcao() })
 }
 
 func (o Operacoes) GetID(id int64) Operacao {
@@ -428,16 +497,18 @@ type Operacao struct {
 	Taxas         decimal.Decimal
 	ValorTotal    decimal.Decimal
 	ValorCompra   decimal.Decimal
-	Lucro         decimal.Decimal // Lucro ou prejuízo da operação de Venda, Bonificação, Grupamento, Subscrição Compra, Redução de Capital.
+	Lucro         decimal.Decimal // Lucro ou prejuízo da operação de Venda, Bonificação, Grupamento, Subscrição Compra, Redução de Capital, Opções.
 	Fracao        decimal.Decimal // Parte fracionária resultante de Bonificação, Grupamento ou Desdobramento.
 	Fator         decimal.Decimal // Fator de Bonificação, Grupamento ou Desdobramento e Redução de Capital.
 	Agg           Agregado
 
 	// Opções.
-	// Strike     string
-	// Vencimento time.Time
-	// Premio     decimal.Decimal
-	// Exercido   bool
+	CID   int64
+	Opcao string
+}
+
+func (o *Operacao) IsOpcao() bool {
+	return o.Opcao != ""
 }
 
 func (o *Operacao) CalcCompra(p Operacao) {
@@ -529,6 +600,70 @@ func (o *Operacao) CalcReducaoCapital(p Operacao) {
 		o.Agg.ValorTotal = p.Agg.ValorTotal.Sub(o.ValorTotal)
 	}
 	o.Agg.CalcPrecoMedio()
+}
+
+func (o *Operacao) CalcVendaPut(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+}
+
+func (o *Operacao) CalcVendaPutExercido(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
+	o.Lucro = o.ValorUnitario.Sub(p.ValorUnitario).Mul(p.Qtd).Add(p.Lucro.Mul(p.Qtd)) // (VA - Strike) + Prêmio
+	o.Agg.Qtd = p.Agg.Qtd.Add(p.Qtd)
+	o.Agg.CalcPrecoMedio()
+}
+
+func (o *Operacao) CalcVendaPutNaoExercido(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
+	o.Lucro = p.Lucro.Mul(p.Qtd)
+}
+
+func (o *Operacao) CalcCompraPut(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+}
+
+func (o *Operacao) CalcCompraPutExercido(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
+	o.Lucro = p.ValorUnitario.Sub(o.ValorUnitario.Add(p.Lucro)).Mul(p.Qtd) // Strike - (VA + Custo)
+	o.Agg.Qtd = p.Agg.Qtd.Sub(p.Qtd)
+	o.Agg.CalcPrecoMedio()
+}
+
+func (o *Operacao) CalcCompraPutNaoExercido(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
+	o.Lucro = p.Lucro.Neg().Mul(p.Qtd)
+}
+
+func (o *Operacao) CalcCompraCall(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+}
+
+func (o *Operacao) CalcCompraCallExercido(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
+	o.Lucro = o.ValorUnitario.Sub(p.ValorUnitario.Add(p.Lucro)).Mul(p.Qtd) // VA - (Strike + Prêmio)
+	o.Agg.Qtd = p.Agg.Qtd.Add(p.Qtd)
+	o.Agg.CalcPrecoMedio()
+}
+
+func (o *Operacao) CalcCompraCallNaoExercido(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
+	o.Lucro = p.Lucro.Neg().Mul(p.Qtd)
+}
+
+func (o *Operacao) CalcVendaCall(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+}
+
+func (o *Operacao) CalcVendaCallExercido(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
+	o.Lucro = p.ValorUnitario.Add(p.Lucro).Sub(o.ValorUnitario).Mul(p.Qtd) // (Strike + Prêmio) - VA
+	o.Agg.Qtd = p.Agg.Qtd.Sub(p.Qtd)
+	o.Agg.CalcPrecoMedio()
+}
+
+func (o *Operacao) CalcVendaCallNaoExercido(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
+	o.Lucro = p.Lucro.Mul(p.Qtd)
 }
 
 func (o *Operacao) Inherit(p Operacao) {
