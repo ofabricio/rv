@@ -88,55 +88,36 @@ func (s *State) BensDireitos() []BensDireitos {
 	// Coleta todas as operações que entram na guia BENS E DIREITOS.
 	oprs := lo.Filter(s.Operacoes, func(o Operacao, _ int) bool { return tipoOprConfig[o.Tipo].IsBemDireito })
 
-	// Encontra o intervalo de anos das operações.
-	nowYear := time.Now().Local().Year()
-	endYear := lo.LastOrEmpty(oprs).Data.Year()
-	endYear = lo.Ternary(len(oprs) == 0, nowYear, endYear)
-	iniYear := lo.FirstOrEmpty(oprs).Data.Year()
-	iniYear = iniYear - (endYear-iniYear+1)%2
-	iniYear = lo.Ternary(len(oprs) == 0, endYear-1, iniYear)
-
-	// Cria uma lista de pares de anos cujos anos intermediários são repetidos.
-	// Por exemplo, o range [2022, 2023, 2024, 2025] se torna [2022, 2023, 2023, 2024, 2024, 2025].
-	years := lo.RangeFrom(iniYear, endYear-iniYear+1)
-	for i := len(years) - 2; i >= 1; i -= 2 {
-		years = slices.Insert(years, i, years[i-1], years[i])
-	}
-
-	// Cria um histórico de operações por ticker por ano. Apenas a última
-	// operação é relevante, pois ela possui o valor total acumulado.
-	history := map[int]map[string]Operacao{}
-	for _, o := range oprs {
-		if history[o.Data.Year()] == nil {
-			history[o.Data.Year()] = map[string]Operacao{}
-		}
-		history[o.Data.Year()][o.Ticker] = o
-	}
-
 	var bens []BensDireitos
-	visited := map[string]BensDireitoTicker{}
-	for _, pair := range lo.Chunk(years, 2) {
-		iniYear, endYear := pair[0], pair[1]
+	prevYear := map[string]Operacao{}
+	for _, oprs := range oprs.PartitionByYear() {
 		bem := BensDireitos{
-			AnoAnterior: iniYear,
-			AnoCorrente: endYear,
+			AnoAnterior: oprs[0].Data.Year() - 1,
+			AnoCorrente: oprs[0].Data.Year(),
 		}
-		for ticker, opr := range history[iniYear] {
-			visited[ticker] = BensDireitoTicker{Ticker: ticker, SituacaoAnterior: opr.ValorTotalAc, SituacaoCorrente: opr.ValorTotalAc, Qtd: opr.QtdAc, PrecoMedio: opr.PrecoMedio}
+		currYear := map[string]Operacao{}
+		for ticker, oprs := range oprs.GroupByTicker() {
+			currYear[ticker] = lo.LastOrEmpty(oprs) // Apenas a última operação é relevante, pois tem o saldo acumulado.
 		}
-		for ticker, opr := range history[endYear] {
-			visited[ticker] = BensDireitoTicker{Ticker: ticker, SituacaoAnterior: visited[ticker].SituacaoAnterior, SituacaoCorrente: opr.ValorTotalAc, Qtd: opr.QtdAc, PrecoMedio: opr.PrecoMedio}
-		}
-		for key, b := range sortKeysIter(visited) {
-			if _, ok := history[bem.AnoCorrente][key]; b.SituacaoAnterior.IsZero() && b.SituacaoCorrente.IsZero() && !ok {
-				// Situações zeradas no ano anterior e corrente cujo ano corrente não existe não são mostradas.
-				continue
+		merge := lo.Assign(prevYear, currYear)
+		for ticker := range sortKeysIter(merge) {
+			if _, ok := currYear[ticker]; !ok && prevYear[ticker].ValorTotalAc.IsZero() && currYear[ticker].ValorTotalAc.IsZero() {
+				continue // Situações zeradas no ano anterior e corrente cujo ano corrente não existe não são mostradas.
 			}
-			bem.Tickers = append(bem.Tickers, b)
+			bem.Tickers = append(bem.Tickers, BensDireitoTicker{
+				Ticker:           ticker,
+				SituacaoAnterior: prevYear[ticker].ValorTotalAc,
+				SituacaoCorrente: merge[ticker].ValorTotalAc,
+				Qtd:              merge[ticker].QtdAc,
+				PrecoMedio:       merge[ticker].PrecoMedio,
+			})
 		}
+		prevYear = merge
 		bens = append(bens, bem)
 	}
-
+	if len(bens)%2 == 0 && len(bens) > 0 {
+		bens = bens[1:] // Remove a primeira posição se o número de anos for par.
+	}
 	return bens
 }
 
@@ -409,6 +390,10 @@ func (o Operacoes) LucroAcumulado() decimal.Decimal {
 	return lo.Reduce(o, func(agg decimal.Decimal, o Operacao, _ int) decimal.Decimal {
 		return agg.Add(o.Lucro)
 	}, decimal.Zero)
+}
+
+func (o Operacoes) PartitionByYear() []Operacoes {
+	return lo.PartitionBy(o, func(o Operacao) int { return o.Data.Year() })
 }
 
 func (o Operacoes) GetID(id int64) Operacao {
