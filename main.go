@@ -11,6 +11,5 @@ func main() {
 	var s model.State
 
 	s.Load("db.ndjson")
-	s.CommandLine()
 	s.Print(os.Stdout)
 }

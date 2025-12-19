@@ -57,12 +57,6 @@ Para visualizar todas as operações:
 ./rv
 ```
 
-Para visualizar os comandos disponíveis:
-
-```sh
-./rv -h
-```
-
 ## Exemplo de output
 
 ```

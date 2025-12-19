@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"cmp"
 	"encoding/json/v2"
-	"flag"
 	"fmt"
 	"iter"
 	"maps"
@@ -61,24 +60,6 @@ func (s *State) Load(file string) {
 			s.Operacoes = append(s.Operacoes, o)
 		}
 	}
-}
-
-func (s *State) CommandLine() {
-
-	flag.Usage = func() {
-		fmt.Println()
-		fmt.Println("  Usage: rv <action>")
-		fmt.Println()
-		fmt.Println("  <action>:")
-		fmt.Println("    show (default; pode ser omitido)")
-		fmt.Println("        mostra os ativos")
-		fmt.Println("    add")
-		fmt.Println("        adiciona um ativo")
-		fmt.Println()
-		flag.PrintDefaults()
-	}
-	flag.BoolVar(&s.Settings.AlterarPrecoMedioNaBonificacao, "AlterarPrecoMedioNaBonificacao", false, "Determina a estratégia de Preço Médio usada na Bonificação.\nSe true, as Bonificações vão alterar seu preço médio.\nSe false, as Bonificações NÃO vão alterar seu preço médio.\nDefault: false")
-	flag.Parse()
 }
 
 func (s *State) BensDireitos() []BensDireitos {
