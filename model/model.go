@@ -101,15 +101,15 @@ func (s *State) BensDireitos() []BensDireitos {
 		}
 		merge := lo.Assign(prevYear, currYear)
 		for ticker := range sortKeysIter(merge) {
-			if _, ok := currYear[ticker]; !ok && prevYear[ticker].ValorTotalAc.IsZero() && currYear[ticker].ValorTotalAc.IsZero() {
+			if _, ok := currYear[ticker]; !ok && prevYear[ticker].Agg.ValorTotal.IsZero() && currYear[ticker].Agg.ValorTotal.IsZero() {
 				continue // Situações zeradas no ano anterior e corrente cujo ano corrente não existe não são mostradas.
 			}
 			bem.Tickers = append(bem.Tickers, BensDireitoTicker{
 				Ticker:           ticker,
-				SituacaoAnterior: prevYear[ticker].ValorTotalAc,
-				SituacaoCorrente: merge[ticker].ValorTotalAc,
-				Qtd:              merge[ticker].QtdAc,
-				PrecoMedio:       merge[ticker].PrecoMedio,
+				SituacaoAnterior: prevYear[ticker].Agg.ValorTotal,
+				SituacaoCorrente: merge[ticker].Agg.ValorTotal,
+				Qtd:              merge[ticker].Agg.Qtd,
+				PrecoMedio:       merge[ticker].Agg.PrecoMedio,
 			})
 		}
 		prevYear = merge
@@ -403,6 +403,20 @@ func (o Operacoes) GetID(id int64) Operacao {
 	return o[id-1]
 }
 
+type Agregado struct {
+	Qtd        decimal.Decimal
+	ValorTotal decimal.Decimal
+	PrecoMedio decimal.Decimal
+}
+
+func (a *Agregado) CalcPrecoMedio() {
+	if a.Qtd.IsZero() {
+		a.PrecoMedio = decimal.Zero
+	} else {
+		a.PrecoMedio = a.ValorTotal.Div(a.Qtd)
+	}
+}
+
 type Operacao struct {
 	ID            int64
 	PID           int64
@@ -413,13 +427,11 @@ type Operacao struct {
 	ValorUnitario decimal.Decimal
 	Taxas         decimal.Decimal
 	ValorTotal    decimal.Decimal
-	QtdAc         decimal.Decimal
-	ValorTotalAc  decimal.Decimal
-	PrecoMedio    decimal.Decimal
 	ValorCompra   decimal.Decimal
 	Lucro         decimal.Decimal // Lucro ou prejuízo da operação de Venda, Bonificação, Grupamento, Subscrição Compra, Redução de Capital.
 	Fracao        decimal.Decimal // Parte fracionária resultante de Bonificação, Grupamento ou Desdobramento.
 	Fator         decimal.Decimal // Fator de Bonificação, Grupamento ou Desdobramento e Redução de Capital.
+	Agg           Agregado
 
 	// Opções.
 	// Strike     string
@@ -430,51 +442,51 @@ type Operacao struct {
 
 func (o *Operacao) CalcCompra(p Operacao) {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Add(o.Taxas)
-	o.QtdAc = p.QtdAc.Add(o.Qtd)
-	o.ValorTotalAc = p.ValorTotalAc.Add(o.ValorTotal)
-	o.CalcPrecoMedio()
+	o.Agg.Qtd = p.Agg.Qtd.Add(o.Qtd)
+	o.Agg.ValorTotal = p.Agg.ValorTotal.Add(o.ValorTotal)
+	o.Agg.CalcPrecoMedio()
 }
 
 func (o *Operacao) CalcVenda(p Operacao) {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Sub(o.Taxas)
-	o.ValorCompra = p.PrecoMedio.Mul(o.Qtd)
-	o.QtdAc = p.QtdAc.Sub(o.Qtd)
-	o.ValorTotalAc = p.ValorTotalAc.Sub(o.ValorCompra)
+	o.ValorCompra = p.Agg.PrecoMedio.Mul(o.Qtd)
+	o.Agg.Qtd = p.Agg.Qtd.Sub(o.Qtd)
+	o.Agg.ValorTotal = p.Agg.ValorTotal.Sub(o.ValorCompra)
 	o.Lucro = o.ValorTotal.Sub(o.ValorCompra)
-	o.CalcPrecoMedio()
+	o.Agg.CalcPrecoMedio()
 }
 
 func (o *Operacao) CalcBonificacao(p Operacao, alterarPrecoMedio bool) {
 	if !o.Fator.IsZero() {
-		o.Fracao = p.QtdAc.Mul(o.Fator)
+		o.Fracao = p.Agg.Qtd.Mul(o.Fator)
 		o.Qtd = o.Fracao.Truncate(0)
 		o.Fracao = o.Fracao.Sub(o.Qtd).Abs()
 	}
-	o.QtdAc = p.QtdAc.Add(o.Qtd)
+	o.Agg.Qtd = p.Agg.Qtd.Add(o.Qtd)
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
-	o.ValorTotalAc = o.ValorTotal.Add(p.ValorTotalAc)
+	o.Agg.ValorTotal = o.ValorTotal.Add(p.Agg.ValorTotal)
 	o.Lucro = o.ValorTotal
 	if alterarPrecoMedio {
-		o.CalcPrecoMedio()
+		o.Agg.CalcPrecoMedio()
 	}
 }
 
 func (o *Operacao) CalcDesdobramento(p Operacao) {
-	o.QtdAc = p.QtdAc.Mul(o.Fator)
-	o.CalcPrecoMedio()
+	o.Agg.Qtd = p.Agg.Qtd.Mul(o.Fator)
+	o.Agg.CalcPrecoMedio()
 }
 
 func (o *Operacao) CalcGrupamento(p Operacao) {
-	qtdAcFra := p.QtdAc.Div(o.Fator)
+	qtdAcFra := p.Agg.Qtd.Div(o.Fator)
 	qtdAcInt := qtdAcFra.Truncate(0)
 	o.Fracao = qtdAcFra.Sub(qtdAcInt)
-	o.QtdAc = qtdAcInt
-	o.ValorTotalAc = qtdAcInt.Mul(p.ValorTotalAc.Div(qtdAcFra))
-	o.CalcPrecoMedio()
+	o.Agg.Qtd = qtdAcInt
+	o.Agg.ValorTotal = qtdAcInt.Mul(p.Agg.ValorTotal.Div(qtdAcFra))
+	o.Agg.CalcPrecoMedio()
 }
 
 func (o *Operacao) CalcLeilaoFracao(p Operacao) {
-	o.Lucro = o.ValorUnitario.Mul(o.Qtd).Sub(o.PrecoMedio.Mul(o.Qtd))
+	o.Lucro = o.ValorUnitario.Mul(o.Qtd).Sub(o.Agg.PrecoMedio.Mul(o.Qtd))
 }
 
 func (o *Operacao) CalcDividendos(p Operacao) {
@@ -488,49 +500,39 @@ func (o *Operacao) CalcRendTrib(p Operacao) {
 
 func (o *Operacao) CalcSubscricaoCompra(p Operacao) {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Add(o.Taxas)
-	o.ValorTotalAc = p.ValorTotalAc.Add(o.ValorTotal)
-	o.CalcPrecoMedio()
+	o.Agg.ValorTotal = p.Agg.ValorTotal.Add(o.ValorTotal)
+	o.Agg.CalcPrecoMedio()
 }
 
 func (o *Operacao) CalcSubscricaoVenda(p Operacao) {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Sub(o.Taxas)
 	o.Lucro = o.ValorTotal
-	o.CalcPrecoMedio()
+	o.Agg.CalcPrecoMedio()
 }
 
 func (o *Operacao) CalcSubscricaoExercicio(p Operacao) {
-	o.QtdAc = p.QtdAc.Add(o.Qtd)
+	o.Agg.Qtd = p.Agg.Qtd.Add(o.Qtd)
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
-	o.ValorTotalAc = p.ValorTotalAc.Add(o.ValorTotal)
-	o.CalcPrecoMedio()
+	o.Agg.ValorTotal = p.Agg.ValorTotal.Add(o.ValorTotal)
+	o.Agg.CalcPrecoMedio()
 }
 
 func (o *Operacao) CalcReducaoCapital(p Operacao) {
 	if o.Fator.IsPositive() {
-		redcap := p.ValorTotalAc.Mul(o.Fator)
-		restituicao := p.QtdAc.Mul(o.ValorUnitario)
+		redcap := p.Agg.ValorTotal.Mul(o.Fator)
+		restituicao := p.Agg.Qtd.Mul(o.ValorUnitario)
 		o.ValorTotal = restituicao
 		o.ValorCompra = redcap
 		o.Lucro = restituicao.Sub(redcap)
-		o.ValorTotalAc = p.ValorTotalAc.Sub(redcap)
+		o.Agg.ValorTotal = p.Agg.ValorTotal.Sub(redcap)
 	} else {
-		o.ValorTotalAc = p.ValorTotalAc.Sub(o.ValorTotal)
+		o.Agg.ValorTotal = p.Agg.ValorTotal.Sub(o.ValorTotal)
 	}
-	o.CalcPrecoMedio()
+	o.Agg.CalcPrecoMedio()
 }
 
 func (o *Operacao) Inherit(p Operacao) {
-	o.ValorTotalAc = p.ValorTotalAc
-	o.QtdAc = p.QtdAc
-	o.PrecoMedio = p.PrecoMedio
-}
-
-func (o *Operacao) CalcPrecoMedio() {
-	if o.QtdAc.IsZero() {
-		o.PrecoMedio = decimal.Zero
-	} else {
-		o.PrecoMedio = o.ValorTotalAc.Div(o.QtdAc)
-	}
+	o.Agg = p.Agg
 }
 
 func unmarshal(line []byte, v any) {

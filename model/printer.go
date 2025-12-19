@@ -62,9 +62,9 @@ func (s *State) PrintOperacoesAcoes(w io.Writer) {
 			s.formatDecimal(v.ValorUnitario),
 			s.formatDecimal(v.ValorTotal),
 			s.formatDecimal(v.Taxas),
-			s.fracOrInt(v.QtdAc),
-			s.formatDecimal(v.ValorTotalAc),
-			s.formatDecimal(v.PrecoMedio),
+			s.fracOrInt(v.Agg.Qtd),
+			s.formatDecimal(v.Agg.ValorTotal),
+			s.formatDecimal(v.Agg.PrecoMedio),
 			s.formatDecimal(v.ValorCompra),
 			s.formatDecimal(v.Lucro),
 		)
