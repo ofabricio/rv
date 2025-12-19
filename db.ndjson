@@ -4,7 +4,7 @@
 // Esses são os campos suportados no JSON:
 // Campos que são comuns a todas as operações:
 //     "ID":     Identificador único da operação. Cada linha deve ter um ID diferente, que deve ser sequencial e começar em 1.
-//     "PID":    Identificador da operação "pai". Deve apontar para o ID anterior.
+//     "CID":    Identificador da operação de continuação. Opções.
 //     "Ticker": Código da ação (ex. PETR4, VALE3).
 //     "Tipo":   Tipo da operação (COMPRA, VENDA, BONIFICAÇÃO, DESDOBRAMENTO, GRUPAMENTO, LEILÃO FRAÇÃO, DIVIDENDOS, JSCP, REND. TRIB., RED. CAP., SUBSCRIÇÃO COMPRA, SUBSCRIÇÃO VENDA, SUBSCRIÇÃO EXERCÍCIO).
 //     "Data":   Data da operação no formato AAAA-MM-DD.
@@ -16,7 +16,7 @@
 // ----------------------------------------------------------
 
 {"Tipo":"CONFIG","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
-{"ID":1,"PID":0,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"10","ValorUnitario":"31.47","Taxas":"1.15"}
-{"ID":2,"PID":1,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-02","Qtd":"20","ValorUnitario":"32.12","Taxas":"2.30"}
-{"ID":3,"PID":0,"Ticker":"VALE3","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"20","ValorUnitario":"60.04","Taxas":"1.40"}
-{"ID":4,"PID":3,"Ticker":"VALE3","Tipo":"VENDA","Data":"2025-01-03","Qtd":"10","ValorUnitario":"61.25","Taxas":"1.30"}
+{"ID":1,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"10","ValorUnitario":"31.47","Taxas":"1.15"}
+{"ID":2,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-02","Qtd":"20","ValorUnitario":"32.12","Taxas":"2.30"}
+{"ID":3,"Ticker":"VALE3","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"20","ValorUnitario":"60.04","Taxas":"1.40"}
+{"ID":4,"Ticker":"VALE3","Tipo":"VENDA","Data":"2025-01-03","Qtd":"10","ValorUnitario":"61.25","Taxas":"1.30"}

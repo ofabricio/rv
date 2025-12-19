@@ -1,30 +1,30 @@
 {"Tipo":"CONFIG","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
-{"ID":1,"PID":0,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
+{"ID":1,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
 // VENDA DE PUT
-{"ID":2,"PID":1,"CID":3,"Ticker":"PETR4","Opcao":"PETRM100","Tipo":"VENDA DE PUT","Data":"2025-01-01","Qtd":"100","ValorUnitario":"8","Lucro":"1"}
-{"ID":3,"PID":2,"Ticker":"PETR4","Opcao":"PETRM100","Tipo":"VENDA DE PUT EX","Data":"2025-02-01","ValorUnitario":"5"}
-{"ID":4,"PID":3,"CID":5,"Ticker":"PETR4","Opcao":"PETRM101","Tipo":"VENDA DE PUT","Data":"2025-03-01","Qtd":"100","ValorUnitario":"8","Lucro":"1"}
-{"ID":5,"PID":4,"Ticker":"PETR4","Opcao":"PETRM101","Tipo":"VENDA DE PUT NE","Data":"2025-04-01","ValorUnitario":"5"}
+{"ID":2,"CID":3,"Ticker":"PETR4","Opcao":"PETRM100","Tipo":"VENDA DE PUT","Data":"2025-01-01","Qtd":"100","ValorUnitario":"8","Lucro":"1"}
+{"ID":3,"Ticker":"PETR4","Opcao":"PETRM100","Tipo":"VENDA DE PUT EX","Data":"2025-02-01","ValorUnitario":"5"}
+{"ID":4,"CID":5,"Ticker":"PETR4","Opcao":"PETRM101","Tipo":"VENDA DE PUT","Data":"2025-03-01","Qtd":"100","ValorUnitario":"8","Lucro":"1"}
+{"ID":5,"Ticker":"PETR4","Opcao":"PETRM101","Tipo":"VENDA DE PUT NE","Data":"2025-04-01","ValorUnitario":"5"}
 // COMPRA DE PUT
-{"ID":6,"PID":5,"CID":7,"Ticker":"PETR4","Opcao":"PETRM102","Tipo":"COMPRA DE PUT","Data":"2025-05-01","Qtd":"100","ValorUnitario":"8","Lucro":"1"}
-{"ID":7,"PID":6,"Ticker":"PETR4","Opcao":"PETRM102","Tipo":"COMPRA DE PUT EX","Data":"2025-06-01","ValorUnitario":"5"}
-{"ID":8,"PID":7,"CID":9,"Ticker":"PETR4","Opcao":"PETRM103","Tipo":"COMPRA DE PUT","Data":"2025-07-01","Qtd":"100","ValorUnitario":"8","Lucro":"1"}
-{"ID":9,"PID":8,"Ticker":"PETR4","Opcao":"PETRM103","Tipo":"COMPRA DE PUT NE","Data":"2025-08-01","ValorUnitario":"5"}
+{"ID":6,"CID":7,"Ticker":"PETR4","Opcao":"PETRM102","Tipo":"COMPRA DE PUT","Data":"2025-05-01","Qtd":"100","ValorUnitario":"8","Lucro":"1"}
+{"ID":7,"Ticker":"PETR4","Opcao":"PETRM102","Tipo":"COMPRA DE PUT EX","Data":"2025-06-01","ValorUnitario":"5"}
+{"ID":8,"CID":9,"Ticker":"PETR4","Opcao":"PETRM103","Tipo":"COMPRA DE PUT","Data":"2025-07-01","Qtd":"100","ValorUnitario":"8","Lucro":"1"}
+{"ID":9,"Ticker":"PETR4","Opcao":"PETRM103","Tipo":"COMPRA DE PUT NE","Data":"2025-08-01","ValorUnitario":"5"}
 // COMPRA DE CALL
-{"ID":10,"PID":9,"CID":11,"Ticker":"PETR4","Opcao":"PETRA101","Tipo":"COMPRA DE CALL","Data":"2025-09-01","Qtd":"100","ValorUnitario":"10","Lucro":"1"}
-{"ID":11,"PID":10,"Ticker":"PETR4","Opcao":"PETRA101","Tipo":"COMPRA DE CALL EX","Data":"2025-10-01","ValorUnitario":"14"}
-{"ID":12,"PID":11,"CID":13,"Ticker":"PETR4","Opcao":"PETRA102","Tipo":"COMPRA DE CALL","Data":"2025-11-01","Qtd":"100","ValorUnitario":"10","Lucro":"1"}
-{"ID":13,"PID":12,"Ticker":"PETR4","Opcao":"PETRA102","Tipo":"COMPRA DE CALL NE","Data":"2025-12-01","ValorUnitario":"14"}
+{"ID":10,"CID":11,"Ticker":"PETR4","Opcao":"PETRA101","Tipo":"COMPRA DE CALL","Data":"2025-09-01","Qtd":"100","ValorUnitario":"10","Lucro":"1"}
+{"ID":11,"Ticker":"PETR4","Opcao":"PETRA101","Tipo":"COMPRA DE CALL EX","Data":"2025-10-01","ValorUnitario":"14"}
+{"ID":12,"CID":13,"Ticker":"PETR4","Opcao":"PETRA102","Tipo":"COMPRA DE CALL","Data":"2025-11-01","Qtd":"100","ValorUnitario":"10","Lucro":"1"}
+{"ID":13,"Ticker":"PETR4","Opcao":"PETRA102","Tipo":"COMPRA DE CALL NE","Data":"2025-12-01","ValorUnitario":"14"}
 // VENDA DE CALL
-{"ID":14,"PID":13,"CID":15,"Ticker":"PETR4","Opcao":"PETRA103","Tipo":"VENDA DE CALL","Data":"2026-01-01","Qtd":"100","ValorUnitario":"10","Lucro":"1"}
-{"ID":15,"PID":14,"Ticker":"PETR4","Opcao":"PETRA103","Tipo":"VENDA DE CALL EX","Data":"2026-02-01","ValorUnitario":"14"}
-{"ID":16,"PID":15,"CID":17,"Ticker":"PETR4","Opcao":"PETRA104","Tipo":"VENDA DE CALL","Data":"2026-03-01","Qtd":"100","ValorUnitario":"10","Lucro":"1"}
-{"ID":17,"PID":16,"Ticker":"PETR4","Opcao":"PETRA104","Tipo":"VENDA DE CALL NE","Data":"2026-04-01","ValorUnitario":"14"}
+{"ID":14,"CID":15,"Ticker":"PETR4","Opcao":"PETRA103","Tipo":"VENDA DE CALL","Data":"2026-01-01","Qtd":"100","ValorUnitario":"10","Lucro":"1"}
+{"ID":15,"Ticker":"PETR4","Opcao":"PETRA103","Tipo":"VENDA DE CALL EX","Data":"2026-02-01","ValorUnitario":"14"}
+{"ID":16,"CID":17,"Ticker":"PETR4","Opcao":"PETRA104","Tipo":"VENDA DE CALL","Data":"2026-03-01","Qtd":"100","ValorUnitario":"10","Lucro":"1"}
+{"ID":17,"Ticker":"PETR4","Opcao":"PETRA104","Tipo":"VENDA DE CALL NE","Data":"2026-04-01","ValorUnitario":"14"}
 //
-{"ID":18,"PID":17,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2026-01-01","Qtd":"900","ValorUnitario":"10"}
-{"ID":19,"PID":18,"Ticker":"PETR4","Tipo":"VENDA","Data":"2026-01-02","Qtd":"800","ValorUnitario":"25"}
-{"ID":20,"PID":19,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2026-02-01","Qtd":"800","ValorUnitario":"10"}
-{"ID":21,"PID":20,"Ticker":"PETR4","Tipo":"VENDA","Data":"2026-02-02","Qtd":"800","ValorUnitario":"26"}
+{"ID":18,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2026-04-01","Qtd":"900","ValorUnitario":"10"}
+{"ID":19,"Ticker":"PETR4","Tipo":"VENDA","Data":"2026-05-02","Qtd":"800","ValorUnitario":"25"}
+{"ID":20,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2026-06-01","Qtd":"800","ValorUnitario":"10"}
+{"ID":21,"Ticker":"PETR4","Tipo":"VENDA","Data":"2026-07-02","Qtd":"800","ValorUnitario":"26"}
 // Se dormiram o ano sem exercício, entram em Bens e Direitos.
-{"ID":22,"PID":21,"CID":0,"Ticker":"PETR4","Opcao":"PETRM102","Tipo":"COMPRA DE PUT","Data":"2026-05-01","Qtd":"100","ValorUnitario":"8","Lucro":"1"}
-{"ID":23,"PID":22,"CID":0,"Ticker":"PETR4","Opcao":"PETRM102","Tipo":"COMPRA DE PUT","Data":"2026-05-01","Qtd":"200","ValorUnitario":"8","Lucro":"1"}
+{"ID":22,"CID":0,"Ticker":"PETR4","Opcao":"PETRM102","Tipo":"COMPRA DE PUT","Data":"2026-08-01","Qtd":"100","ValorUnitario":"8","Lucro":"1"}
+{"ID":23,"CID":0,"Ticker":"PETR4","Opcao":"PETRM102","Tipo":"COMPRA DE PUT","Data":"2026-08-01","Qtd":"200","ValorUnitario":"8","Lucro":"1"}

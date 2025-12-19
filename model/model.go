@@ -322,7 +322,7 @@ type RendimentoTributavelMensal struct {
 
 func (s *State) Calculate(o *Operacao) {
 
-	p := s.Operacoes.GetID(o.PID)
+	p := s.Operacoes.FindParent(o)
 
 	o.Agg = p.Agg
 
@@ -444,11 +444,13 @@ func (o Operacoes) PartitionByAcaoOpcao() []Operacoes {
 	return lo.PartitionBy(o, func(o Operacao) bool { return o.IsOpcao() })
 }
 
-func (o Operacoes) GetID(id int64) Operacao {
-	if id == 0 {
-		return Operacao{}
+func (o Operacoes) FindParent(op *Operacao) Operacao {
+	for i := op.ID - 2; i >= 0; i-- {
+		if o[i].Ticker == op.Ticker {
+			return o[i]
+		}
 	}
-	return o[id-1]
+	return Operacao{}
 }
 
 type Agregado struct {
@@ -467,7 +469,6 @@ func (a *Agregado) CalcPrecoMedio() {
 
 type Operacao struct {
 	ID            int64
-	PID           int64
 	Ticker        string
 	Tipo          TipoOpr
 	Data          time.Time `json:"Data,format:DateOnly"`
