@@ -1,4 +1,4 @@
-{"Settings":{"AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}}
+{"Tipo":"CONFIG","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
 {"ID":1,"PID":0,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
 // VENDA DE PUT
 {"ID":2,"PID":1,"CID":3,"Ticker":"PETR4","Opcao":"PETRM100","Tipo":"VENDA DE PUT","Data":"2025-01-01","Qtd":"100","ValorUnitario":"8","Lucro":"1"}

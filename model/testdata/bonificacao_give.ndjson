@@ -1,9 +1,9 @@
-{"Settings":{"AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}}
+{"Tipo":"CONFIG","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
 // Caso de teste tirado de https://www.youtube.com/watch?v=WY1lazhN90U
-{ "Settings": { "AlterarPrecoMedioNaBonificacao": true } }
+{"Tipo":"CONFIG","AlterarPrecoMedioNaBonificacao": true }
 {"ID":1,"PID":0,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"100","ValorUnitario":"50"}
 {"ID":2,"PID":1,"Ticker":"PETR4","Tipo":"BONIFICAÇÃO","Data":"2025-02-01","Qtd":"10","ValorUnitario":"10"}
-{ "Settings": { "AlterarPrecoMedioNaBonificacao": false } }
+{"Tipo":"CONFIG","AlterarPrecoMedioNaBonificacao": false }
 {"ID":3,"PID":0,"Ticker":"VALE3","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"100","ValorUnitario":"50"}
 {"ID":4,"PID":3,"Ticker":"VALE3","Tipo":"BONIFICAÇÃO","Data":"2025-02-01","Qtd":"10","ValorUnitario":"10"}
 // Testa sobra fracionária na bonificação, e também o uso de Razão.

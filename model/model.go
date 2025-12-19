@@ -51,10 +51,8 @@ func (s *State) Load(file string) {
 	for line := range FileLines(file) {
 		var o Operacao
 		unmarshal(line, &o)
-		if o.ID == 0 {
-			var state State
-			unmarshal(line, &state)
-			s.Settings = state.Settings
+		if o.Tipo == "CONFIG" {
+			unmarshal(line, &s.Settings)
 		} else {
 			s.Calculate(&o)
 			s.Operacoes = append(s.Operacoes, o)
@@ -326,7 +324,7 @@ func (s *State) Calculate(o *Operacao) {
 
 	p := s.Operacoes.GetID(o.PID)
 
-	o.Inherit(p)
+	o.Agg = p.Agg
 
 	switch o.Tipo {
 	case COMPRA:
@@ -645,10 +643,6 @@ func (o *Operacao) CalcVendaCallExercido(p Operacao) {
 func (o *Operacao) CalcVendaCallNaoExercido(p Operacao) {
 	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
 	o.Lucro = p.Lucro.Mul(p.Qtd)
-}
-
-func (o *Operacao) Inherit(p Operacao) {
-	o.Agg = p.Agg
 }
 
 func unmarshal(line []byte, v any) {
