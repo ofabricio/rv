@@ -1,9 +1,9 @@
 {"Tipo":"CONFIG","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
-{"ID":1,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2023-01-01","Qtd":"100","ValorUnitario":"10"}
-{"ID":2,"Ticker":"PETR4","Tipo":"VENDA","Data":"2024-01-01","Qtd":"100","ValorUnitario":"10"}
-{"ID":3,"Ticker":"VALE3","Tipo":"COMPRA","Data":"2024-01-01","Qtd":"100","ValorUnitario":"10"}
-{"ID":4,"Ticker":"KLBN3","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
+{"ID":1,"Ticker":"PETR4","Tipo":"Compra","Data":"2023-01-01","Qtd":"100","ValorUnitario":"10"}
+{"ID":2,"Ticker":"PETR4","Tipo":"Venda","Data":"2024-01-01","Qtd":"100","ValorUnitario":"10"}
+{"ID":3,"Ticker":"VALE3","Tipo":"Compra","Data":"2024-01-01","Qtd":"100","ValorUnitario":"10"}
+{"ID":4,"Ticker":"KLBN3","Tipo":"Compra","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
 // ID 5 e 6 testa venda no mesmo ano.
-{"ID":5,"Ticker":"ITUB3","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
-{"ID":6,"Ticker":"ITUB3","Tipo":"VENDA","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
-{"ID":7,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2026-01-01","Qtd":"100","ValorUnitario":"10"}
+{"ID":5,"Ticker":"ITUB3","Tipo":"Compra","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
+{"ID":6,"Ticker":"ITUB3","Tipo":"Venda","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
+{"ID":7,"Ticker":"PETR4","Tipo":"Compra","Data":"2026-01-01","Qtd":"100","ValorUnitario":"10"}

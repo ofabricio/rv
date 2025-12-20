@@ -1,11 +1,11 @@
 {"Tipo":"CONFIG","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
-{"ID":1,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
-{"ID":2,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-02-01","Qtd":"100","ValorUnitario":"10"}
+{"ID":1,"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
+{"ID":2,"Ticker":"PETR4","Tipo":"Compra","Data":"2025-02-01","Qtd":"100","ValorUnitario":"10"}
 // Testa venda com prejuízo.
-{"ID":3,"Ticker":"PETR4","Tipo":"VENDA","Data":"2025-03-01","Qtd":"10","ValorUnitario":"1"}
+{"ID":3,"Ticker":"PETR4","Tipo":"Venda","Data":"2025-03-01","Qtd":"10","ValorUnitario":"1"}
 // Testa venda com lucro isento.
-{"ID":4,"Ticker":"PETR4","Tipo":"VENDA","Data":"2025-04-01","Qtd":"10","ValorUnitario":"50"}
+{"ID":4,"Ticker":"PETR4","Tipo":"Venda","Data":"2025-04-01","Qtd":"10","ValorUnitario":"50"}
 // Testa venda com lucro tributável.
-{"ID":5,"Ticker":"PETR4","Tipo":"VENDA","Data":"2025-05-01","Qtd":"10","ValorUnitario":"2100"}
+{"ID":5,"Ticker":"PETR4","Tipo":"Venda","Data":"2025-05-01","Qtd":"10","ValorUnitario":"2100"}
 // Testa venda total.
-{"ID":6,"Ticker":"PETR4","Tipo":"VENDA","Data":"2025-06-01","Qtd":"170","ValorUnitario":"10"}
+{"ID":6,"Ticker":"PETR4","Tipo":"Venda","Data":"2025-06-01","Qtd":"170","ValorUnitario":"10"}

@@ -7,16 +7,16 @@
 // - Afirma que é necessário declarar lucro (se acima da isenção de 20k) ou prejuízo em "Operações Comuns/Day Trade".
 // - Afirma que é necessário declarar em "Rendimentos Isentos e Não Tributáveis" se lucro abaixo da isenção de 20k, entrando no valor total.
 // 1. Caso de Prejuízo apresentado no vídeo.
-{"ID":1,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-01-01","Qtd":"500","ValorUnitario":"7.20"}
-{"ID":2,"Ticker":"PETR4","Tipo":"RED. CAP.","Data":"2025-02-01","Fator":"0.3604164635","ValorUnitario":"2.52713563580"}
+{"ID":1,"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-01","Qtd":"500","ValorUnitario":"7.20"}
+{"ID":2,"Ticker":"PETR4","Tipo":"Red. Cap.","Data":"2025-02-01","Fator":"0.3604164635","ValorUnitario":"2.52713563580"}
 // 2. Caso de Lucro apresentado no vídeo.
-{"ID":3,"Ticker":"VALE3","Tipo":"COMPRA","Data":"2025-03-01","Qtd":"500","ValorUnitario":"5.30"}
-{"ID":4,"Ticker":"VALE3","Tipo":"RED. CAP.","Data":"2025-04-01","Fator":"0.3604164635","ValorUnitario":"2.52713563580"}
+{"ID":3,"Ticker":"VALE3","Tipo":"Compra","Data":"2025-03-01","Qtd":"500","ValorUnitario":"5.30"}
+{"ID":4,"Ticker":"VALE3","Tipo":"Red. Cap.","Data":"2025-04-01","Fator":"0.3604164635","ValorUnitario":"2.52713563580"}
 
 // * [Caso de teste] tirado de https://youtu.be/5B90MG1J3-Y?t=1663
 // - Não há menção sobre lucro ou prejuízo em redução de capital.
 // - Apresenta cálculo simples reduzindo do seu valor total acumulado o valor recebido na redução de capital.
 // - Não há menção sobre atualizar o preço médio.
 // - Afirma que é necessário apenas atualizar "Bens e Direitos" e não se deve declarar em "Rendimentos Isentos e Não Tributáveis".
-{"ID":5,"Ticker":"KLBN3","Tipo":"COMPRA","Data":"2025-03-01","Qtd":"550","ValorUnitario":"14.25689"}
-{"ID":6,"Ticker":"KLBN3","Tipo":"RED. CAP.","Data":"2025-04-01","ValorTotal":"96.01"}
+{"ID":5,"Ticker":"KLBN3","Tipo":"Compra","Data":"2025-03-01","Qtd":"550","ValorUnitario":"14.25689"}
+{"ID":6,"Ticker":"KLBN3","Tipo":"Red. Cap.","Data":"2025-04-01","ValorTotal":"96.01"}

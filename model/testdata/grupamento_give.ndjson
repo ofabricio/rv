@@ -1,4 +1,4 @@
 {"Tipo":"CONFIG","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
-{"ID":1,"Ticker":"PETR4","Tipo":"COMPRA","Data":"2025-04-22","Qtd":"2240","ValorUnitario":"1.5910267857142857"}
-{"ID":2,"Ticker":"PETR4","Tipo":"GRUPAMENTO","Data":"2025-07-26","Fator":"100"}
-{"ID":3,"Ticker":"PETR4","Tipo":"LEILÃO FRAÇÃO","Data":"2025-07-30","Qtd":"0.4","ValorUnitario":"7.08"}
+{"ID":1,"Ticker":"PETR4","Tipo":"Compra","Data":"2025-04-22","Qtd":"2240","ValorUnitario":"1.5910267857142857"}
+{"ID":2,"Ticker":"PETR4","Tipo":"Grupamento","Data":"2025-07-26","Fator":"100"}
+{"ID":3,"Ticker":"PETR4","Tipo":"Leilão Fração","Data":"2025-07-30","Qtd":"0.4","ValorUnitario":"7.08"}
