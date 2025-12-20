@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/aquasecurity/table"
 	"github.com/shopspring/decimal"
@@ -11,6 +12,7 @@ import (
 func (s *State) Print(w io.Writer) {
 	s.PrintOperacoesAcoes(w)
 	s.PrintBensDireitos(w)
+	s.PrintDividaOnusReais(w)
 	s.PrintRendimentosIsentosNaoTributaveis(w)
 	s.PrintRendimentosIsentosNaoTributaveisAte20k(w)
 	s.PrintRendimentosSujeitosTributacaoExclusiva(w)
@@ -56,7 +58,7 @@ func (s *State) PrintOperacoesAcoes(w io.Writer) {
 		t.AddRow(
 			fmt.Sprint(v.ID),
 			fmt.Sprintf("%s% 12s", v.Ticker, v.Opcao),
-			v.Data.Format("2006-01-02"),
+			s.formatData(v.Data, v.Vencimento),
 			string(v.Tipo),
 			s.fracOrInt(v.Qtd)+s.sprintFracao(v),
 			s.formatDecimal(v.ValorUnitario),
@@ -80,6 +82,34 @@ func (s *State) PrintBensDireitos(w io.Writer) {
 		t.SetHeaderColSpans(0, 4)
 		t.SetHeaderAlignment(table.AlignCenter)
 		t.AddHeaders(fmt.Sprintf("BENS E DIREITOS ── Grupo %s ── Código %s", bens.Grupo, bens.Codigo))
+		t.SetAlignment(table.AlignLeft, table.AlignCenter, table.AlignCenter, table.AlignLeft)
+		t.AddHeaders(
+			"Ticker",
+			fmt.Sprintf("Situação em %d", bens.AnoAnterior),
+			fmt.Sprintf("Situação em %d", bens.AnoCorrente),
+			"Discriminação",
+		)
+		t.SetAlignment(table.AlignLeft, table.AlignCenter, table.AlignCenter, table.AlignLeft)
+		for _, ticker := range bens.Tickers {
+			t.AddRow(
+				ticker.Ticker,
+				s.formatDecimal(ticker.SituacaoAnterior),
+				s.formatDecimal(ticker.SituacaoCorrente),
+				ticker.Discriminacao,
+			)
+		}
+		t.Render()
+	}
+}
+
+func (s *State) PrintDividaOnusReais(w io.Writer) {
+
+	for _, bens := range s.DividaOnusReais() {
+		t := table.New(w)
+		t.SetColumnMaxWidth(100)
+		t.SetHeaderColSpans(0, 4)
+		t.SetHeaderAlignment(table.AlignCenter)
+		t.AddHeaders(fmt.Sprintf("DÍVIDA E ÔNUS REAIS ── Código %s", bens.Codigo))
 		t.SetAlignment(table.AlignLeft, table.AlignCenter, table.AlignCenter, table.AlignLeft)
 		t.AddHeaders(
 			"Ticker",
@@ -188,6 +218,13 @@ func (s *State) formatDecimal(v decimal.Decimal) string {
 		return v.String()
 	}
 	return v.StringFixed(2)
+}
+
+func (s *State) formatData(data, venc time.Time) string {
+	if venc.IsZero() {
+		return data.Format("2006-01-02")
+	}
+	return fmt.Sprintf("%s %s", data.Format("2006-01-02"), venc.Format("2006-01-02"))
 }
 
 func translateMonth(monthNumber string) string {

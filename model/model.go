@@ -109,12 +109,40 @@ func (s *State) BensDireitos() []BensDireitos {
 	return append(bens, opcs...)
 }
 
+func (s *State) DividaOnusReais() []BensDireitos {
+	var opcs []BensDireitos
+	for _, oprs := range s.Operacoes.PartitionByYear() {
+		if opc := s.DividaOnusReaisOpcoes(oprs); len(opc) > 0 {
+			opcs = append(opcs, BensDireitos{
+				AnoAnterior: oprs[0].Data.Year() - 1,
+				AnoCorrente: oprs[0].Data.Year(),
+				Codigo:      "16",
+				Tickers:     opc,
+			})
+		}
+	}
+	return opcs
+}
+
 func (s *State) BensDireitosOpcoes(oprs Operacoes) []BensDireitoTicker {
 	var opc []BensDireitoTicker
 	for _, o := range lo.Filter(oprs, func(o Operacao, _ int) bool { return o.CID == 0 && (o.Tipo == PUT_COMPRA || o.Tipo == CALL_COMPRA) }) {
 		opc = append(opc, BensDireitoTicker{
-			Ticker:        o.Opcao,
-			Discriminacao: fmt.Sprintf("%s OPÇÕES COMPRADAS %s DE STRIKE R$ %s", o.Qtd.String(), o.Opcao, s.formatDecimal(o.ValorUnitario)),
+			Ticker:           o.Opcao,
+			SituacaoCorrente: o.Lucro.Mul(o.Qtd),
+			Discriminacao:    fmt.Sprintf("%s OPÇÕES COMPRADAS SÉRIE %s PREÇO MÉDIO R$ %s VENCIMENTO %s", o.Qtd.String(), o.Opcao, s.formatDecimal(o.Lucro), o.Vencimento.Format("02/01/2006")),
+		})
+	}
+	return opc
+}
+
+func (s *State) DividaOnusReaisOpcoes(oprs Operacoes) []BensDireitoTicker {
+	var opc []BensDireitoTicker
+	for _, o := range lo.Filter(oprs, func(o Operacao, _ int) bool { return o.CID == 0 && (o.Tipo == PUT_VENDA || o.Tipo == CALL_VENDA) }) {
+		opc = append(opc, BensDireitoTicker{
+			Ticker:           o.Opcao,
+			SituacaoCorrente: o.Lucro.Mul(o.Qtd),
+			Discriminacao:    fmt.Sprintf("%s OPÇÕES VENDIDAS SÉRIE %s PREÇO MÉDIO R$ %s VENCIMENTO %s", o.Qtd.String(), o.Opcao, s.formatDecimal(o.Lucro), o.Vencimento.Format("02/01/2006")),
 		})
 	}
 	return opc
@@ -483,8 +511,9 @@ type Operacao struct {
 	Agg           Agregado
 
 	// Opções.
-	CID   int64
-	Opcao string
+	CID        int64
+	Opcao      string
+	Vencimento time.Time `json:"Vencimento,format:DateOnly"`
 }
 
 func (o *Operacao) IsOpcao() bool {
