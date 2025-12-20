@@ -14,8 +14,8 @@ func TestStateLoad(t *testing.T) {
 		Then string
 	}{
 		{
-			Give: "testdata/_me_give.ndjson",
-			Then: "testdata/_me_then.txt",
+			Give: "testdata/_carteira_give.ndjson",
+			Then: "testdata/_carteira_then.txt",
 		},
 		{
 			Give: "testdata/opcoes_give.ndjson",
