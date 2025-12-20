@@ -15,17 +15,17 @@ const (
 	SUBSCRICAO_VENDA     TipoOpr = "Subscrição Venda"
 	SUBSCRICAO_EXERCICIO TipoOpr = "Subscrição Exercício"
 	PUT_VENDA            TipoOpr = "Venda PUT"
-	PUT_VENDA_EX         TipoOpr = "Venda PUT EX"
-	PUT_VENDA_NE         TipoOpr = "Venda PUT NE"
+	PUT_VENDA_EX         TipoOpr = "Venda PUT (EX)"
+	PUT_VENDA_NE         TipoOpr = "Venda PUT (NE)"
 	PUT_COMPRA           TipoOpr = "Compra PUT"
-	PUT_COMPRA_EX        TipoOpr = "Compra PUT EX"
-	PUT_COMPRA_NE        TipoOpr = "Compra PUT NE"
+	PUT_COMPRA_EX        TipoOpr = "Compra PUT (EX)"
+	PUT_COMPRA_NE        TipoOpr = "Compra PUT (NE)"
 	CALL_VENDA           TipoOpr = "Venda CALL"
-	CALL_VENDA_EX        TipoOpr = "Venda CALL EX"
-	CALL_VENDA_NE        TipoOpr = "Venda CALL NE"
+	CALL_VENDA_EX        TipoOpr = "Venda CALL (EX)"
+	CALL_VENDA_NE        TipoOpr = "Venda CALL (NE)"
 	CALL_COMPRA          TipoOpr = "Compra CALL"
-	CALL_COMPRA_EX       TipoOpr = "Compra CALL EX"
-	CALL_COMPRA_NE       TipoOpr = "Compra CALL NE"
+	CALL_COMPRA_EX       TipoOpr = "Compra CALL (EX)"
+	CALL_COMPRA_NE       TipoOpr = "Compra CALL (NE)"
 )
 
 var tipoOprConfig = map[TipoOpr]TipoOprConfig{
@@ -42,17 +42,17 @@ var tipoOprConfig = map[TipoOpr]TipoOprConfig{
 	SUBSCRICAO_COMPRA:    {Codigo: "03"},
 	SUBSCRICAO_VENDA:     {Codigo: "03", IsLucroTributavel: true, IsPrejuizoAbativel: true},
 	SUBSCRICAO_EXERCICIO: {Codigo: "03"},
-	PUT_VENDA:            {},
+	PUT_VENDA:            {IsLucroTributavel: false},
 	PUT_VENDA_EX:         {IsPrejuizoAbativel: true},
 	PUT_VENDA_NE:         {IsLucroTributavel: true},
-	PUT_COMPRA:           {},
+	PUT_COMPRA:           {IsPrejuizoAbativel: false},
 	PUT_COMPRA_EX:        {IsLucroTributavel: true, IsPrejuizoAbativel: true},
 	PUT_COMPRA_NE:        {IsPrejuizoAbativel: true},
-	CALL_VENDA:           {},
+	CALL_VENDA:           {IsLucroTributavel: false},
 	CALL_VENDA_EX:        {IsLucroTributavel: true, IsPrejuizoAbativel: true},
 	CALL_VENDA_NE:        {IsLucroTributavel: true},
-	CALL_COMPRA:          {},
-	CALL_COMPRA_EX:       {IsLucroTributavel: true, IsPrejuizoAbativel: true},
+	CALL_COMPRA:          {IsPrejuizoAbativel: false},
+	CALL_COMPRA_EX:       {IsLucroTributavel: false, IsPrejuizoAbativel: false},
 	CALL_COMPRA_NE:       {IsPrejuizoAbativel: true},
 }
 

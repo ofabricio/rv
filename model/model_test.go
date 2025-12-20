@@ -18,8 +18,20 @@ func TestStateLoad(t *testing.T) {
 			Then: "testdata/_carteira_then.txt",
 		},
 		{
-			Give: "testdata/opcoes_give.ndjson",
-			Then: "testdata/opcoes_then.txt",
+			Give: "testdata/opcoes_venda_put_give.ndjson",
+			Then: "testdata/opcoes_venda_put_then.txt",
+		},
+		{
+			Give: "testdata/opcoes_venda_call_give.ndjson",
+			Then: "testdata/opcoes_venda_call_then.txt",
+		},
+		{
+			Give: "testdata/opcoes_compra_put_give.ndjson",
+			Then: "testdata/opcoes_compra_put_then.txt",
+		},
+		{
+			Give: "testdata/opcoes_compra_call_give.ndjson",
+			Then: "testdata/opcoes_compra_call_then.txt",
 		},
 		{
 			Give: "testdata/bens_e_direitos_give.ndjson",

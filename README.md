@@ -19,7 +19,7 @@ Operações suportadas:
   - Rend. Trib.
   - Subscrição
 
-- Opções
+- Opções (em breve...)
   - Compra/Venda de PUT
   - Compra/Venda de CALL
 

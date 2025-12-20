@@ -126,11 +126,13 @@ func (s *State) DividaOnusReais() []BensDireitos {
 
 func (s *State) BensDireitosOpcoes(oprs Operacoes) []BensDireitoTicker {
 	var opc []BensDireitoTicker
-	for _, o := range lo.Filter(oprs, func(o Operacao, _ int) bool { return o.CID == 0 && (o.Tipo == PUT_COMPRA || o.Tipo == CALL_COMPRA) }) {
+	for _, o := range lo.Filter(oprs, func(a Operacao, _ int) bool {
+		return (a.Tipo == PUT_COMPRA || a.Tipo == CALL_COMPRA) && lo.NoneBy(oprs, func(b Operacao) bool { return b.IsOpcaoEncerradaDe(a) })
+	}) {
 		opc = append(opc, BensDireitoTicker{
-			Ticker:           o.Opcao,
-			SituacaoCorrente: o.Lucro.Mul(o.Qtd),
-			Discriminacao:    fmt.Sprintf("%s OPÇÕES COMPRADAS SÉRIE %s PREÇO MÉDIO R$ %s VENCIMENTO %s", o.Qtd.String(), o.Opcao, s.formatDecimal(o.Lucro), o.Vencimento.Format("02/01/2006")),
+			Ticker:           o.Serie,
+			SituacaoCorrente: o.Premio.Mul(o.Qtd),
+			Discriminacao:    fmt.Sprintf("%s OPÇÕES COMPRADAS SÉRIE %s VENCIMENTO %s", o.Qtd.String(), o.Serie, o.Vencimento.Format("02/01/2006")),
 		})
 	}
 	return opc
@@ -138,11 +140,13 @@ func (s *State) BensDireitosOpcoes(oprs Operacoes) []BensDireitoTicker {
 
 func (s *State) DividaOnusReaisOpcoes(oprs Operacoes) []BensDireitoTicker {
 	var opc []BensDireitoTicker
-	for _, o := range lo.Filter(oprs, func(o Operacao, _ int) bool { return o.CID == 0 && (o.Tipo == PUT_VENDA || o.Tipo == CALL_VENDA) }) {
+	for _, o := range lo.Filter(oprs, func(a Operacao, _ int) bool {
+		return (a.Tipo == PUT_VENDA || a.Tipo == CALL_VENDA) && lo.NoneBy(oprs, func(b Operacao) bool { return b.IsOpcaoEncerradaDe(a) })
+	}) {
 		opc = append(opc, BensDireitoTicker{
-			Ticker:           o.Opcao,
-			SituacaoCorrente: o.Lucro.Mul(o.Qtd),
-			Discriminacao:    fmt.Sprintf("%s OPÇÕES VENDIDAS SÉRIE %s PREÇO MÉDIO R$ %s VENCIMENTO %s", o.Qtd.String(), o.Opcao, s.formatDecimal(o.Lucro), o.Vencimento.Format("02/01/2006")),
+			Ticker:           o.Serie,
+			SituacaoCorrente: o.Premio.Mul(o.Qtd),
+			Discriminacao:    fmt.Sprintf("%s OPÇÕES VENDIDAS SÉRIE %s VENCIMENTO %s", o.Qtd.String(), o.Serie, o.Vencimento.Format("02/01/2006")),
 		})
 	}
 	return opc
@@ -384,27 +388,27 @@ func (s *State) Calculate(o *Operacao) {
 	case PUT_VENDA:
 		o.CalcVendaPut(p)
 	case PUT_VENDA_EX:
-		o.CalcVendaPutExercido(p)
+		o.CalcVendaPutExercida(p)
 	case PUT_VENDA_NE:
-		o.CalcVendaPutNaoExercido(p)
+		o.CalcVendaPutNaoExercida(p)
 	case PUT_COMPRA:
 		o.CalcCompraPut(p)
 	case PUT_COMPRA_EX:
-		o.CalcCompraPutExercido(p)
+		o.CalcCompraPutExercida(p)
 	case PUT_COMPRA_NE:
-		o.CalcCompraPutNaoExercido(p)
+		o.CalcCompraPutNaoExercida(p)
 	case CALL_COMPRA:
 		o.CalcCompraCall(p)
 	case CALL_COMPRA_EX:
-		o.CalcCompraCallExercido(p)
+		o.CalcCompraCallExercida(p)
 	case CALL_COMPRA_NE:
-		o.CalcCompraCallNaoExercido(p)
+		o.CalcCompraCallNaoExercida(p)
 	case CALL_VENDA:
 		o.CalcVendaCall(p)
 	case CALL_VENDA_EX:
-		o.CalcVendaCallExercido(p)
+		o.CalcVendaCallExercida(p)
 	case CALL_VENDA_NE:
-		o.CalcVendaCallNaoExercido(p)
+		o.CalcVendaCallNaoExercida(p)
 	}
 }
 
@@ -423,7 +427,15 @@ func (o Operacoes) GroupByTicker() iter.Seq2[string, Operacoes] {
 
 func (o Operacoes) GroupByYear() iter.Seq2[int, Operacoes] {
 	return func(yield func(int, Operacoes) bool) {
-		g := lo.GroupByMap(o, func(o Operacao) (int, Operacao) { return o.Data.Year(), o })
+		g := lo.GroupByMap(o, func(o Operacao) (int, Operacao) {
+			// if !o.Encerramento.IsZero() {
+			// 	return o.Encerramento.Year(), o
+			// }
+			// if !o.Exercicio.IsZero() {
+			// 	return o.Exercicio.Year(), o
+			// }
+			return o.Data.Year(), o
+		})
 		for _, k := range sortKeys(g) {
 			if !yield(k, g[k]) {
 				return
@@ -434,7 +446,15 @@ func (o Operacoes) GroupByYear() iter.Seq2[int, Operacoes] {
 
 func (o Operacoes) GroupByMonth() iter.Seq2[string, Operacoes] {
 	return func(yield func(string, Operacoes) bool) {
-		g := lo.GroupByMap(o, func(o Operacao) (string, Operacao) { return o.Data.Format("01"), o })
+		g := lo.GroupByMap(o, func(o Operacao) (string, Operacao) {
+			// if !o.Encerramento.IsZero() {
+			// 	return o.Encerramento.Format("01"), o
+			// }
+			// if !o.Exercicio.IsZero() {
+			// 	return o.Exercicio.Format("01"), o
+			// }
+			return o.Data.Format("01"), o
+		})
 		for _, k := range sortKeys(g) {
 			if !yield(k, g[k]) {
 				return
@@ -499,9 +519,9 @@ type Operacao struct {
 	ID            int64
 	Ticker        string
 	Tipo          TipoOpr
-	Data          time.Time `json:"Data,format:DateOnly"`
+	Data          time.Time `json:",format:DateOnly"` // Opções: Data de Compra/Venda da opção ou Data de Vencimento ou Data de Encerramento.
 	Qtd           decimal.Decimal
-	ValorUnitario decimal.Decimal
+	ValorUnitario decimal.Decimal // Opções: Strike.
 	Taxas         decimal.Decimal
 	ValorTotal    decimal.Decimal
 	ValorCompra   decimal.Decimal
@@ -511,28 +531,36 @@ type Operacao struct {
 	Agg           Agregado
 
 	// Opções.
-	CID        int64
-	Opcao      string
-	Vencimento time.Time `json:"Vencimento,format:DateOnly"`
+	Serie          string
+	ValorExercicio decimal.Decimal // Valor da ação no dia do exercício da opção.
+	Premio         decimal.Decimal
+	Vencimento     time.Time `json:",format:DateOnly"`
+}
+
+func (b *Operacao) IsOpcaoEncerradaDe(a Operacao) bool {
+	put := a.Tipo == PUT_VENDA && (b.Tipo == PUT_VENDA_EX || b.Tipo == PUT_VENDA_NE) || a.Tipo == PUT_COMPRA && (b.Tipo == PUT_COMPRA_EX || b.Tipo == PUT_COMPRA_NE)
+	cal := a.Tipo == CALL_VENDA && (b.Tipo == CALL_VENDA_EX || b.Tipo == CALL_VENDA_NE) || a.Tipo == CALL_COMPRA && (b.Tipo == CALL_COMPRA_EX || b.Tipo == CALL_COMPRA_NE)
+	return (put || cal) && a.Serie == b.Serie && b.Data.Equal(a.Vencimento) && a.Qtd.Equal(b.Qtd) && a.ValorUnitario.Equal(b.ValorUnitario) && a.Premio.Equal(b.Premio)
 }
 
 func (o *Operacao) IsOpcao() bool {
-	return o.Opcao != ""
+	return o.Serie != ""
 }
 
 func (o *Operacao) CalcCompra(p Operacao) {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Add(o.Taxas)
-	o.Agg.Qtd = p.Agg.Qtd.Add(o.Qtd)
-	o.Agg.ValorTotal = p.Agg.ValorTotal.Add(o.ValorTotal)
+	o.Lucro = o.Premio.Mul(o.Qtd)
+	o.Agg.Qtd = o.Agg.Qtd.Add(o.Qtd)
+	o.Agg.ValorTotal = o.Agg.ValorTotal.Add(o.ValorTotal).Sub(o.Premio.Mul(o.Qtd))
 	o.Agg.CalcPrecoMedio()
 }
 
 func (o *Operacao) CalcVenda(p Operacao) {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Sub(o.Taxas)
-	o.ValorCompra = p.Agg.PrecoMedio.Mul(o.Qtd)
-	o.Agg.Qtd = p.Agg.Qtd.Sub(o.Qtd)
-	o.Agg.ValorTotal = p.Agg.ValorTotal.Sub(o.ValorCompra)
-	o.Lucro = o.ValorTotal.Sub(o.ValorCompra)
+	o.ValorCompra = o.Agg.PrecoMedio.Mul(o.Qtd)
+	o.Lucro = o.ValorTotal.Add(o.Premio.Mul(o.Qtd)).Sub(o.ValorCompra)
+	o.Agg.Qtd = o.Agg.Qtd.Sub(o.Qtd)
+	o.Agg.ValorTotal = o.Agg.ValorTotal.Sub(o.ValorCompra)
 	o.Agg.CalcPrecoMedio()
 }
 
@@ -612,67 +640,67 @@ func (o *Operacao) CalcReducaoCapital(p Operacao) {
 }
 
 func (o *Operacao) CalcVendaPut(p Operacao) {
-	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Add(o.Taxas)
+	o.Lucro = o.Premio.Mul(o.Qtd)
 }
 
-func (o *Operacao) CalcVendaPutExercido(p Operacao) {
-	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
-	o.Lucro = o.ValorUnitario.Sub(p.ValorUnitario).Mul(p.Qtd).Add(p.Lucro.Mul(p.Qtd)) // (VA - Strike) + Prêmio
-	o.Agg.Qtd = p.Agg.Qtd.Add(p.Qtd)
-	o.Agg.CalcPrecoMedio()
+func (o *Operacao) CalcVendaPutExercida(p Operacao) {
+	o.CalcCompra(p)
 }
 
-func (o *Operacao) CalcVendaPutNaoExercido(p Operacao) {
-	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
-	o.Lucro = p.Lucro.Mul(p.Qtd)
+func (o *Operacao) CalcVendaPutNaoExercida(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Add(o.Taxas)
+	o.Lucro = o.Premio.Mul(o.Qtd)
 }
 
 func (o *Operacao) CalcCompraPut(p Operacao) {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+	o.Lucro = o.Premio.Neg().Mul(o.Qtd)
 }
 
-func (o *Operacao) CalcCompraPutExercido(p Operacao) {
-	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
-	o.Lucro = p.ValorUnitario.Sub(o.ValorUnitario.Add(p.Lucro)).Mul(p.Qtd) // Strike - (VA + Custo)
-	o.Agg.Qtd = p.Agg.Qtd.Sub(p.Qtd)
+func (o *Operacao) CalcCompraPutExercida(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+	o.Lucro = o.ValorUnitario.Sub(o.ValorExercicio).Sub(o.Premio).Mul(o.Qtd)
+	o.Agg.Qtd = o.Agg.Qtd.Sub(o.Qtd)
+	o.Agg.ValorTotal = o.Agg.ValorTotal.Sub(o.ValorTotal)
 	o.Agg.CalcPrecoMedio()
 }
 
-func (o *Operacao) CalcCompraPutNaoExercido(p Operacao) {
-	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
-	o.Lucro = p.Lucro.Neg().Mul(p.Qtd)
+func (o *Operacao) CalcCompraPutNaoExercida(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+	o.Lucro = o.Premio.Neg().Mul(o.Qtd)
 }
 
 func (o *Operacao) CalcCompraCall(p Operacao) {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+	o.Lucro = o.Premio.Neg().Mul(o.Qtd)
 }
 
-func (o *Operacao) CalcCompraCallExercido(p Operacao) {
-	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
-	o.Lucro = o.ValorUnitario.Sub(p.ValorUnitario.Add(p.Lucro)).Mul(p.Qtd) // VA - (Strike + Prêmio)
-	o.Agg.Qtd = p.Agg.Qtd.Add(p.Qtd)
+func (o *Operacao) CalcCompraCallExercida(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+	o.Lucro = o.Premio.Neg().Mul(o.Qtd)
+	o.Agg.Qtd = o.Agg.Qtd.Add(o.Qtd)
+	o.Agg.ValorTotal = o.Agg.ValorTotal.Add(o.ValorTotal).Add(o.Premio.Mul(o.Qtd))
 	o.Agg.CalcPrecoMedio()
 }
 
-func (o *Operacao) CalcCompraCallNaoExercido(p Operacao) {
-	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
-	o.Lucro = p.Lucro.Neg().Mul(p.Qtd)
+func (o *Operacao) CalcCompraCallNaoExercida(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+	o.Lucro = o.Premio.Neg().Mul(o.Qtd)
 }
 
 func (o *Operacao) CalcVendaCall(p Operacao) {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+	o.Lucro = o.Premio.Mul(o.Qtd)
 }
 
-func (o *Operacao) CalcVendaCallExercido(p Operacao) {
-	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
-	o.Lucro = p.ValorUnitario.Add(p.Lucro).Sub(o.ValorUnitario).Mul(p.Qtd) // (Strike + Prêmio) - VA
-	o.Agg.Qtd = p.Agg.Qtd.Sub(p.Qtd)
-	o.Agg.CalcPrecoMedio()
+func (o *Operacao) CalcVendaCallExercida(p Operacao) {
+	o.CalcVenda(p)
 }
 
-func (o *Operacao) CalcVendaCallNaoExercido(p Operacao) {
-	o.ValorTotal = o.ValorUnitario.Mul(p.Qtd)
-	o.Lucro = p.Lucro.Mul(p.Qtd)
+func (o *Operacao) CalcVendaCallNaoExercida(p Operacao) {
+	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Add(o.Taxas)
+	o.Lucro = o.Premio.Mul(o.Qtd)
 }
 
 func unmarshal(line []byte, v any) {

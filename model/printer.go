@@ -3,7 +3,6 @@ package model
 import (
 	"fmt"
 	"io"
-	"time"
 
 	"github.com/aquasecurity/table"
 	"github.com/shopspring/decimal"
@@ -57,18 +56,18 @@ func (s *State) PrintOperacoesAcoes(w io.Writer) {
 	for _, v := range s.Operacoes {
 		t.AddRow(
 			fmt.Sprint(v.ID),
-			fmt.Sprintf("%s% 12s", v.Ticker, v.Opcao),
-			s.formatData(v.Data, v.Vencimento),
-			string(v.Tipo),
+			fmt.Sprintf("%s%12s", v.Ticker, v.Serie),
+			s.formatColumnData(v),
+			s.formatColumnTipo(v),
 			s.fracOrInt(v.Qtd)+s.sprintFracao(v),
-			s.formatDecimal(v.ValorUnitario),
-			s.formatDecimal(v.ValorTotal),
+			s.formatColumnValorUnitario(v),
+			s.formatColumnValorTotal(v),
 			s.formatDecimal(v.Taxas),
 			s.fracOrInt(v.Agg.Qtd),
 			s.formatDecimal(v.Agg.ValorTotal),
 			s.formatDecimal(v.Agg.PrecoMedio),
 			s.formatDecimal(v.ValorCompra),
-			s.formatDecimal(v.Lucro),
+			s.formatColumnLucro(v),
 		)
 	}
 	t.Render()
@@ -220,11 +219,51 @@ func (s *State) formatDecimal(v decimal.Decimal) string {
 	return v.StringFixed(2)
 }
 
-func (s *State) formatData(data, venc time.Time) string {
-	if venc.IsZero() {
-		return data.Format("2006-01-02")
+func (s *State) formatColumnLucro(o Operacao) string {
+	if !o.Premio.IsZero() {
+		return fmt.Sprintf("(P %s) %s", s.formatDecimal(o.Premio), s.formatDecimal(o.Lucro))
 	}
-	return fmt.Sprintf("%s %s", data.Format("2006-01-02"), venc.Format("2006-01-02"))
+	return s.formatDecimal(o.Lucro)
+}
+
+func (s *State) formatColumnValorUnitario(o Operacao) string {
+	if !o.ValorExercicio.IsZero() {
+		return fmt.Sprintf("(E %s) %s", s.formatDecimal(o.ValorExercicio), s.formatDecimal(o.ValorUnitario))
+	}
+	return s.formatDecimal(o.ValorUnitario)
+}
+
+func (s *State) formatColumnValorTotal(o Operacao) string {
+	if !o.ValorExercicio.IsZero() {
+		return fmt.Sprintf("(E %s) %s", s.formatDecimal(o.ValorExercicio.Mul(o.Qtd)), s.formatDecimal(o.ValorTotal))
+	}
+	return s.formatDecimal(o.ValorTotal)
+}
+
+func (s *State) formatColumnTipo(o Operacao) string {
+	// if o.IsOpcao() {
+	// 	// if !o.Encerramento.IsZero() {
+	// 	// 	return fmt.Sprintf("%s (NE)", o.Tipo)
+	// 	// }
+	// 	if !o.Exercicio.IsZero() {
+	// 		return fmt.Sprintf("%s (EX)", o.Tipo)
+	// 	}
+	// 	return fmt.Sprintf("%s (??)", o.Tipo)
+	// }
+	return string(o.Tipo)
+}
+
+func (s *State) formatColumnData(o Operacao) string {
+	if o.IsOpcao() {
+		// if !o.Encerramento.IsZero() {
+		// 	return fmt.Sprintf("%s V %s E %s", o.Data.Format("2006-01-02"), o.Vencimento.Format("2006-01-02"), o.Encerramento.Format("2006-01-02"))
+		// }
+		// if !o.Exercicio.IsZero() {
+		// 	return fmt.Sprintf("%s V %s E %s", o.Data.Format("2006-01-02"), o.Vencimento.Format("2006-01-02"), o.Exercicio.Format("2006-01-02"))
+		// }
+		return fmt.Sprintf("%s V %s", o.Data.Format("2006-01-02"), o.Vencimento.Format("2006-01-02"))
+	}
+	return o.Data.Format("2006-01-02")
 }
 
 func translateMonth(monthNumber string) string {
