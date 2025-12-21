@@ -539,10 +539,6 @@ type Operacao struct {
 	Vencimento     time.Time `json:",format:DateOnly"`
 }
 
-func (b *Operacao) IsOpcaoEncerradaDe(a Operacao) bool {
-	return a.Serie == b.Serie && b.Data.Equal(a.Vencimento) && a.Qtd.Equal(b.Qtd) && a.ValorUnitario.Equal(b.ValorUnitario) && a.Premio.Equal(b.Premio)
-}
-
 func (o *Operacao) IsOpcao() bool {
 	return o.Serie != ""
 }
