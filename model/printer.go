@@ -249,7 +249,7 @@ func (s *State) formatColumnTipo(o Operacao) string {
 }
 
 func (s *State) formatColumnData(o Operacao) string {
-	if o.IsOpcao() {
+	if !o.Vencimento.IsZero() {
 		return fmt.Sprintf("%s V %s", o.Data.Format(s.Config.FormatoData), o.Vencimento.Format(s.Config.FormatoData))
 	}
 	return o.Data.Format(s.Config.FormatoData)
