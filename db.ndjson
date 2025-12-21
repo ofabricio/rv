@@ -7,20 +7,20 @@
 //     "Ticker"
 //          Código da ação (ex. PETR4, VALE3).
 //     "Tipo"
-//          Tipo da operação (COMPRA, VENDA, BONIFICAÇÃO, DESDOBRAMENTO, GRUPAMENTO, LEILÃO FRAÇÃO, DIVIDENDOS, JSCP, REND. TRIB., RED. CAP., SUBSCRIÇÃO COMPRA, SUBSCRIÇÃO VENDA, SUBSCRIÇÃO EXERCÍCIO).
+//          Tipo da operação. Compra, Venda, Bonificação, Desdobramento, Grupamento, Leilão Fração, Dividendos, JSCP, Rend. Trib., Red. Cap., Subscrição Compra, Subscrição Venda, Subscrição Exercício).
 //     "Data":
 //          Data da operação no formato AAAA-MM-DD.
 // Campos que são específicos para cada tipo de operação:
 //     "Qtd"
-//          Quantidade de ações envolvidas nas operações de COMPRA, VENDA, BONIFICAÇÃO e LEILÃO FRAÇÃO.
+//          Quantidade de ações envolvidas nas operações de Compra, Venda, Bonificação e Leilão Fração.
 //     "ValorUnitario":
-//          Valor unitário da ação nas operações de COMPRA, VENDA, BONIFICAÇÃO, LEILÃO FRAÇÃO e RED. CAP. (ex. 10.4).
+//          Valor unitário da ação nas operações de Compra, Venda, Bonificação, Leilão Fração e Red. Cap. (ex. 10.4).
 //     "Taxas"
-//          Taxas associadas às operações de COMPRA, VENDA, SUBSCRIÇÃO COMPRA e SUBSCRIÇÃO VENDA. (ex. 2.30).
+//          Taxas associadas às operações de Compra, Venda, Subscrição Compra e Subscrição Venda. (ex. 2.30).
 //     "Fator"
-//          Fator de BONIFICAÇÃO, DESDOBRAMENTO, GRUPAMENTO e REDUÇÃO DE CAPITAL. (ex. 0.1, 1.5, 2).
+//          Fator de Bonificação, Desdobramento, Grupamento e Redução de Capital. (ex. 0.1, 1.5, 2).
 //     "Fracao"
-//        Parte fracionária resultante de BONIFICAÇÃO, DESDOBRAMENTO, GRUPAMENTO e LEILÃO FRAÇÃO. (ex. 0.4).
+//        Parte fracionária resultante de Bonificação, Desdobramento, Grupamento e Leilão Fração. (ex. 0.4).
 // Para Opções:
 //     "Serie"
 //          Série da opção (ex. PETRA123, PETRM140).
