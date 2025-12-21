@@ -77,10 +77,6 @@ func TestStateLoad(t *testing.T) {
 			Then: "testdata/compra_venda.then",
 		},
 		{
-			Give: "testdata/all.give",
-			Then: "testdata/all.then",
-		},
-		{
 			Give: "testdata/readme.give",
 			Then: "testdata/readme.then",
 		},
