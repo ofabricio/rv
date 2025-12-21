@@ -4,6 +4,8 @@ Esta ferramenta faz o controle de operações de ações do mercado brasileiro, 
 
 Se deseja usá-la **é por sua conta e risco**. :warning:
 
+## Features
+
 Operações suportadas:
 
 - Ações
@@ -43,7 +45,7 @@ git clone --depth 1 https://github.com/ofabricio/rv.git ; cd rv
 docker run --rm -v $PWD:/src -w /src -e GOEXPERIMENT=jsonv2 golang:alpine go run .
 ```
 
-**Nota:** para gerar um executável adicione `-e GOOS=darwin -e GOARCH=amd64` e altere os [valores](https://go.dev/doc/install/source#environment) conforme seu sistema operacional.
+**Nota:** para gerar um executável use `go build` em vez de `go run .` e adicione `-e GOOS=darwin -e GOARCH=amd64` e altere os [valores](https://go.dev/doc/install/source#environment) conforme seu sistema operacional.
 
 ## Como usar
 

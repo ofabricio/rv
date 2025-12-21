@@ -2,6 +2,7 @@ package model
 
 import (
 	"bufio"
+	"bytes"
 	"cmp"
 	"encoding/json/v2"
 	"fmt"
@@ -9,7 +10,6 @@ import (
 	"maps"
 	"os"
 	"slices"
-	"strings"
 	"time"
 
 	"github.com/samber/lo"
@@ -111,7 +111,7 @@ func (s *State) BensDireitos() []BensDireitos {
 				Ticker:           ticker,
 				SituacaoAnterior: prevYear[ticker].Agg.ValorTotal,
 				SituacaoCorrente: o.Agg.ValorTotal,
-				Discriminacao:    fmt.Sprintf("%s AÇÕES %s COM PREÇO MÉDIO DE R$ %s", o.Agg.Qtd.String(), ticker, s.formatDecimal(o.Agg.PrecoMedio)),
+				Discriminacao:    fmt.Sprintf("%s AÇÕES %s COM PREÇO MÉDIO DE R$ %s", o.Agg.Qtd, ticker, s.formatDecimal(o.Agg.PrecoMedio)),
 			})
 		}
 		prevYear = merge
@@ -156,7 +156,7 @@ func (s *State) BensDireitosOpcoes(oprs Operacoes) []BensDireitoTicker {
 		opc = append(opc, BensDireitoTicker{
 			Ticker:           o.Serie,
 			SituacaoCorrente: o.Premio.Mul(o.Qtd),
-			Discriminacao:    fmt.Sprintf("%s OPÇÕES COMPRADAS SÉRIE %s VENCIMENTO %s", o.Qtd.String(), o.Serie, o.Vencimento.Format("02/01/2006")),
+			Discriminacao:    fmt.Sprintf("%s OPÇÕES COMPRADAS SÉRIE %s VENCIMENTO %s", o.Qtd, o.Serie, o.Vencimento.Format("02/01/2006")),
 		})
 	}
 	return opc
@@ -170,7 +170,7 @@ func (s *State) DividaOnusReaisOpcoes(oprs Operacoes) []BensDireitoTicker {
 		opc = append(opc, BensDireitoTicker{
 			Ticker:           o.Serie,
 			SituacaoCorrente: o.Premio.Mul(o.Qtd),
-			Discriminacao:    fmt.Sprintf("%s OPÇÕES VENDIDAS SÉRIE %s VENCIMENTO %s", o.Qtd.String(), o.Serie, o.Vencimento.Format("02/01/2006")),
+			Discriminacao:    fmt.Sprintf("%s OPÇÕES VENDIDAS SÉRIE %s VENCIMENTO %s", o.Qtd, o.Serie, o.Vencimento.Format("02/01/2006")),
 		})
 	}
 	return opc
@@ -459,9 +459,7 @@ func (o Operacoes) GroupByYear() iter.Seq2[int, Operacoes] {
 
 func (o Operacoes) GroupByMonth() iter.Seq2[string, Operacoes] {
 	return func(yield func(string, Operacoes) bool) {
-		g := lo.GroupByMap(o, func(o Operacao) (string, Operacao) {
-			return o.Data.Format("01"), o
-		})
+		g := lo.GroupByMap(o, func(o Operacao) (string, Operacao) { return o.Data.Format("01"), o })
 		for _, k := range sortKeys(g) {
 			if !yield(k, g[k]) {
 				return
@@ -713,10 +711,11 @@ func FileLines(file string) func(yield func([]byte) bool) {
 		defer f.Close()
 		lines := bufio.NewScanner(f)
 		for lines.Scan() {
-			if lines.Text() == "" || strings.HasPrefix(lines.Text(), "//") {
+			line := bytes.TrimSpace(lines.Bytes())
+			if len(line) == 0 || bytes.HasPrefix(line, []byte("//")) {
 				continue
 			}
-			if !yield(lines.Bytes()) {
+			if !yield(line) {
 				return
 			}
 		}

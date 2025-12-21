@@ -3,7 +3,6 @@ package model
 import (
 	"bytes"
 	"os"
-	"strings"
 	"testing"
 )
 
@@ -100,8 +99,8 @@ func TestStateLoad(t *testing.T) {
 			t.Errorf("failed to read expected output: %v", err)
 		}
 
-		if strings.TrimSpace(got.String()) != strings.TrimSpace(string(exp)) {
-			t.Errorf("\nFile: %s\nGot:\n%s\nExp:\n%s", tc.Then, got.String(), exp)
+		if !bytes.Equal(bytes.TrimSpace(got.Bytes()), bytes.TrimSpace(exp)) {
+			t.Errorf("\nFile: %s\nGot:\n%s\nExp:\n%s", tc.Then, got.Bytes(), exp)
 		}
 	}
 }
