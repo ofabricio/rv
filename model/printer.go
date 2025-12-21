@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/aquasecurity/table"
 	"github.com/shopspring/decimal"
@@ -213,10 +214,13 @@ func (s *State) fracOrInt(d decimal.Decimal) string {
 }
 
 func (s *State) formatDecimal(v decimal.Decimal) string {
+	var r string
 	if s.Settings.MostrarValorExato {
-		return v.String()
+		r = v.String()
+	} else {
+		r = v.StringFixed(2)
 	}
-	return v.StringFixed(2)
+	return strings.Replace(r, ".", s.Settings.SeparadorDecimal, 1)
 }
 
 func (s *State) formatColumnLucro(o Operacao) string {

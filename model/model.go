@@ -41,13 +41,29 @@ type Settings struct {
 	// Mostra os valores exatos.
 	MostrarValorExato bool
 
+	// Formata valores usando esse separador de casas decimais.
+	// Exemplo: "1234,56" (padrão) ou "1234.56".
+	SeparadorDecimal string
+
 	AcaoSwingTradeIR decimal.Decimal
 	AcaoDayTradeIR   decimal.Decimal
 	AcaoLimiteIsento decimal.Decimal
 }
 
+func DefaultSettings() Settings {
+	return Settings{
+		AlterarPrecoMedioNaBonificacao: false,
+		MostrarValorExato:              false,
+		SeparadorDecimal:               ",",
+		AcaoSwingTradeIR:               decimal.NewFromFloat(0.15),
+		AcaoDayTradeIR:                 decimal.NewFromFloat(0.20),
+		AcaoLimiteIsento:               decimal.NewFromInt(20000),
+	}
+}
+
 func (s *State) Load(file string) {
 	s.Operacoes = nil
+	s.Settings = DefaultSettings()
 	for line := range FileLines(file) {
 		var o Operacao
 		unmarshal(line, &o)
