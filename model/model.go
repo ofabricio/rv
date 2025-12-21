@@ -45,6 +45,10 @@ type Settings struct {
 	// Exemplo: "1234,56" (padrão) ou "1234.56".
 	SeparadorDecimal string
 
+	// Formata datas usando esse formato.
+	// Exemplo: "02/01/2006" (padrão) ou "2006-01-02".
+	FormatoData string
+
 	AcaoSwingTradeIR decimal.Decimal
 	AcaoDayTradeIR   decimal.Decimal
 	AcaoLimiteIsento decimal.Decimal
@@ -55,6 +59,7 @@ func DefaultSettings() Settings {
 		AlterarPrecoMedioNaBonificacao: false,
 		MostrarValorExato:              false,
 		SeparadorDecimal:               ",",
+		FormatoData:                    "02/01/2006",
 		AcaoSwingTradeIR:               decimal.NewFromFloat(0.15),
 		AcaoDayTradeIR:                 decimal.NewFromFloat(0.20),
 		AcaoLimiteIsento:               decimal.NewFromInt(20000),

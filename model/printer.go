@@ -250,9 +250,9 @@ func (s *State) formatColumnTipo(o Operacao) string {
 
 func (s *State) formatColumnData(o Operacao) string {
 	if o.IsOpcao() {
-		return fmt.Sprintf("%s V %s", o.Data.Format("2006-01-02"), o.Vencimento.Format("2006-01-02"))
+		return fmt.Sprintf("%s V %s", o.Data.Format(s.Settings.FormatoData), o.Vencimento.Format(s.Settings.FormatoData))
 	}
-	return o.Data.Format("2006-01-02")
+	return o.Data.Format(s.Settings.FormatoData)
 }
 
 func translateMonth(monthNumber string) string {
