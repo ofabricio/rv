@@ -51,7 +51,7 @@ func (s *State) Load(file string) {
 	for line := range FileLines(file) {
 		var o Operacao
 		unmarshal(line, &o)
-		if o.Tipo == "CONFIG" {
+		if o.Tipo == "Config" {
 			unmarshal(line, &s.Settings)
 		} else {
 			s.Calculate(&o)
