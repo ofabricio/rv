@@ -479,7 +479,7 @@ func (o Operacoes) PartitionByAcaoOpcao() []Operacoes {
 }
 
 func (o Operacoes) FindParent(op *Operacao) Operacao {
-	for i := op.ID - 2; i >= 0; i-- {
+	for i := len(o) - 1; i >= 0; i-- {
 		if o[i].Ticker == op.Ticker {
 			return o[i]
 		}
@@ -502,7 +502,6 @@ func (a *Agregado) CalcPrecoMedio() {
 }
 
 type Operacao struct {
-	ID            int64
 	Ticker        string
 	Tipo          TipoOpr
 	Data          time.Time `json:",format:DateOnly"` // Opções: Data de Compra/Venda da opção ou Data de Vencimento ou Data de Encerramento.

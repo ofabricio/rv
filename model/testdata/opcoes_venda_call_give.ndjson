@@ -1,13 +1,13 @@
 {"Tipo":"Config","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
-{"ID":1,"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-01","Qtd":"300","ValorUnitario":"10"}
+{"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-01","Qtd":"300","ValorUnitario":"10"}
 // Testa que vai aparecer em "Dívida e Onus Reais", pois o vencimento virou o ano.
-{"ID":2,"Ticker":"PETR4","Serie":"PETRA100","Tipo":"Venda CALL","Data":"2025-01-01","Vencimento":"2026-01-01","Qtd":"100","ValorUnitario":"10","Premio":"1"}
+{"Ticker":"PETR4","Serie":"PETRA100","Tipo":"Venda CALL","Data":"2025-01-01","Vencimento":"2026-01-01","Qtd":"100","ValorUnitario":"10","Premio":"1"}
 // Testa Venda de CALL com lucro.
-{"ID":3,"Ticker":"PETR4","Serie":"PETRA101","Tipo":"Venda CALL","Data":"2025-01-01","Vencimento":"2025-02-01","Qtd":"100","ValorUnitario":"12","Premio":"1"}
-{"ID":4,"Ticker":"PETR4","Serie":"PETRA101","Tipo":"Venda CALL (EX)","Data":"2025-02-01","Vencimento":"2025-02-01","Qtd":"100","ValorUnitario":"12","Premio":"1","ValorExercicio":"14"}
+{"Ticker":"PETR4","Serie":"PETRA101","Tipo":"Venda CALL","Data":"2025-01-01","Vencimento":"2025-02-01","Qtd":"100","ValorUnitario":"12","Premio":"1"}
+{"Ticker":"PETR4","Serie":"PETRA101","Tipo":"Venda CALL (EX)","Data":"2025-02-01","Vencimento":"2025-02-01","Qtd":"100","ValorUnitario":"12","Premio":"1","ValorExercicio":"14"}
 // Testa venda de CALL com prejuízo.
-{"ID":5,"Ticker":"PETR4","Serie":"PETRA102","Tipo":"Venda CALL","Data":"2025-02-01","Vencimento":"2025-03-01","Qtd":"100","ValorUnitario":"8","Premio":"1"}
-{"ID":6,"Ticker":"PETR4","Serie":"PETRA102","Tipo":"Venda CALL (EX)","Data":"2025-03-01","Vencimento":"2025-03-01","Qtd":"100","ValorUnitario":"8","Premio":"1","ValorExercicio":"9"}
+{"Ticker":"PETR4","Serie":"PETRA102","Tipo":"Venda CALL","Data":"2025-02-01","Vencimento":"2025-03-01","Qtd":"100","ValorUnitario":"8","Premio":"1"}
+{"Ticker":"PETR4","Serie":"PETRA102","Tipo":"Venda CALL (EX)","Data":"2025-03-01","Vencimento":"2025-03-01","Qtd":"100","ValorUnitario":"8","Premio":"1","ValorExercicio":"9"}
 // Testa venda de CAL não exercida.
-{"ID":7,"Ticker":"PETR4","Serie":"PETRA103","Tipo":"Venda CALL","Data":"2025-03-01","Vencimento":"2025-04-01","Qtd":"100","ValorUnitario":"10","Premio":"2"}
-{"ID":8,"Ticker":"PETR4","Serie":"PETRA103","Tipo":"Venda CALL (NE)","Data":"2025-04-01","Vencimento":"2025-04-01","Qtd":"100","ValorUnitario":"10","Premio":"2"}
+{"Ticker":"PETR4","Serie":"PETRA103","Tipo":"Venda CALL","Data":"2025-03-01","Vencimento":"2025-04-01","Qtd":"100","ValorUnitario":"10","Premio":"2"}
+{"Ticker":"PETR4","Serie":"PETRA103","Tipo":"Venda CALL (NE)","Data":"2025-04-01","Vencimento":"2025-04-01","Qtd":"100","ValorUnitario":"10","Premio":"2"}

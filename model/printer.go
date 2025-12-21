@@ -53,9 +53,9 @@ func (s *State) PrintOperacoesAcoes(w io.Writer) {
 		table.AlignRight,
 		table.AlignRight,
 	)
-	for _, v := range s.Operacoes {
+	for i, v := range s.Operacoes {
 		t.AddRow(
-			fmt.Sprint(v.ID),
+			fmt.Sprint(i+1),
 			fmt.Sprintf("%s%12s", v.Ticker, v.Serie),
 			s.formatColumnData(v),
 			s.formatColumnTipo(v),

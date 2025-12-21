@@ -1,13 +1,13 @@
 {"Tipo":"Config","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
-{"ID":1,"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
+{"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
 // Testa que vai aparecer em "Dívida e Onus Reais", pois o vencimento virou o ano.
-{"ID":2,"Ticker":"PETR4","Serie":"PETRM100","Tipo":"Venda PUT","Data":"2025-01-01","Vencimento":"2026-01-01","Qtd":"100","ValorUnitario":"10","Premio":"1"}
+{"Ticker":"PETR4","Serie":"PETRM100","Tipo":"Venda PUT","Data":"2025-01-01","Vencimento":"2026-01-01","Qtd":"100","ValorUnitario":"10","Premio":"1"}
 // Testa Venda de PUT com prejuízo.
-{"ID":3,"Ticker":"PETR4","Serie":"PETRM101","Tipo":"Venda PUT","Data":"2025-01-01","Vencimento":"2025-03-01","Qtd":"100","ValorUnitario":"10","Premio":"1"}
-{"ID":4,"Ticker":"PETR4","Serie":"PETRM101","Tipo":"Venda PUT (EX)","Data":"2025-03-01","Vencimento":"2025-03-01","Qtd":"100","ValorUnitario":"10","Premio":"1","ValorExercicio":"8"}
+{"Ticker":"PETR4","Serie":"PETRM101","Tipo":"Venda PUT","Data":"2025-01-01","Vencimento":"2025-03-01","Qtd":"100","ValorUnitario":"10","Premio":"1"}
+{"Ticker":"PETR4","Serie":"PETRM101","Tipo":"Venda PUT (EX)","Data":"2025-03-01","Vencimento":"2025-03-01","Qtd":"100","ValorUnitario":"10","Premio":"1","ValorExercicio":"8"}
 // Testa Venda de PUT com lucro.
-{"ID":5,"Ticker":"PETR4","Serie":"PETRM102","Tipo":"Venda PUT","Data":"2025-03-01","Vencimento":"2025-04-01","Qtd":"100","ValorUnitario":"10","Premio":"3"}
-{"ID":6,"Ticker":"PETR4","Serie":"PETRM102","Tipo":"Venda PUT (EX)","Data":"2025-04-01","Vencimento":"2025-04-01","Qtd":"100","ValorUnitario":"10","Premio":"3","ValorExercicio":"8"}
+{"Ticker":"PETR4","Serie":"PETRM102","Tipo":"Venda PUT","Data":"2025-03-01","Vencimento":"2025-04-01","Qtd":"100","ValorUnitario":"10","Premio":"3"}
+{"Ticker":"PETR4","Serie":"PETRM102","Tipo":"Venda PUT (EX)","Data":"2025-04-01","Vencimento":"2025-04-01","Qtd":"100","ValorUnitario":"10","Premio":"3","ValorExercicio":"8"}
 // Testa venda de PUT não exercida.
-{"ID":7,"Ticker":"PETR4","Serie":"PETRM103","Tipo":"Venda PUT","Data":"2025-04-01","Vencimento":"2025-05-01","Qtd":"100","ValorUnitario":"10","Premio":"2"}
-{"ID":8,"Ticker":"PETR4","Serie":"PETRM103","Tipo":"Venda PUT (NE)","Data":"2025-05-01","Vencimento":"2025-05-01","Qtd":"100","ValorUnitario":"10","Premio":"2"}
+{"Ticker":"PETR4","Serie":"PETRM103","Tipo":"Venda PUT","Data":"2025-04-01","Vencimento":"2025-05-01","Qtd":"100","ValorUnitario":"10","Premio":"2"}
+{"Ticker":"PETR4","Serie":"PETRM103","Tipo":"Venda PUT (NE)","Data":"2025-05-01","Vencimento":"2025-05-01","Qtd":"100","ValorUnitario":"10","Premio":"2"}
