@@ -404,7 +404,7 @@ func (s *State) Calculate(o *Operacao) {
 		o.CalcSubscricaoCompra(p)
 	case SUBSCRICAO_VENDA:
 		o.CalcSubscricaoVenda(p)
-	case SUBSCRICAO_EXERCICIO:
+	case SUBSCRICAO_EX:
 		o.CalcSubscricaoExercicio(p)
 	case PUT_VENDA:
 		o.CalcVendaPut(p)
