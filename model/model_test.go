@@ -13,76 +13,76 @@ func TestStateLoad(t *testing.T) {
 		Then string
 	}{
 		{
-			Give: "testdata/_carteira_give.ndjson",
-			Then: "testdata/_carteira_then.txt",
+			Give: "testdata/_carteira.give",
+			Then: "testdata/_carteira.then",
 		},
 		{
-			Give: "testdata/opcoes_venda_put_give.ndjson",
-			Then: "testdata/opcoes_venda_put_then.txt",
+			Give: "testdata/opcoes_venda_put.give",
+			Then: "testdata/opcoes_venda_put.then",
 		},
 		{
-			Give: "testdata/opcoes_venda_call_give.ndjson",
-			Then: "testdata/opcoes_venda_call_then.txt",
+			Give: "testdata/opcoes_venda_call.give",
+			Then: "testdata/opcoes_venda_call.then",
 		},
 		{
-			Give: "testdata/opcoes_compra_put_give.ndjson",
-			Then: "testdata/opcoes_compra_put_then.txt",
+			Give: "testdata/opcoes_compra_put.give",
+			Then: "testdata/opcoes_compra_put.then",
 		},
 		{
-			Give: "testdata/opcoes_compra_call_give.ndjson",
-			Then: "testdata/opcoes_compra_call_then.txt",
+			Give: "testdata/opcoes_compra_call.give",
+			Then: "testdata/opcoes_compra_call.then",
 		},
 		{
-			Give: "testdata/bens_e_direitos_give.ndjson",
-			Then: "testdata/bens_e_direitos_then.txt",
+			Give: "testdata/bens_e_direitos.give",
+			Then: "testdata/bens_e_direitos.then",
 		},
 		{
-			Give: "testdata/subscricao_give.ndjson",
-			Then: "testdata/subscricao_then.txt",
+			Give: "testdata/subscricao.give",
+			Then: "testdata/subscricao.then",
 		},
 		{
-			Give: "testdata/reducao_capital_give.ndjson",
-			Then: "testdata/reducao_capital_then.txt",
+			Give: "testdata/reducao_capital.give",
+			Then: "testdata/reducao_capital.then",
 		},
 		{
-			Give: "testdata/rend_trib_give.ndjson",
-			Then: "testdata/rend_trib_then.txt",
+			Give: "testdata/rend_trib.give",
+			Then: "testdata/rend_trib.then",
 		},
 		{
-			Give: "testdata/bonificacao_give.ndjson",
-			Then: "testdata/bonificacao_then.txt",
+			Give: "testdata/bonificacao.give",
+			Then: "testdata/bonificacao.then",
 		},
 		{
-			Give: "testdata/dividendos_give.ndjson",
-			Then: "testdata/dividendos_then.txt",
+			Give: "testdata/dividendos.give",
+			Then: "testdata/dividendos.then",
 		},
 		{
-			Give: "testdata/jscp_give.ndjson",
-			Then: "testdata/jscp_then.txt",
+			Give: "testdata/jscp.give",
+			Then: "testdata/jscp.then",
 		},
 		{
-			Give: "testdata/grupamento_give.ndjson",
-			Then: "testdata/grupamento_then.txt",
+			Give: "testdata/grupamento.give",
+			Then: "testdata/grupamento.then",
 		},
 		{
-			Give: "testdata/desdobramento_give.ndjson",
-			Then: "testdata/desdobramento_then.txt",
+			Give: "testdata/desdobramento.give",
+			Then: "testdata/desdobramento.then",
 		},
 		{
-			Give: "testdata/rendimentos_give.ndjson",
-			Then: "testdata/rendimentos_then.txt",
+			Give: "testdata/rendimentos.give",
+			Then: "testdata/rendimentos.then",
 		},
 		{
-			Give: "testdata/compra_venda_give.ndjson",
-			Then: "testdata/compra_venda_then.txt",
+			Give: "testdata/compra_venda.give",
+			Then: "testdata/compra_venda.then",
 		},
 		{
-			Give: "testdata/all_give.ndjson",
-			Then: "testdata/all_then.txt",
+			Give: "testdata/all.give",
+			Then: "testdata/all.then",
 		},
 		{
-			Give: "testdata/readme_give.ndjson",
-			Then: "testdata/readme_then.txt",
+			Give: "testdata/readme.give",
+			Then: "testdata/readme.then",
 		},
 	}
 
