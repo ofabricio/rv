@@ -8,12 +8,12 @@
 //          Código da ação (ex. PETR4, VALE3).
 //     "Tipo"
 //          Tipo da operação. Compra, Venda, Bonificação, Desdobramento, Grupamento, Leilão Fração, Dividendos, JSCP, Rend. Trib., Red. Cap., Subscrição Compra, Subscrição Venda, Subscrição Exercício).
-//     "Data":
+//     "Data"
 //          Data da operação no formato AAAA-MM-DD.
 // Campos que são específicos para cada tipo de operação:
 //     "Qtd"
 //          Quantidade de ações envolvidas nas operações de Compra, Venda, Bonificação e Leilão Fração.
-//     "ValorUnitario":
+//     "ValorUnitario"
 //          Valor unitário da ação nas operações de Compra, Venda, Bonificação, Leilão Fração e Red. Cap. (ex. 10.4).
 //     "Taxas"
 //          Taxas associadas às operações de Compra, Venda, Subscrição Compra e Subscrição Venda. (ex. 2.30).
