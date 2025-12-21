@@ -19,10 +19,10 @@ import (
 type State struct {
 	Operacoes Operacoes
 
-	Settings Settings
+	Config Config
 }
 
-type Settings struct {
+type Config struct {
 	// Determina a estratégia de Preço Médio usada na Bonificação.
 	//
 	// Se true, as Bonificações vão alterar seu preço médio.
@@ -54,8 +54,8 @@ type Settings struct {
 	AcaoLimiteIsento decimal.Decimal
 }
 
-func DefaultSettings() Settings {
-	return Settings{
+func DefaultConfig() Config {
+	return Config{
 		AlterarPrecoMedioNaBonificacao: false,
 		MostrarValorExato:              false,
 		SeparadorDecimal:               ",",
@@ -68,16 +68,16 @@ func DefaultSettings() Settings {
 
 func (s *State) Load(file string) {
 	s.Operacoes = nil
-	s.Settings = DefaultSettings()
+	s.Config = DefaultConfig()
 	for line := range FileLines(file) {
 		var o Operacao
 		unmarshal(line, &o)
 		if o.Tipo == "Config" {
-			unmarshal(line, &s.Settings)
-		} else {
-			s.Calculate(&o)
-			s.Operacoes = append(s.Operacoes, o)
+			unmarshal(line, &s.Config)
+			continue
 		}
+		s.Calculate(&o)
+		s.Operacoes = append(s.Operacoes, o)
 	}
 }
 
@@ -269,7 +269,7 @@ func (s *State) RendimentosIsentosNaoTributaveisAte20k() []RendimentosIsentosAte
 			vendaNoMes := oprs.ValorTotalAcumulado()
 			lucroNoMes := oprs.LucroAcumulado()
 
-			if vendaNoMes.LessThanOrEqual(s.Settings.AcaoLimiteIsento) && lucroNoMes.IsPositive() {
+			if vendaNoMes.LessThanOrEqual(s.Config.AcaoLimiteIsento) && lucroNoMes.IsPositive() {
 				ri.Meses = append(ri.Meses, RendimentoIsentosAte20kMensal{Mes: month, Valor: lucroNoMes})
 				ri.Total = ri.Total.Add(lucroNoMes)
 			}
@@ -319,7 +319,7 @@ func (s *State) OperacoesComunsDayTrade() []RendimentosTributaveis {
 					lucro = &lucroNoMes
 				}
 				for _, o := range p {
-					if tipoOprConfig[o.Tipo].IsRendimentoTributavelApos20k && vendaNoMes.GreaterThan(s.Settings.AcaoLimiteIsento) && o.Lucro.IsPositive() {
+					if tipoOprConfig[o.Tipo].IsRendimentoTributavelApos20k && vendaNoMes.GreaterThan(s.Config.AcaoLimiteIsento) && o.Lucro.IsPositive() {
 						*lucro = lucro.Add(o.Lucro)
 					}
 					if tipoOprConfig[o.Tipo].IsLucroTributavel && o.Lucro.IsPositive() {
@@ -338,7 +338,7 @@ func (s *State) OperacoesComunsDayTrade() []RendimentosTributaveis {
 			lucroAcumuladoPelosAnos = lucroAcumuladoPelosAnos.Add(lucroNoMes).Add(lucroNoMesOp)
 			rtm := RendimentoTributavelMensal{Mes: month, Lucro: lucroNoMes, LucroOp: lucroNoMesOp, LucroAc: lucroAcumuladoPelosAnos}
 			if lucroAcumuladoPelosAnos.IsPositive() {
-				rtm.IR = lucroAcumuladoPelosAnos.Mul(s.Settings.AcaoSwingTradeIR)
+				rtm.IR = lucroAcumuladoPelosAnos.Mul(s.Config.AcaoSwingTradeIR)
 				lucroAcumuladoPelosAnos = decimal.Zero
 			}
 			rt.Meses = append(rt.Meses, rtm)
@@ -385,7 +385,7 @@ func (s *State) Calculate(o *Operacao) {
 	case VENDA:
 		o.CalcVenda(p)
 	case BONIFICACAO:
-		o.CalcBonificacao(p, s.Settings.AlterarPrecoMedioNaBonificacao)
+		o.CalcBonificacao(p, s.Config.AlterarPrecoMedioNaBonificacao)
 	case DESDOBRAMENTO:
 		o.CalcDesdobramento(p)
 	case GRUPAMENTO:

@@ -215,12 +215,12 @@ func (s *State) fracOrInt(d decimal.Decimal) string {
 
 func (s *State) formatDecimal(v decimal.Decimal) string {
 	var r string
-	if s.Settings.MostrarValorExato {
+	if s.Config.MostrarValorExato {
 		r = v.String()
 	} else {
 		r = v.StringFixed(2)
 	}
-	return strings.Replace(r, ".", s.Settings.SeparadorDecimal, 1)
+	return strings.Replace(r, ".", s.Config.SeparadorDecimal, 1)
 }
 
 func (s *State) formatColumnLucro(o Operacao) string {
@@ -250,9 +250,9 @@ func (s *State) formatColumnTipo(o Operacao) string {
 
 func (s *State) formatColumnData(o Operacao) string {
 	if o.IsOpcao() {
-		return fmt.Sprintf("%s V %s", o.Data.Format(s.Settings.FormatoData), o.Vencimento.Format(s.Settings.FormatoData))
+		return fmt.Sprintf("%s V %s", o.Data.Format(s.Config.FormatoData), o.Vencimento.Format(s.Config.FormatoData))
 	}
-	return o.Data.Format(s.Settings.FormatoData)
+	return o.Data.Format(s.Config.FormatoData)
 }
 
 func translateMonth(monthNumber string) string {
