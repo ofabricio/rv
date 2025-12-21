@@ -127,21 +127,29 @@ func (s *State) BensDireitos() []BensDireitos {
 }
 
 func (s *State) BensDireitosOpcoes() []BensDireitos {
+	return s.bensDireitosOpcoes(func(o Operacao) bool { return o.Tipo == PUT_COMPRA || o.Tipo == CALL_COMPRA }, "COMPRADAS", "04", "04")
+}
+
+func (s *State) DividaOnusReais() []BensDireitos {
+	return s.bensDireitosOpcoes(func(o Operacao) bool { return o.Tipo == PUT_VENDA || o.Tipo == CALL_VENDA }, "VENDIDAS", "", "16")
+}
+
+func (s *State) bensDireitosOpcoes(cond func(Operacao) bool, tipo, grupo, cod string) []BensDireitos {
 
 	var bens []BensDireitos
 
+	oprs := lo.Filter(s.Operacoes, func(o Operacao, _ int) bool { return cond(o) && o.Vencimento.Year() > o.Data.Year() })
+
 	prevYear := map[string]Operacao{}
-	for _, oprs := range s.Operacoes.PartitionByYear() {
+	for _, oprs := range oprs.PartitionByYear() {
 		bem := BensDireitos{
 			AnoAnterior: oprs[0].Data.Year() - 1,
 			AnoCorrente: oprs[0].Data.Year(),
-			Grupo:       "04",
-			Codigo:      "04",
+			Grupo:       grupo,
+			Codigo:      cod,
 		}
 		currYear := map[string]Operacao{}
-		for _, op := range lo.Filter(oprs, func(o Operacao, _ int) bool {
-			return (o.Tipo == CALL_COMPRA || o.Tipo == PUT_COMPRA) && o.Vencimento.Year() > o.Data.Year()
-		}) {
+		for _, op := range oprs {
 			currYear[op.Serie] = op
 		}
 		merge := lo.Assign(prevYear, currYear)
@@ -155,47 +163,16 @@ func (s *State) BensDireitosOpcoes() []BensDireitos {
 				Ticker:           ticker,
 				SituacaoAnterior: prev.Premio.Mul(prev.Qtd),
 				SituacaoCorrente: curr.Premio.Mul(curr.Qtd),
-				Discriminacao:    fmt.Sprintf("%s OPÇÕES COMPRADAS SÉRIE %s VENCIMENTO %s", curr.Qtd, curr.Serie, curr.Vencimento.Format("02/01/2006")),
+				Discriminacao:    fmt.Sprintf("%s OPÇÕES %s SÉRIE %s VENCIMENTO %s", curr.Qtd, tipo, curr.Serie, curr.Vencimento.Format("02/01/2006")),
 			})
 		}
-		if len(merge) > 0 {
-			prevYear = merge
-			bens = append(bens, bem)
-		}
+		prevYear = merge
+		bens = append(bens, bem)
 	}
 	if len(bens)%2 == 0 && len(bens) > 0 {
 		bens = bens[1:] // Remove a primeira posição se o número de anos for par.
 	}
 	return bens
-}
-
-func (s *State) DividaOnusReais() []BensDireitos {
-	var opcs []BensDireitos
-	for _, oprs := range s.Operacoes.PartitionByYear() {
-		if opc := s.DividaOnusReaisOpcoes(oprs); len(opc) > 0 {
-			opcs = append(opcs, BensDireitos{
-				AnoAnterior: oprs[0].Data.Year() - 1,
-				AnoCorrente: oprs[0].Data.Year(),
-				Codigo:      "16",
-				Tickers:     opc,
-			})
-		}
-	}
-	return opcs
-}
-
-func (s *State) DividaOnusReaisOpcoes(oprs Operacoes) []BensDireitoTicker {
-	var opc []BensDireitoTicker
-	for _, o := range lo.Filter(oprs, func(a Operacao, _ int) bool {
-		return (a.Tipo == PUT_VENDA || a.Tipo == CALL_VENDA) && lo.NoneBy(oprs, func(b Operacao) bool { return b.IsOpcaoEncerradaDe(a) })
-	}) {
-		opc = append(opc, BensDireitoTicker{
-			Ticker:           o.Serie,
-			SituacaoCorrente: o.Premio.Mul(o.Qtd),
-			Discriminacao:    fmt.Sprintf("%s OPÇÕES VENDIDAS SÉRIE %s VENCIMENTO %s", o.Qtd, o.Serie, o.Vencimento.Format("02/01/2006")),
-		})
-	}
-	return opc
 }
 
 type BensDireitos struct {
