@@ -97,9 +97,11 @@ func (s *State) BensDireitos() []BensDireitos {
 			Grupo:       "03",
 			Codigo:      "01",
 		}
+		bonifics := map[string]decimal.Decimal{}
 		currYear := map[string]Operacao{}
 		for ticker, oprs := range oprs.GroupByTicker() {
 			currYear[ticker] = lo.LastOrEmpty(oprs) // Apenas a última operação é relevante, pois tem o saldo acumulado.
+			bonifics[ticker] = oprs.FilterByTipo(BONIFICACAO).QtdAcumulado()
 		}
 		merge := lo.Assign(prevYear, currYear)
 		for ticker := range sortKeysIter(merge) {
@@ -111,7 +113,9 @@ func (s *State) BensDireitos() []BensDireitos {
 				Ticker:           ticker,
 				SituacaoAnterior: prevYear[ticker].Agg.ValorTotal,
 				SituacaoCorrente: o.Agg.ValorTotal,
-				Discriminacao:    fmt.Sprintf("%s AÇÕES %s COM PREÇO MÉDIO DE R$ %s", o.Agg.Qtd, ticker, s.formatDecimal(o.Agg.PrecoMedio)),
+				Discriminacao: fmt.Sprintf("%s AÇÕES %s COM PREÇO MÉDIO DE R$ %s%s", o.Agg.Qtd, ticker, s.formatDecimal(o.Agg.PrecoMedio),
+					lo.Ternary(bonifics[ticker].IsPositive(), fmt.Sprintf(" ONDE %s AÇÕES SÃO PROVENIENTES DE BONIFICAÇÃO", bonifics[ticker]), ""),
+				),
 			})
 		}
 		prevYear = merge
@@ -435,6 +439,10 @@ func (s *State) Calculate(o *Operacao, a *Agregado) {
 
 type Operacoes []Operacao
 
+func (o Operacoes) FilterByTipo(tipo TipoOpr) Operacoes {
+	return lo.Filter(o, func(v Operacao, _ int) bool { return v.Tipo == tipo })
+}
+
 func (o Operacoes) GroupByTicker() iter.Seq2[string, Operacoes] {
 	return func(yield func(string, Operacoes) bool) {
 		g := lo.GroupByMap(o, func(o Operacao) (string, Operacao) { return o.Ticker, o })
@@ -466,6 +474,10 @@ func (o Operacoes) GroupByMonth() iter.Seq2[string, Operacoes] {
 			}
 		}
 	}
+}
+
+func (o Operacoes) QtdAcumulado() decimal.Decimal {
+	return lo.Reduce(o, func(agg decimal.Decimal, o Operacao, _ int) decimal.Decimal { return agg.Add(o.Qtd) }, decimal.Zero)
 }
 
 func (o Operacoes) ValorTotalAcumulado() decimal.Decimal {

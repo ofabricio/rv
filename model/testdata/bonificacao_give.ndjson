@@ -5,6 +5,7 @@
 {"Tipo":"Config","AlterarPrecoMedioNaBonificacao": false}
 {"Ticker":"VALE3","Tipo":"Compra","Data":"2025-01-01","Qtd":"100","ValorUnitario":"50"}
 {"Ticker":"VALE3","Tipo":"Bonificação","Data":"2025-02-01","Qtd":"10","ValorUnitario":"10"}
+{"Ticker":"VALE3","Tipo":"Bonificação","Data":"2025-02-10","Qtd":"12","ValorUnitario":"10"}
 // Testa sobra fracionária na bonificação, e também o uso de Razão.
 {"Ticker":"KLBN3","Tipo":"Compra","Data":"2025-01-01","Qtd":"99","ValorUnitario":"50"}
 {"Ticker":"KLBN3","Tipo":"Bonificação","Data":"2025-02-01","Fator":"0.3","ValorUnitario":"10"}
