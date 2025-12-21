@@ -1,18 +1,35 @@
 // Este arquivo é o "banco de dados".
 // Cada linha é um JSON que representa uma operação de ações.
 // ----------------------------------------------------------
-// Esses são os campos suportados no JSON:
+// Esses são os campos suportados no JSON.
+//
 // Campos que são comuns a todas as operações:
-//     "ID":     Identificador único da operação. Cada linha deve ter um ID diferente, que deve ser sequencial e começar em 1.
-//     "CID":    Identificador da operação de continuação. Opções.
-//     "Ticker": Código da ação (ex. PETR4, VALE3).
-//     "Tipo":   Tipo da operação (COMPRA, VENDA, BONIFICAÇÃO, DESDOBRAMENTO, GRUPAMENTO, LEILÃO FRAÇÃO, DIVIDENDOS, JSCP, REND. TRIB., RED. CAP., SUBSCRIÇÃO COMPRA, SUBSCRIÇÃO VENDA, SUBSCRIÇÃO EXERCÍCIO).
-//     "Data":   Data da operação no formato AAAA-MM-DD.
+//     "Ticker"
+//          Código da ação (ex. PETR4, VALE3).
+//     "Tipo"
+//          Tipo da operação (COMPRA, VENDA, BONIFICAÇÃO, DESDOBRAMENTO, GRUPAMENTO, LEILÃO FRAÇÃO, DIVIDENDOS, JSCP, REND. TRIB., RED. CAP., SUBSCRIÇÃO COMPRA, SUBSCRIÇÃO VENDA, SUBSCRIÇÃO EXERCÍCIO).
+//     "Data":
+//          Data da operação no formato AAAA-MM-DD.
 // Campos que são específicos para cada tipo de operação:
-//     "Qtd":    Quantidade de ações envolvidas nas operações de COMPRA, VENDA, BONIFICAÇÃO e LEILÃO FRAÇÃO.
-//     "ValorUnitario": Valor unitário da ação nas operações de COMPRA, VENDA, BONIFICAÇÃO, LEILÃO FRAÇÃO e RED. CAP. (ex. 10.4).
-//     "Fator":  Fator de BONIFICAÇÃO, DESDOBRAMENTO, GRUPAMENTO e REDUÇÃO DE CAPITAL. (ex. 0.1, 1.5, 2).
-//     "Taxas":  Taxas associadas às operações de COMPRA, VENDA, SUBSCRIÇÃO COMPRA e SUBSCRIÇÃO VENDA. (ex. 2.30).
+//     "Qtd"
+//          Quantidade de ações envolvidas nas operações de COMPRA, VENDA, BONIFICAÇÃO e LEILÃO FRAÇÃO.
+//     "ValorUnitario":
+//          Valor unitário da ação nas operações de COMPRA, VENDA, BONIFICAÇÃO, LEILÃO FRAÇÃO e RED. CAP. (ex. 10.4).
+//     "Taxas"
+//          Taxas associadas às operações de COMPRA, VENDA, SUBSCRIÇÃO COMPRA e SUBSCRIÇÃO VENDA. (ex. 2.30).
+//     "Fator"
+//          Fator de BONIFICAÇÃO, DESDOBRAMENTO, GRUPAMENTO e REDUÇÃO DE CAPITAL. (ex. 0.1, 1.5, 2).
+//     "Fracao"
+//        Parte fracionária resultante de BONIFICAÇÃO, DESDOBRAMENTO, GRUPAMENTO e LEILÃO FRAÇÃO. (ex. 0.4).
+// Para Opções:
+//     "Serie"
+//          Série da opção (ex. PETRA123, PETRM140).
+//     "ValorExercicio"
+//          Valor da ação no momento do exercício da opção (ex. 30.54).
+//     "Premio"
+//          Prêmio pago/recebido na compra/venda da opção (ex. 1.5).
+//     "Vencimento"
+//          Data de vencimento da opção no formato AAAA-MM-DD.
 // ----------------------------------------------------------
 
 {"Tipo":"Config","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
