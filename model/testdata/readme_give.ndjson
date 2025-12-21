@@ -1,4 +1,3 @@
-{"Tipo":"Config","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
 {"Ticker":"PETR4","Tipo":"Compra","Data":"2024-01-01","Qtd":"100","ValorUnitario":"30"}
 {"Ticker":"PETR4","Tipo":"Compra","Data":"2024-02-01","Qtd":"200","ValorUnitario":"30.50"}
 {"Ticker":"VALE3","Tipo":"Compra","Data":"2025-03-01","Qtd":"200","ValorUnitario":"60"}

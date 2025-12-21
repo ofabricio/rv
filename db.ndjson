@@ -32,7 +32,6 @@
 //          Data de vencimento da opção no formato AAAA-MM-DD.
 // ----------------------------------------------------------
 
-{"Tipo":"Config","AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
 {"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-01","Qtd":"10","ValorUnitario":"31.47","Taxas":"1.15"}
 {"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-02","Qtd":"20","ValorUnitario":"32.12","Taxas":"2.30"}
 {"Ticker":"VALE3","Tipo":"Compra","Data":"2025-01-01","Qtd":"20","ValorUnitario":"60.04","Taxas":"1.40"}

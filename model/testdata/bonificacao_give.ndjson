@@ -1,8 +1,8 @@
 // Caso de teste tirado de https://www.youtube.com/watch?v=WY1lazhN90U
-{"Tipo":"Config","AlterarPrecoMedioNaBonificacao": true,"AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
+{"Tipo":"Config","AlterarPrecoMedioNaBonificacao": true}
 {"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-01","Qtd":"100","ValorUnitario":"50"}
 {"Ticker":"PETR4","Tipo":"Bonificação","Data":"2025-02-01","Qtd":"10","ValorUnitario":"10"}
-{"Tipo":"Config","AlterarPrecoMedioNaBonificacao": false,"AcaoSwingTradeIR":"0.15","AcaoDayTradeIR":"0.20","AcaoLimiteIsento":"20000"}
+{"Tipo":"Config","AlterarPrecoMedioNaBonificacao": false}
 {"Ticker":"VALE3","Tipo":"Compra","Data":"2025-01-01","Qtd":"100","ValorUnitario":"50"}
 {"Ticker":"VALE3","Tipo":"Bonificação","Data":"2025-02-01","Qtd":"10","ValorUnitario":"10"}
 // Testa sobra fracionária na bonificação, e também o uso de Razão.
