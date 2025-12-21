@@ -241,26 +241,11 @@ func (s *State) formatColumnValorTotal(o Operacao) string {
 }
 
 func (s *State) formatColumnTipo(o Operacao) string {
-	// if o.IsOpcao() {
-	// 	// if !o.Encerramento.IsZero() {
-	// 	// 	return fmt.Sprintf("%s (NE)", o.Tipo)
-	// 	// }
-	// 	if !o.Exercicio.IsZero() {
-	// 		return fmt.Sprintf("%s (EX)", o.Tipo)
-	// 	}
-	// 	return fmt.Sprintf("%s (??)", o.Tipo)
-	// }
 	return string(o.Tipo)
 }
 
 func (s *State) formatColumnData(o Operacao) string {
 	if o.IsOpcao() {
-		// if !o.Encerramento.IsZero() {
-		// 	return fmt.Sprintf("%s V %s E %s", o.Data.Format("2006-01-02"), o.Vencimento.Format("2006-01-02"), o.Encerramento.Format("2006-01-02"))
-		// }
-		// if !o.Exercicio.IsZero() {
-		// 	return fmt.Sprintf("%s V %s E %s", o.Data.Format("2006-01-02"), o.Vencimento.Format("2006-01-02"), o.Exercicio.Format("2006-01-02"))
-		// }
 		return fmt.Sprintf("%s V %s", o.Data.Format("2006-01-02"), o.Vencimento.Format("2006-01-02"))
 	}
 	return o.Data.Format("2006-01-02")

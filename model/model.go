@@ -427,15 +427,7 @@ func (o Operacoes) GroupByTicker() iter.Seq2[string, Operacoes] {
 
 func (o Operacoes) GroupByYear() iter.Seq2[int, Operacoes] {
 	return func(yield func(int, Operacoes) bool) {
-		g := lo.GroupByMap(o, func(o Operacao) (int, Operacao) {
-			// if !o.Encerramento.IsZero() {
-			// 	return o.Encerramento.Year(), o
-			// }
-			// if !o.Exercicio.IsZero() {
-			// 	return o.Exercicio.Year(), o
-			// }
-			return o.Data.Year(), o
-		})
+		g := lo.GroupByMap(o, func(o Operacao) (int, Operacao) { return o.Data.Year(), o })
 		for _, k := range sortKeys(g) {
 			if !yield(k, g[k]) {
 				return
@@ -447,12 +439,6 @@ func (o Operacoes) GroupByYear() iter.Seq2[int, Operacoes] {
 func (o Operacoes) GroupByMonth() iter.Seq2[string, Operacoes] {
 	return func(yield func(string, Operacoes) bool) {
 		g := lo.GroupByMap(o, func(o Operacao) (string, Operacao) {
-			// if !o.Encerramento.IsZero() {
-			// 	return o.Encerramento.Format("01"), o
-			// }
-			// if !o.Exercicio.IsZero() {
-			// 	return o.Exercicio.Format("01"), o
-			// }
 			return o.Data.Format("01"), o
 		})
 		for _, k := range sortKeys(g) {
