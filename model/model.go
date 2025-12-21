@@ -69,6 +69,7 @@ func DefaultConfig() Config {
 func (s *State) Load(file string) {
 	s.Operacoes = nil
 	s.Config = DefaultConfig()
+	aggr := map[string]Agregado{}
 	for line := range FileLines(file) {
 		var o Operacao
 		unmarshal(line, &o)
@@ -76,7 +77,9 @@ func (s *State) Load(file string) {
 			unmarshal(line, &s.Config)
 			continue
 		}
-		s.Calculate(&o)
+		a := aggr[o.Ticker]
+		s.Calculate(&o, &a)
+		aggr[o.Ticker] = a
 		s.Operacoes = append(s.Operacoes, o)
 	}
 }
@@ -373,64 +376,61 @@ type RendimentoTributavelMensal struct {
 	IR      decimal.Decimal
 }
 
-func (s *State) Calculate(o *Operacao) {
-
-	p := s.Operacoes.FindParent(o)
-
-	o.Agg = p.Agg
-
+func (s *State) Calculate(o *Operacao, a *Agregado) {
+	o.Agg = *a
 	switch o.Tipo {
 	case COMPRA:
-		o.CalcCompra(p)
+		o.CalcCompra()
 	case VENDA:
-		o.CalcVenda(p)
+		o.CalcVenda()
 	case BONIFICACAO:
-		o.CalcBonificacao(p, s.Config.AlterarPrecoMedioNaBonificacao)
+		o.CalcBonificacao(s.Config.AlterarPrecoMedioNaBonificacao)
 	case DESDOBRAMENTO:
-		o.CalcDesdobramento(p)
+		o.CalcDesdobramento()
 	case GRUPAMENTO:
-		o.CalcGrupamento(p)
+		o.CalcGrupamento()
 	case LEILAO_FRACAO:
-		o.CalcLeilaoFracao(p)
+		o.CalcLeilaoFracao()
 	case DIVIDENDOS:
-		o.CalcDividendos(p)
+		o.CalcDividendos()
 	case JSCP:
-		o.CalcJSCP(p)
+		o.CalcJSCP()
 	case REND_TRIB:
-		o.CalcRendTrib(p)
+		o.CalcRendTrib()
 	case REDUCAO_CAPITAL:
-		o.CalcReducaoCapital(p)
+		o.CalcReducaoCapital()
 	case SUBSCRICAO_COMPRA:
-		o.CalcSubscricaoCompra(p)
+		o.CalcSubscricaoCompra()
 	case SUBSCRICAO_VENDA:
-		o.CalcSubscricaoVenda(p)
+		o.CalcSubscricaoVenda()
 	case SUBSCRICAO_EX:
-		o.CalcSubscricaoExercicio(p)
+		o.CalcSubscricaoExercicio()
 	case PUT_VENDA:
-		o.CalcVendaPut(p)
+		o.CalcVendaPut()
 	case PUT_VENDA_EX:
-		o.CalcVendaPutExercida(p)
+		o.CalcVendaPutExercida()
 	case PUT_VENDA_NE:
-		o.CalcVendaPutNaoExercida(p)
+		o.CalcVendaPutNaoExercida()
 	case PUT_COMPRA:
-		o.CalcCompraPut(p)
+		o.CalcCompraPut()
 	case PUT_COMPRA_EX:
-		o.CalcCompraPutExercida(p)
+		o.CalcCompraPutExercida()
 	case PUT_COMPRA_NE:
-		o.CalcCompraPutNaoExercida(p)
+		o.CalcCompraPutNaoExercida()
 	case CALL_COMPRA:
-		o.CalcCompraCall(p)
+		o.CalcCompraCall()
 	case CALL_COMPRA_EX:
-		o.CalcCompraCallExercida(p)
+		o.CalcCompraCallExercida()
 	case CALL_COMPRA_NE:
-		o.CalcCompraCallNaoExercida(p)
+		o.CalcCompraCallNaoExercida()
 	case CALL_VENDA:
-		o.CalcVendaCall(p)
+		o.CalcVendaCall()
 	case CALL_VENDA_EX:
-		o.CalcVendaCallExercida(p)
+		o.CalcVendaCallExercida()
 	case CALL_VENDA_NE:
-		o.CalcVendaCallNaoExercida(p)
+		o.CalcVendaCallNaoExercida()
 	}
+	*a = o.Agg
 }
 
 type Operacoes []Operacao
@@ -499,15 +499,6 @@ func (o Operacoes) PartitionByAcaoOpcao() []Operacoes {
 	return lo.PartitionBy(o, func(o Operacao) bool { return o.IsOpcao() })
 }
 
-func (o Operacoes) FindParent(op *Operacao) Operacao {
-	for i := len(o) - 1; i >= 0; i-- {
-		if o[i].Ticker == op.Ticker {
-			return o[i]
-		}
-	}
-	return Operacao{}
-}
-
 type Agregado struct {
 	Qtd        decimal.Decimal
 	ValorTotal decimal.Decimal
@@ -544,16 +535,14 @@ type Operacao struct {
 }
 
 func (b *Operacao) IsOpcaoEncerradaDe(a Operacao) bool {
-	put := a.Tipo == PUT_VENDA && (b.Tipo == PUT_VENDA_EX || b.Tipo == PUT_VENDA_NE) || a.Tipo == PUT_COMPRA && (b.Tipo == PUT_COMPRA_EX || b.Tipo == PUT_COMPRA_NE)
-	cal := a.Tipo == CALL_VENDA && (b.Tipo == CALL_VENDA_EX || b.Tipo == CALL_VENDA_NE) || a.Tipo == CALL_COMPRA && (b.Tipo == CALL_COMPRA_EX || b.Tipo == CALL_COMPRA_NE)
-	return (put || cal) && a.Serie == b.Serie && b.Data.Equal(a.Vencimento) && a.Qtd.Equal(b.Qtd) && a.ValorUnitario.Equal(b.ValorUnitario) && a.Premio.Equal(b.Premio)
+	return a.Serie == b.Serie && b.Data.Equal(a.Vencimento) && a.Qtd.Equal(b.Qtd) && a.ValorUnitario.Equal(b.ValorUnitario) && a.Premio.Equal(b.Premio)
 }
 
 func (o *Operacao) IsOpcao() bool {
 	return o.Serie != ""
 }
 
-func (o *Operacao) CalcCompra(p Operacao) {
+func (o *Operacao) CalcCompra() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Add(o.Taxas)
 	o.Lucro = o.Premio.Mul(o.Qtd)
 	o.Agg.Qtd = o.Agg.Qtd.Add(o.Qtd)
@@ -561,7 +550,7 @@ func (o *Operacao) CalcCompra(p Operacao) {
 	o.Agg.CalcPrecoMedio()
 }
 
-func (o *Operacao) CalcVenda(p Operacao) {
+func (o *Operacao) CalcVenda() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Sub(o.Taxas)
 	o.ValorCompra = o.Agg.PrecoMedio.Mul(o.Qtd)
 	o.Lucro = o.ValorTotal.Add(o.Premio.Mul(o.Qtd)).Sub(o.ValorCompra)
@@ -570,101 +559,101 @@ func (o *Operacao) CalcVenda(p Operacao) {
 	o.Agg.CalcPrecoMedio()
 }
 
-func (o *Operacao) CalcBonificacao(p Operacao, alterarPrecoMedio bool) {
+func (o *Operacao) CalcBonificacao(alterarPrecoMedio bool) {
 	if !o.Fator.IsZero() {
-		o.Fracao = p.Agg.Qtd.Mul(o.Fator)
+		o.Fracao = o.Agg.Qtd.Mul(o.Fator)
 		o.Qtd = o.Fracao.Truncate(0)
 		o.Fracao = o.Fracao.Sub(o.Qtd).Abs()
 	}
-	o.Agg.Qtd = p.Agg.Qtd.Add(o.Qtd)
+	o.Agg.Qtd = o.Agg.Qtd.Add(o.Qtd)
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
-	o.Agg.ValorTotal = o.ValorTotal.Add(p.Agg.ValorTotal)
+	o.Agg.ValorTotal = o.ValorTotal.Add(o.Agg.ValorTotal)
 	o.Lucro = o.ValorTotal
 	if alterarPrecoMedio {
 		o.Agg.CalcPrecoMedio()
 	}
 }
 
-func (o *Operacao) CalcDesdobramento(p Operacao) {
-	o.Agg.Qtd = p.Agg.Qtd.Mul(o.Fator)
+func (o *Operacao) CalcDesdobramento() {
+	o.Agg.Qtd = o.Agg.Qtd.Mul(o.Fator)
 	o.Agg.CalcPrecoMedio()
 }
 
-func (o *Operacao) CalcGrupamento(p Operacao) {
-	qtdAcFra := p.Agg.Qtd.Div(o.Fator)
+func (o *Operacao) CalcGrupamento() {
+	qtdAcFra := o.Agg.Qtd.Div(o.Fator)
 	qtdAcInt := qtdAcFra.Truncate(0)
 	o.Fracao = qtdAcFra.Sub(qtdAcInt)
 	o.Agg.Qtd = qtdAcInt
-	o.Agg.ValorTotal = qtdAcInt.Mul(p.Agg.ValorTotal.Div(qtdAcFra))
+	o.Agg.ValorTotal = qtdAcInt.Mul(o.Agg.ValorTotal.Div(qtdAcFra))
 	o.Agg.CalcPrecoMedio()
 }
 
-func (o *Operacao) CalcLeilaoFracao(p Operacao) {
+func (o *Operacao) CalcLeilaoFracao() {
 	o.Lucro = o.ValorUnitario.Mul(o.Qtd).Sub(o.Agg.PrecoMedio.Mul(o.Qtd))
 }
 
-func (o *Operacao) CalcDividendos(p Operacao) {
+func (o *Operacao) CalcDividendos() {
 }
 
-func (o *Operacao) CalcJSCP(p Operacao) {
+func (o *Operacao) CalcJSCP() {
 }
 
-func (o *Operacao) CalcRendTrib(p Operacao) {
+func (o *Operacao) CalcRendTrib() {
 }
 
-func (o *Operacao) CalcSubscricaoCompra(p Operacao) {
+func (o *Operacao) CalcSubscricaoCompra() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Add(o.Taxas)
-	o.Agg.ValorTotal = p.Agg.ValorTotal.Add(o.ValorTotal)
+	o.Agg.ValorTotal = o.Agg.ValorTotal.Add(o.ValorTotal)
 	o.Agg.CalcPrecoMedio()
 }
 
-func (o *Operacao) CalcSubscricaoVenda(p Operacao) {
+func (o *Operacao) CalcSubscricaoVenda() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Sub(o.Taxas)
 	o.Lucro = o.ValorTotal
 	o.Agg.CalcPrecoMedio()
 }
 
-func (o *Operacao) CalcSubscricaoExercicio(p Operacao) {
-	o.Agg.Qtd = p.Agg.Qtd.Add(o.Qtd)
+func (o *Operacao) CalcSubscricaoExercicio() {
+	o.Agg.Qtd = o.Agg.Qtd.Add(o.Qtd)
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
-	o.Agg.ValorTotal = p.Agg.ValorTotal.Add(o.ValorTotal)
+	o.Agg.ValorTotal = o.Agg.ValorTotal.Add(o.ValorTotal)
 	o.Agg.CalcPrecoMedio()
 }
 
-func (o *Operacao) CalcReducaoCapital(p Operacao) {
+func (o *Operacao) CalcReducaoCapital() {
 	if o.Fator.IsPositive() {
-		redcap := p.Agg.ValorTotal.Mul(o.Fator)
-		restituicao := p.Agg.Qtd.Mul(o.ValorUnitario)
+		redcap := o.Agg.ValorTotal.Mul(o.Fator)
+		restituicao := o.Agg.Qtd.Mul(o.ValorUnitario)
 		o.ValorTotal = restituicao
 		o.ValorCompra = redcap
 		o.Lucro = restituicao.Sub(redcap)
-		o.Agg.ValorTotal = p.Agg.ValorTotal.Sub(redcap)
+		o.Agg.ValorTotal = o.Agg.ValorTotal.Sub(redcap)
 	} else {
-		o.Agg.ValorTotal = p.Agg.ValorTotal.Sub(o.ValorTotal)
+		o.Agg.ValorTotal = o.Agg.ValorTotal.Sub(o.ValorTotal)
 	}
 	o.Agg.CalcPrecoMedio()
 }
 
-func (o *Operacao) CalcVendaPut(p Operacao) {
+func (o *Operacao) CalcVendaPut() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Add(o.Taxas)
 	o.Lucro = o.Premio.Mul(o.Qtd)
 }
 
-func (o *Operacao) CalcVendaPutExercida(p Operacao) {
-	o.CalcCompra(p)
+func (o *Operacao) CalcVendaPutExercida() {
+	o.CalcCompra()
 }
 
-func (o *Operacao) CalcVendaPutNaoExercida(p Operacao) {
+func (o *Operacao) CalcVendaPutNaoExercida() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Add(o.Taxas)
 	o.Lucro = o.Premio.Mul(o.Qtd)
 }
 
-func (o *Operacao) CalcCompraPut(p Operacao) {
+func (o *Operacao) CalcCompraPut() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
 	o.Lucro = o.Premio.Neg().Mul(o.Qtd)
 }
 
-func (o *Operacao) CalcCompraPutExercida(p Operacao) {
+func (o *Operacao) CalcCompraPutExercida() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
 	o.Lucro = o.ValorUnitario.Sub(o.ValorExercicio).Sub(o.Premio).Mul(o.Qtd)
 	o.Agg.Qtd = o.Agg.Qtd.Sub(o.Qtd)
@@ -672,17 +661,17 @@ func (o *Operacao) CalcCompraPutExercida(p Operacao) {
 	o.Agg.CalcPrecoMedio()
 }
 
-func (o *Operacao) CalcCompraPutNaoExercida(p Operacao) {
+func (o *Operacao) CalcCompraPutNaoExercida() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
 	o.Lucro = o.Premio.Neg().Mul(o.Qtd)
 }
 
-func (o *Operacao) CalcCompraCall(p Operacao) {
+func (o *Operacao) CalcCompraCall() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
 	o.Lucro = o.Premio.Neg().Mul(o.Qtd)
 }
 
-func (o *Operacao) CalcCompraCallExercida(p Operacao) {
+func (o *Operacao) CalcCompraCallExercida() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
 	o.Lucro = o.Premio.Neg().Mul(o.Qtd)
 	o.Agg.Qtd = o.Agg.Qtd.Add(o.Qtd)
@@ -690,21 +679,21 @@ func (o *Operacao) CalcCompraCallExercida(p Operacao) {
 	o.Agg.CalcPrecoMedio()
 }
 
-func (o *Operacao) CalcCompraCallNaoExercida(p Operacao) {
+func (o *Operacao) CalcCompraCallNaoExercida() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
 	o.Lucro = o.Premio.Neg().Mul(o.Qtd)
 }
 
-func (o *Operacao) CalcVendaCall(p Operacao) {
+func (o *Operacao) CalcVendaCall() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
 	o.Lucro = o.Premio.Mul(o.Qtd)
 }
 
-func (o *Operacao) CalcVendaCallExercida(p Operacao) {
-	o.CalcVenda(p)
+func (o *Operacao) CalcVendaCallExercida() {
+	o.CalcVenda()
 }
 
-func (o *Operacao) CalcVendaCallNaoExercida(p Operacao) {
+func (o *Operacao) CalcVendaCallNaoExercida() {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Add(o.Taxas)
 	o.Lucro = o.Premio.Mul(o.Qtd)
 }
