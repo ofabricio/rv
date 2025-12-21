@@ -17,6 +17,10 @@ func TestStateLoad(t *testing.T) {
 			Then: "testdata/_carteira.then",
 		},
 		{
+			Give: "testdata/opcoes_bens_e_direitos.give",
+			Then: "testdata/opcoes_bens_e_direitos.then",
+		},
+		{
 			Give: "testdata/opcoes_venda_put.give",
 			Then: "testdata/opcoes_venda_put.then",
 		},

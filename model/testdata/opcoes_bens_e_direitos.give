@@ -1,0 +1,7 @@
+{"Ticker":"PETR4","Tipo":"Compra","Data":"2022-01-01","Qtd":"100","ValorUnitario":"10"}
+// Testa que vai aparecer em "Bens e Direitos", pois o vencimento virou o ano.
+{"Ticker":"PETR4","Serie":"PETRA100","Tipo":"Compra CALL","Data":"2022-01-01","Vencimento":"2023-01-01","Qtd":"100","ValorUnitario":"10","Premio":"1"}
+{"Ticker":"PETR4","Serie":"PETRA101","Tipo":"Compra CALL","Data":"2023-01-01","Vencimento":"2026-01-01","Qtd":"200","ValorUnitario":"10","Premio":"1"}
+{"Ticker":"PETR4","Serie":"PETRA102","Tipo":"Compra CALL","Data":"2024-01-01","Vencimento":"2025-01-01","Qtd":"300","ValorUnitario":"10","Premio":"1"}
+{"Ticker":"PETR4","Serie":"PETRA103","Tipo":"Compra CALL","Data":"2025-01-01","Vencimento":"2026-01-01","Qtd":"400","ValorUnitario":"10","Premio":"1"}
+{"Ticker":"PETR4","Serie":"PETRA104","Tipo":"Compra CALL","Data":"2026-01-01","Vencimento":"2027-01-01","Qtd":"500","ValorUnitario":"10","Premio":"1"}
