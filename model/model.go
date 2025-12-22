@@ -191,39 +191,18 @@ type BensDireitoTicker struct {
 }
 
 func (s *State) RendimentosIsentosNaoTributaveis() []RendimentosIsentosNaoTributaveis {
-
-	var rs []RendimentosIsentosNaoTributaveis
-
-	oprs := lo.Filter(s.Operacoes, func(o Operacao, _ int) bool {
-		return tipoOprConfig[o.Tipo].IsRendimentoIsentoNaoTributavel && o.Lucro.IsPositive()
-	})
-
-	for year, oprs := range oprs.GroupByYear() {
-		var r RendimentosIsentosNaoTributaveis
-		r.Ano = year
-		for ticker, oprs := range oprs.GroupByTicker() {
-			g := lo.GroupBy(oprs, func(o Operacao) string { return tipoOprConfig[o.Tipo].Codigo })
-			for cod, oprs := range sortKeysIter(g) {
-				r.Rendimentos = append(r.Rendimentos, RendimentoIsentoNaoTributavel{
-					Ticker: ticker,
-					Valor:  oprs.LucroAcumulado(),
-					Codigo: cod,
-				})
-			}
-		}
-		rs = append(rs, r)
-	}
-
-	return rs
+	return s.rendimentos(func(o Operacao) bool { return tipoOprConfig[o.Tipo].IsRendimentoIsentoNaoTributavel })
 }
 
 func (s *State) RendimentosSujeitosTributacaoExclusiva() []RendimentosIsentosNaoTributaveis {
+	return s.rendimentos(func(o Operacao) bool { return tipoOprConfig[o.Tipo].IsRendimentoSujeitoTributacaoExclusiva })
+}
+
+func (s *State) rendimentos(cond func(Operacao) bool) []RendimentosIsentosNaoTributaveis {
 
 	var rs []RendimentosIsentosNaoTributaveis
 
-	oprs := lo.Filter(s.Operacoes, func(o Operacao, _ int) bool {
-		return tipoOprConfig[o.Tipo].IsRendimentoSujeitoTributacaoExclusiva && o.Lucro.IsPositive()
-	})
+	oprs := lo.Filter(s.Operacoes, func(o Operacao, _ int) bool { return cond(o) && o.Lucro.IsPositive() })
 
 	for year, oprs := range oprs.GroupByYear() {
 		var r RendimentosIsentosNaoTributaveis
