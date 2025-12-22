@@ -247,7 +247,7 @@ func (s *State) RendimentosIsentosNaoTributaveisAte20k() []RendimentosIsentosAte
 
 		for month, oprs := range oprs.GroupByMonth() {
 
-			vendaNoMes := oprs.ValorTotalAcumulado()
+			vendaNoMes := oprs.VendasAcumulado()
 			lucroNoMes := oprs.LucroAcumulado()
 
 			if vendaNoMes.LessThanOrEqual(s.Config.AcaoLimiteIsento) && lucroNoMes.IsPositive() {
@@ -296,7 +296,7 @@ func (s *State) OperacoesComunsDayTrade() []RendimentosTributaveis {
 				if p[0].IsOpcao() {
 					lucro = &lucroNoMesOp
 				} else {
-					vendaNoMes = p.TotalVendas()
+					vendaNoMes = p.VendasAcumulado()
 					lucro = &lucroNoMes
 				}
 				for _, o := range p {
@@ -454,24 +454,18 @@ func (o Operacoes) QtdAcumulado() decimal.Decimal {
 	return lo.Reduce(o, func(agg decimal.Decimal, o Operacao, _ int) decimal.Decimal { return agg.Add(o.Qtd) }, decimal.Zero)
 }
 
-func (o Operacoes) ValorTotalAcumulado() decimal.Decimal {
+func (o Operacoes) VendasAcumulado() decimal.Decimal {
 	return lo.Reduce(o, func(agg decimal.Decimal, o Operacao, _ int) decimal.Decimal {
-		return agg.Add(o.ValorTotal)
+		if o.Tipo == VENDA {
+			return agg.Add(o.ValorTotal)
+		}
+		return agg
 	}, decimal.Zero)
 }
 
 func (o Operacoes) LucroAcumulado() decimal.Decimal {
 	return lo.Reduce(o, func(agg decimal.Decimal, o Operacao, _ int) decimal.Decimal {
 		return agg.Add(o.Lucro)
-	}, decimal.Zero)
-}
-
-func (o Operacoes) TotalVendas() decimal.Decimal {
-	return lo.Reduce(o, func(agg decimal.Decimal, o Operacao, _ int) decimal.Decimal {
-		if o.Tipo == VENDA {
-			return agg.Add(o.ValorTotal)
-		}
-		return agg
 	}, decimal.Zero)
 }
 
