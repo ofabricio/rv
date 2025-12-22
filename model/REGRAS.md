@@ -4,7 +4,8 @@ Este arquivo contém as regras de cálculo e declaração de IR de cada operaç�
 
 ## Ações
 
-TODO
+- Bonificação
+    - Deve ser declarado em **RENDIMENTOS ISENTOS E NÃO TRIBUTÁVEIS**; a quantidade deve ser declarada na discriminação de **BENS E DIREITOS**.
 
 ## Opções
 

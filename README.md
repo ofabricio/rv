@@ -53,6 +53,8 @@ Basta adicionar as operações e acompanhar a evolução.
 
 No momento só é possível adicionar as operações editando manualmente o arquivo [db.ndjson](/db.ndjson), que fica na raiz do projeto. No futuro será criado uma interface no terminal ou no navegador para facilitar isso.
 
+Para exemplos de uso de cada tipo de operação ver nos arquivos `*.give` do diretório [/model/testdata](/model/testdata).
+
 Para visualizar todas as operações:
 
 ```sh
