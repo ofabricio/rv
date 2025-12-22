@@ -168,7 +168,7 @@ func (s *State) PrintRendimentosIsentosNaoTributaveisAte20k(w io.Writer) {
 		t.SetHeaders(fmt.Sprint(r.Ano), "RENDIMENTOS ISENTOS E NÃO TRIBUTÁVEIS")
 		t.SetAlignment(table.AlignCenter, table.AlignRight)
 		for _, mes := range r.Meses {
-			t.AddRow(translateMonth(mes.Mes), s.formatDecimal(mes.Valor))
+			t.AddRow(translateMonth[mes.Mes], s.formatDecimal(mes.Valor))
 		}
 		t.SetFooterAlignment(table.AlignCenter, table.AlignRight)
 		t.SetFooters("Códig 20", "Isenção até R$ 20000"+" │ "+s.formatDecimal(r.Total))
@@ -186,7 +186,7 @@ func (s *State) PrintOperacoesComunsDayTrade(w io.Writer) {
 		t.SetAlignment(table.AlignCenter, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight)
 		for _, v := range r.Meses {
 			t.AddRow(
-				translateMonth(v.Mes),
+				translateMonth[v.Mes],
 				s.formatDecimal(v.Lucro),
 				s.formatDecimal(v.LucroOp),
 				s.formatDecimal(v.LucroAc),
@@ -255,19 +255,17 @@ func (s *State) formatColumnData(o Operacao) string {
 	return o.Data.Format(s.Config.FormatoData)
 }
 
-func translateMonth(monthNumber string) string {
-	return map[string]string{
-		"01": "JAN",
-		"02": "FEV",
-		"03": "MAR",
-		"04": "ABR",
-		"05": "MAI",
-		"06": "JUN",
-		"07": "JUL",
-		"08": "AGO",
-		"09": "SET",
-		"10": "OUT",
-		"11": "NOV",
-		"12": "DEZ",
-	}[monthNumber]
+var translateMonth = map[string]string{
+	"01": "JAN",
+	"02": "FEV",
+	"03": "MAR",
+	"04": "ABR",
+	"05": "MAI",
+	"06": "JUN",
+	"07": "JUL",
+	"08": "AGO",
+	"09": "SET",
+	"10": "OUT",
+	"11": "NOV",
+	"12": "DEZ",
 }
