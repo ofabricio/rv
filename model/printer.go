@@ -255,17 +255,17 @@ func (s *State) formatColumnData(o Operacao) string {
 	return o.Data.Format(s.Config.FormatoData)
 }
 
-var translateMonth = map[string]string{
-	"01": "JAN",
-	"02": "FEV",
-	"03": "MAR",
-	"04": "ABR",
-	"05": "MAI",
-	"06": "JUN",
-	"07": "JUL",
-	"08": "AGO",
-	"09": "SET",
-	"10": "OUT",
-	"11": "NOV",
-	"12": "DEZ",
+var translateMonth = map[int]string{
+	1:  "JAN",
+	2:  "FEV",
+	3:  "MAR",
+	4:  "ABR",
+	5:  "MAI",
+	6:  "JUN",
+	7:  "JUL",
+	8:  "AGO",
+	9:  "SET",
+	10: "OUT",
+	11: "NOV",
+	12: "DEZ",
 }

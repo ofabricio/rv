@@ -271,7 +271,7 @@ type RendimentosIsentosAte20k struct {
 }
 
 type RendimentoIsentosAte20kMensal struct {
-	Mes   string
+	Mes   int
 	Valor decimal.Decimal
 }
 
@@ -347,7 +347,7 @@ type RendimentosTributaveis struct {
 }
 
 type RendimentoTributavelMensal struct {
-	Mes     string
+	Mes     int
 	Lucro   decimal.Decimal
 	LucroOp decimal.Decimal
 	LucroAc decimal.Decimal
@@ -439,9 +439,9 @@ func (o Operacoes) GroupByYear() iter.Seq2[int, Operacoes] {
 	}
 }
 
-func (o Operacoes) GroupByMonth() iter.Seq2[string, Operacoes] {
-	return func(yield func(string, Operacoes) bool) {
-		g := lo.GroupByMap(o, func(o Operacao) (string, Operacao) { return o.Data.Format("01"), o })
+func (o Operacoes) GroupByMonth() iter.Seq2[int, Operacoes] {
+	return func(yield func(int, Operacoes) bool) {
+		g := lo.GroupByMap(o, func(o Operacao) (int, Operacao) { return int(o.Data.Month()), o })
 		for _, k := range sortKeys(g) {
 			if !yield(k, g[k]) {
 				return
