@@ -1,6 +1,6 @@
 {"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-01","Qtd":"1000","ValorUnitario":"10"}
 {"Ticker":"PETR4","Tipo":"Dividendos","Data":"2025-01-02","Lucro":"1000"}
-{"Ticker":"PETR4","Tipo":"Dividendos","Data":"2025-02-02","Lucro":"500"}
-{"Ticker":"VALE3","Tipo":"Compra","Data":"2025-01-01","Qtd":"1000","ValorUnitario":"20"}
-{"Ticker":"VALE3","Tipo":"Dividendos","Data":"2025-01-02","Lucro":"2000"}
-{"Ticker":"VALE3","Tipo":"Dividendos","Data":"2025-02-02","Lucro":"300"}
+{"Ticker":"PETR4","Tipo":"Dividendos","Data":"2025-01-03","Lucro":"500"}
+{"Ticker":"VALE3","Tipo":"Compra","Data":"2025-02-01","Qtd":"1000","ValorUnitario":"20"}
+{"Ticker":"VALE3","Tipo":"Dividendos","Data":"2025-02-02","Lucro":"2000"}
+{"Ticker":"VALE3","Tipo":"Dividendos","Data":"2025-02-03","Lucro":"300"}
