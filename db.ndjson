@@ -12,7 +12,7 @@
 //          Data da operação no formato AAAA-MM-DD.
 // Campos que são específicos para cada tipo de operação:
 //     "Qtd"
-//          Quantidade de ações envolvidas nas operações de Compra, Venda, Bonificação e Leilão Fração.
+//          Quantidade de ações envolvidas nas operações de Compra, Venda e Bonificação.
 //     "ValorUnitario"
 //          Valor unitário da ação nas operações de Compra, Venda, Bonificação, Leilão Fração e Red. Cap. (ex. 10.4).
 //     "Taxas"

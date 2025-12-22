@@ -563,7 +563,7 @@ func (o *Operacao) CalcGrupamento() {
 }
 
 func (o *Operacao) CalcLeilaoFracao() {
-	o.Lucro = o.ValorUnitario.Mul(o.Qtd).Sub(o.Agg.PrecoMedio.Mul(o.Qtd))
+	o.Lucro = o.ValorUnitario.Mul(o.Fracao).Sub(o.Agg.PrecoMedio.Mul(o.Fracao))
 }
 
 func (o *Operacao) CalcDividendos() {
