@@ -1,10 +1,10 @@
 // Caso de teste retirado de https://www.youtube.com/watch?v=YCv2LXZjbLQ
 {"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-01","Qtd":"50","ValorUnitario":"99.46"}
 // Na compra de subscrição há taxas.
-{"Ticker":"PETR4","Tipo":"Subscrição Compra","Data":"2025-02-01","Qtd":"118","ValorUnitario":"0.3","Taxas":"0"}
+{"Ticker":"PETR4","Tipo":"Compra Subscrição","Data":"2025-02-01","Qtd":"118","ValorUnitario":"0.3","Taxas":"0"}
 // No exercício da subscrição não há taxas.
-{"Ticker":"PETR4","Tipo":"Subscrição (EX)","Data":"2025-03-01","Qtd":"118","ValorUnitario":"101.65"}
+{"Ticker":"PETR4","Tipo":"Compra Subscrição (EX)","Data":"2025-03-01","Qtd":"118","ValorUnitario":"101.65"}
 // Testa Venda de Subscrição.
 {"Ticker":"VALE3","Tipo":"Compra","Data":"2025-01-01","Qtd":"50","ValorUnitario":"99.46"}
 // Na venda de subscrição há taxas.
-{"Ticker":"VALE3","Tipo":"Subscrição Venda","Data":"2025-02-01","Qtd":"18","ValorUnitario":"3.01","Taxas":"0.01"}
+{"Ticker":"VALE3","Tipo":"Venda Subscrição","Data":"2025-02-01","Qtd":"18","ValorUnitario":"3.01","Taxas":"0.01"}
