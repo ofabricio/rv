@@ -223,11 +223,15 @@ func (s *State) formatDecimal(v decimal.Decimal) string {
 	return strings.Replace(r, ".", s.Config.SeparadorDecimal, 1)
 }
 
-func (s *State) formatColumnLucro(o Operacao) string {
-	if !o.Premio.IsZero() {
-		return fmt.Sprintf("(P %s) %s", s.formatDecimal(o.Premio), s.formatDecimal(o.Lucro))
+func (s *State) formatColumnData(o Operacao) string {
+	if !o.Vencimento.IsZero() {
+		return fmt.Sprintf("%s V %s", o.Data.Format(s.Config.FormatoData), o.Vencimento.Format(s.Config.FormatoData))
 	}
-	return s.formatDecimal(o.Lucro)
+	return o.Data.Format(s.Config.FormatoData)
+}
+
+func (s *State) formatColumnTipo(o Operacao) string {
+	return string(o.Tipo)
 }
 
 func (s *State) formatColumnValorUnitario(o Operacao) string {
@@ -244,15 +248,11 @@ func (s *State) formatColumnValorTotal(o Operacao) string {
 	return s.formatDecimal(o.ValorTotal)
 }
 
-func (s *State) formatColumnTipo(o Operacao) string {
-	return string(o.Tipo)
-}
-
-func (s *State) formatColumnData(o Operacao) string {
-	if !o.Vencimento.IsZero() {
-		return fmt.Sprintf("%s V %s", o.Data.Format(s.Config.FormatoData), o.Vencimento.Format(s.Config.FormatoData))
+func (s *State) formatColumnLucro(o Operacao) string {
+	if !o.Premio.IsZero() {
+		return fmt.Sprintf("(P %s) %s", s.formatDecimal(o.Premio), s.formatDecimal(o.Lucro))
 	}
-	return o.Data.Format(s.Config.FormatoData)
+	return s.formatDecimal(o.Lucro)
 }
 
 var translateMonth = map[int]string{
