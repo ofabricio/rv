@@ -1,0 +1,19 @@
+// Caso de teste tirado de https://www.youtube.com/watch?v=WY1lazhN90U
+{ "Data": "2024-01-01", "Tipo": "Config", "AlterarPrecoMedioNaBonificacao": true }
+{ "Data": "2024-01-01", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "50" }
+{ "Data": "2024-01-02", "Ticker": "PETR4", "Tipo": "Bonificação", "Qtd": "10", "ValorUnitario": "10" }
+{ "Data": "2025-02-01", "Tipo": "Config", "AlterarPrecoMedioNaBonificacao": false }
+{ "Data": "2025-02-01", "Ticker": "VALE3", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "50" }
+{ "Data": "2025-02-02", "Ticker": "VALE3", "Tipo": "Bonificação", "Qtd": "10", "ValorUnitario": "10" }
+{ "Data": "2025-02-03", "Ticker": "VALE3", "Tipo": "Bonificação", "Qtd": "12", "ValorUnitario": "10" }
+// Testa sobra fracionária na bonificação, e também o uso de Fator.
+{ "Data": "2025-03-01", "Ticker": "KLBN3", "Tipo": "Compra", "Qtd": "99", "ValorUnitario": "50" }
+{ "Data": "2025-03-02", "Ticker": "KLBN3", "Tipo": "Bonificação", "Fator": "0.3", "ValorUnitario": "10" }
+// Testa leilão de fração com Prejuízo.
+{ "Data": "2025-04-01", "Ticker": "BBSE3", "Tipo": "Compra", "Qtd": "99", "ValorUnitario": "50" }
+{ "Data": "2025-04-02", "Ticker": "BBSE3", "Tipo": "Bonificação", "Fator": "0.3", "ValorUnitario": "10" }
+{ "Data": "2025-04-03", "Ticker": "BBSE3", "Tipo": "Leilão Fração", "Fracao": "0.7", "ValorUnitario": "10" }
+// Testa leilão de fração com Lucro.
+{ "Data": "2025-05-01", "Ticker": "CXSE3", "Tipo": "Compra", "Qtd": "99", "ValorUnitario": "50" }
+{ "Data": "2025-05-02", "Ticker": "CXSE3", "Tipo": "Bonificação", "Fator": "0.3", "ValorUnitario": "10" }
+{ "Data": "2025-05-03", "Ticker": "CXSE3", "Tipo": "Leilão Fração", "Fracao": "0.7", "ValorUnitario": "55" }

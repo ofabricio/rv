@@ -3,13 +3,12 @@ package main
 import (
 	"os"
 
-	"github.com/ofabricio/rv/model"
+	"github.com/ofabricio/rv/data"
 )
 
 func main() {
 
-	var s model.State
-
-	s.Load("db.ndjson")
-	s.Print(os.Stdout)
+	var c data.Carteira
+	c.Load("db.ndjson")
+	c.Print(os.Stdout)
 }

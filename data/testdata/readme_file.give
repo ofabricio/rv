@@ -1,0 +1,8 @@
+{ "Data": "2024-01-01", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "30" }
+{ "Data": "2024-02-01", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "200", "ValorUnitario": "30.50" }
+{ "Data": "2025-03-01", "Ticker": "VALE3", "Tipo": "Compra", "Qtd": "200", "ValorUnitario": "60" }
+{ "Data": "2025-04-01", "Ticker": "VALE3", "Tipo": "Desdobramento", "Fator": "2" }
+{ "Data": "2025-05-01", "Ticker": "VALE3", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "61" }
+{ "Data": "2025-06-01", "Ticker": "PETR4", "Tipo": "Dividendos", "Lucro": "1000" }
+{ "Data": "2025-07-01", "Ticker": "VALE3", "Tipo": "JSCP", "Lucro": "1000" }
+{ "Data": "2025-08-01", "Ticker": "VALE3", "Tipo": "Venda", "Qtd": "400", "ValorUnitario": "65" }

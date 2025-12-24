@@ -1,0 +1,10 @@
+// Caso de teste retirado de https://www.youtube.com/watch?v=YCv2LXZjbLQ
+{ "Data" : "2025-01-01" , "Ticker" : "PETR4" , "Tipo" : "Compra" , "Qtd" : "50" , "ValorUnitario" : "99.46" }
+// Na compra de subscrição há taxas.
+{ "Data" : "2025-01-02" , "Ticker" : "PETR4" , "Tipo" : "Compra Subscrição" , "Qtd" : "118" , "ValorUnitario" : "0.3" , "Taxas" : "0" }
+// No exercício da subscrição não há taxas.
+{ "Data" : "2025-01-03" , "Ticker" : "PETR4" , "Tipo" : "Compra Subscrição (EX)" , "Qtd" : "118" , "ValorUnitario" : "101.65" }
+// Testa Venda de Subscrição.
+{ "Data" : "2025-02-01" , "Ticker" : "VALE3" , "Tipo" : "Compra" , "Qtd" : "50" , "ValorUnitario" : "99.46" }
+// Na venda de subscrição há taxas.
+{ "Data" : "2025-02-02" , "Ticker" : "VALE3" , "Tipo" : "Venda Subscrição" , "Qtd" : "18" , "ValorUnitario" : "3.01" , "Taxas" : "0.01" }

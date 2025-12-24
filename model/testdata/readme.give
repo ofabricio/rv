@@ -1,8 +1,0 @@
-{"Ticker":"PETR4","Tipo":"Compra","Data":"2024-01-01","Qtd":"100","ValorUnitario":"30"}
-{"Ticker":"PETR4","Tipo":"Compra","Data":"2024-02-01","Qtd":"200","ValorUnitario":"30.50"}
-{"Ticker":"VALE3","Tipo":"Compra","Data":"2025-03-01","Qtd":"200","ValorUnitario":"60"}
-{"Ticker":"VALE3","Tipo":"Desdobramento","Data":"2025-04-01","Fator":"2"}
-{"Ticker":"VALE3","Tipo":"Compra","Data":"2025-05-01","Qtd":"100","ValorUnitario":"61"}
-{"Ticker":"PETR4","Tipo":"Dividendos","Data":"2025-06-01","Lucro":"1000"}
-{"Ticker":"VALE3","Tipo":"JSCP","Data":"2025-07-01","Lucro":"1000"}
-{"Ticker":"VALE3","Tipo":"Venda","Data":"2025-08-01","Qtd":"400","ValorUnitario":"65"}

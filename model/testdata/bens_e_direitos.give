@@ -1,8 +1,0 @@
-{"Ticker":"PETR4","Tipo":"Compra","Data":"2023-01-01","Qtd":"100","ValorUnitario":"10"}
-{"Ticker":"PETR4","Tipo":"Venda","Data":"2024-01-01","Qtd":"100","ValorUnitario":"10"}
-{"Ticker":"VALE3","Tipo":"Compra","Data":"2024-01-01","Qtd":"100","ValorUnitario":"10"}
-{"Ticker":"KLBN3","Tipo":"Compra","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
-// Testa venda no mesmo ano.
-{"Ticker":"ITUB3","Tipo":"Compra","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
-{"Ticker":"ITUB3","Tipo":"Venda","Data":"2025-01-01","Qtd":"100","ValorUnitario":"10"}
-{"Ticker":"PETR4","Tipo":"Compra","Data":"2026-01-01","Qtd":"100","ValorUnitario":"10"}

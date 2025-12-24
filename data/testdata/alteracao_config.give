@@ -1,0 +1,15 @@
+{ "Data": "1900-01-01", "Tipo": "Config", "LimiteVendaIsenta": "20000" }
+{ "Data": "1900-01-01", "Tipo": "Config", "SwingTradeIR": "0.12" }
+{ "Data": "2024-01-01", "Tipo": "Compra", "Ticker": "PETR4", "Qtd":"2000", "ValorUnitario": "10" }
+{ "Data": "2024-01-02", "Tipo": "Venda", "Ticker": "PETR4", "Qtd":"1000", "ValorUnitario": "12" }
+{ "Data": "2024-01-03", "Tipo": "Venda", "Ticker": "PETR4", "Qtd":"1000", "ValorUnitario": "12" }
+{ "Data": "2024-01-04", "Tipo": "Compra", "Ticker": "VALE3", "Qtd":"1000", "ValorUnitario": "10" }
+
+{ "Data": "2025-01-01", "Tipo": "Config", "LimiteVendaIsenta": "20000" }
+{ "Data": "2025-01-01", "Tipo": "Config", "SwingTradeIR": "0.15" }
+{ "Data": "2025-01-01", "Tipo": "Compra", "Ticker": "PETR4", "Qtd":"2000", "ValorUnitario": "10" }
+{ "Data": "2025-01-02", "Tipo": "Venda", "Ticker": "PETR4", "Qtd":"1000", "ValorUnitario": "12" }
+{ "Data": "2025-01-03", "Tipo": "Venda", "Ticker": "PETR4", "Qtd":"1000", "ValorUnitario": "12" }
+{ "Data": "2025-01-04", "Tipo": "Compra", "Ticker": "VALE3", "Qtd":"1000", "ValorUnitario": "10" }
+{ "Data": "2025-01-04", "Tipo": "JSCP Não Pago", "Ticker": "VALE3", "Lucro": "1000" }
+{ "Data": "2025-01-05", "Tipo": "JSCP Não Pago", "Ticker": "VALE3", "Lucro": "1500" }

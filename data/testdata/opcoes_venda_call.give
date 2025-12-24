@@ -1,0 +1,12 @@
+{ "Data": "2025-01-01", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "300", "ValorUnitario": "10" }
+// Testa que vai aparecer em "Dívida e Onus Reais", pois o vencimento virou o ano.
+{ "Data": "2025-01-01", "Ticker": "PETR4", "Serie": "PETRA100", "Tipo": "Venda CALL", "Vencimento": "2026-01-01", "Qtd": "100", "ValorUnitario": "10", "Premio": "1" }
+// Testa Venda de CALL com lucro.
+{ "Data": "2025-01-01", "Ticker": "PETR4", "Serie": "PETRA101", "Tipo": "Venda CALL", "Vencimento": "2025-02-01", "Qtd": "100", "ValorUnitario": "12", "Premio": "1" }
+{ "Data": "2025-02-01", "Ticker": "PETR4", "Serie": "PETRA101", "Tipo": "Venda CALL (EX)", "Vencimento": "2025-02-01", "Qtd": "100", "ValorUnitario": "12", "Premio": "1", "ValorExercicio": "14" }
+// Testa venda de CALL com prejuízo.
+{ "Data": "2025-02-01", "Ticker": "PETR4", "Serie": "PETRA102", "Tipo": "Venda CALL", "Vencimento": "2025-03-01", "Qtd": "100", "ValorUnitario": "8", "Premio": "1" }
+{ "Data": "2025-03-01", "Ticker": "PETR4", "Serie": "PETRA102", "Tipo": "Venda CALL (EX)", "Vencimento": "2025-03-01", "Qtd": "100", "ValorUnitario": "8", "Premio": "1", "ValorExercicio": "9" }
+// Testa venda de CAL não exercida.
+{ "Data": "2025-03-01", "Ticker": "PETR4", "Serie": "PETRA103", "Tipo": "Venda CALL", "Vencimento": "2025-04-01", "Qtd": "100", "ValorUnitario": "10", "Premio": "2" }
+{ "Data": "2025-04-01", "Ticker": "PETR4", "Serie": "PETRA103", "Tipo": "Venda CALL (NE)", "Vencimento": "2025-04-01", "Qtd": "100", "ValorUnitario": "10", "Premio": "2" }

@@ -1,0 +1,8 @@
+{ "Data": "2023-01-01", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "10" }
+{ "Data": "2024-01-01", "Ticker": "PETR4", "Tipo": "Venda", "Qtd": "100", "ValorUnitario": "10" }
+{ "Data": "2024-01-01", "Ticker": "VALE3", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "10" }
+{ "Data": "2025-01-01", "Ticker": "KLBN3", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "10" }
+// Testa venda no mesmo ano.
+{ "Data": "2025-01-01", "Ticker": "ITUB3", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "10" }
+{ "Data": "2025-01-01", "Ticker": "ITUB3", "Tipo": "Venda", "Qtd": "100", "ValorUnitario": "10" }
+{ "Data": "2026-01-01", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "10" }

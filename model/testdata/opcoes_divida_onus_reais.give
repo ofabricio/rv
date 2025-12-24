@@ -1,7 +1,0 @@
-{"Ticker":"PETR4","Tipo":"Compra","Data":"2022-01-01","Qtd":"100","ValorUnitario":"10"}
-// Testa que vai aparecer em "Bens e Direitos", pois o vencimento virou o ano.
-{"Ticker":"PETR4","Serie":"PETRM100","Tipo":"Venda PUT","Data":"2022-01-01","Vencimento":"2023-01-01","Qtd":"100","ValorUnitario":"10","Premio":"1"}
-{"Ticker":"PETR4","Serie":"PETRM101","Tipo":"Venda PUT","Data":"2023-01-01","Vencimento":"2026-01-01","Qtd":"200","ValorUnitario":"10","Premio":"1"}
-{"Ticker":"PETR4","Serie":"PETRM102","Tipo":"Venda PUT","Data":"2024-01-01","Vencimento":"2025-01-01","Qtd":"300","ValorUnitario":"10","Premio":"1"}
-{"Ticker":"PETR4","Serie":"PETRM103","Tipo":"Venda PUT","Data":"2025-01-01","Vencimento":"2026-01-01","Qtd":"400","ValorUnitario":"10","Premio":"1"}
-{"Ticker":"PETR4","Serie":"PETRM104","Tipo":"Venda PUT","Data":"2026-01-01","Vencimento":"2027-01-01","Qtd":"500","ValorUnitario":"10","Premio":"1"}
