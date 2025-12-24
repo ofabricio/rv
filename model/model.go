@@ -85,6 +85,10 @@ func (s *State) Load(file string) {
 }
 
 func (s *State) BensDireitos() []BensDireitos {
+	return slices.Concat(s.BensDireitosTickers(), s.BensDireitosOpcoes(), s.BensDireitosJSCPNaoPagos())
+}
+
+func (s *State) BensDireitosTickers() []BensDireitos {
 
 	var bens []BensDireitos
 
@@ -107,12 +111,13 @@ func (s *State) BensDireitos() []BensDireitos {
 			if _, ok := currYear[ticker]; !ok && prevYear[ticker].Agg.ValorTotal.IsZero() && currYear[ticker].Agg.ValorTotal.IsZero() {
 				continue // Situações zeradas no ano anterior e corrente cujo ano corrente não existe não são mostradas.
 			}
-			o := merge[ticker]
+			prev := prevYear[ticker]
+			curr := merge[ticker]
 			bem.Tickers = append(bem.Tickers, BensDireitoTicker{
 				Ticker:           ticker,
-				SituacaoAnterior: prevYear[ticker].Agg.ValorTotal,
-				SituacaoCorrente: o.Agg.ValorTotal,
-				Discriminacao: fmt.Sprintf("%s AÇÕES %s COM PREÇO MÉDIO DE R$ %s%s", o.Agg.Qtd, ticker, s.formatDecimal(o.Agg.PrecoMedio),
+				SituacaoAnterior: prev.Agg.ValorTotal,
+				SituacaoCorrente: curr.Agg.ValorTotal,
+				Discriminacao: fmt.Sprintf("%s AÇÕES %s COM PREÇO MÉDIO DE R$ %s%s", curr.Agg.Qtd, ticker, s.formatDecimal(curr.Agg.PrecoMedio),
 					lo.Ternary(bonifics[ticker].IsPositive(), fmt.Sprintf(" ONDE %s AÇÕES SÃO PROVENIENTES DE BONIFICAÇÃO", bonifics[ticker]), ""),
 				),
 			})
@@ -123,7 +128,7 @@ func (s *State) BensDireitos() []BensDireitos {
 	if len(bens)%2 == 0 && len(bens) > 0 {
 		bens = bens[1:] // Remove a primeira posição se o número de anos for par.
 	}
-	return slices.Concat(bens, s.BensDireitosOpcoes(), s.BensDireitosJSCPNaoPagos())
+	return bens
 }
 
 func (s *State) BensDireitosJSCPNaoPagos() []BensDireitos {
