@@ -123,18 +123,28 @@ func (s *State) BensDireitos() []BensDireitos {
 	if len(bens)%2 == 0 && len(bens) > 0 {
 		bens = bens[1:] // Remove a primeira posição se o número de anos for par.
 	}
-	return append(bens, s.BensDireitosOpcoes()...)
+	return slices.Concat(bens, s.BensDireitosOpcoes(), s.BensDireitosJSCPNaoPagos())
+}
+
+func (s *State) BensDireitosJSCPNaoPagos() []BensDireitos {
+	return s.bensDireitosOpcoes(func(o Operacao) bool { return o.Tipo == JSCP_NAO_PAGO }, "99", "07", func(o Operacao) decimal.Decimal {
+		return o.Lucro
+	})
 }
 
 func (s *State) BensDireitosOpcoes() []BensDireitos {
-	return s.bensDireitosOpcoes(func(o Operacao) bool { return o.Tipo == PUT_COMPRA || o.Tipo == CALL_COMPRA }, "COMPRADAS", "04", "04")
+	return s.bensDireitosOpcoes(func(o Operacao) bool { return o.Tipo == PUT_COMPRA || o.Tipo == CALL_COMPRA }, "04", "04", func(o Operacao) decimal.Decimal {
+		return o.Premio.Mul(o.Qtd)
+	})
 }
 
 func (s *State) DividaOnusReais() []BensDireitos {
-	return s.bensDireitosOpcoes(func(o Operacao) bool { return o.Tipo == PUT_VENDA || o.Tipo == CALL_VENDA }, "VENDIDAS", "", "16")
+	return s.bensDireitosOpcoes(func(o Operacao) bool { return o.Tipo == PUT_VENDA || o.Tipo == CALL_VENDA }, "", "16", func(o Operacao) decimal.Decimal {
+		return o.Premio.Mul(o.Qtd)
+	})
 }
 
-func (s *State) bensDireitosOpcoes(cond func(Operacao) bool, tipo, grupo, cod string) []BensDireitos {
+func (s *State) bensDireitosOpcoes(cond func(Operacao) bool, grupo, cod string, situacao func(o Operacao) decimal.Decimal) []BensDireitos {
 
 	var bens []BensDireitos
 
@@ -150,7 +160,7 @@ func (s *State) bensDireitosOpcoes(cond func(Operacao) bool, tipo, grupo, cod st
 		}
 		currYear := map[string]Operacao{}
 		for _, op := range oprs {
-			currYear[op.Serie] = op
+			currYear[cmp.Or(op.Serie, op.Ticker)] = op
 		}
 		merge := lo.Assign(prevYear, currYear)
 		for ticker := range sortKeysIter(merge) {
@@ -161,9 +171,9 @@ func (s *State) bensDireitosOpcoes(cond func(Operacao) bool, tipo, grupo, cod st
 			curr := merge[ticker]
 			bem.Tickers = append(bem.Tickers, BensDireitoTicker{
 				Ticker:           ticker,
-				SituacaoAnterior: prev.Premio.Mul(prev.Qtd),
-				SituacaoCorrente: curr.Premio.Mul(curr.Qtd),
-				Discriminacao:    fmt.Sprintf("%s OPÇÕES %s SÉRIE %s VENCIMENTO %s", curr.Qtd, tipo, curr.Serie, curr.Vencimento.Format("02/01/2006")),
+				SituacaoAnterior: situacao(prev),
+				SituacaoCorrente: situacao(curr),
+				Discriminacao:    s.Discriminacao(curr),
 			})
 		}
 		prevYear = merge
@@ -336,6 +346,21 @@ func (s *State) OperacoesComunsDayTrade() []RendimentosTributaveis {
 	return rts
 }
 
+func (s *State) Discriminacao(o Operacao) string {
+	switch o.Tipo {
+	case PUT_COMPRA, CALL_COMPRA:
+		return fmt.Sprintf("%s OPÇÕES COMPRADAS SÉRIE %s VENCIMENTO %s", o.Qtd, o.Serie, o.Vencimento.Format("02/01/2006"))
+	case PUT_VENDA, CALL_VENDA:
+		return fmt.Sprintf("%s OPÇÕES VENDIDAS SÉRIE %s VENCIMENTO %s", o.Qtd, o.Serie, o.Vencimento.Format("02/01/2006"))
+	case BONIFICACAO:
+		return fmt.Sprintf(" ONDE %s AÇÕES SÃO PROVENIENTES DE BONIFICAÇÃO", o.Lucro)
+	case JSCP_NAO_PAGO:
+		return fmt.Sprintf("%s RENDIMENTOS CREDITADOS MAS NÃO PAGOS", o.Ticker)
+	default:
+		return ""
+	}
+}
+
 type RendimentosTributaveis struct {
 	Ticker  string
 	Ano     int
@@ -373,6 +398,8 @@ func (s *State) Calculate(o *Operacao, a *Agregado) {
 		o.CalcDividendos()
 	case JSCP:
 		o.CalcJSCP()
+	case JSCP_NAO_PAGO:
+		o.CalcJSCPNaoPago()
 	case REND_TRIB:
 		o.CalcRendTrib()
 	case REDUCAO_CAPITAL:
@@ -570,6 +597,9 @@ func (o *Operacao) CalcDividendos() {
 }
 
 func (o *Operacao) CalcJSCP() {
+}
+
+func (o *Operacao) CalcJSCPNaoPago() {
 }
 
 func (o *Operacao) CalcRendTrib() {

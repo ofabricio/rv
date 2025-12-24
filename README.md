@@ -16,6 +16,7 @@ Operações suportadas:
   - Desdobramento
   - Dividendos
   - JSCP
+  - JSCP Não Pago
   - Leilão de Fração
   - Redução de Capital
   - Rend. Trib.

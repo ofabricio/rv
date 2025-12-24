@@ -9,6 +9,7 @@ const (
 	LEILAO_FRACAO        TipoOpr = "Leilão Fração"
 	DIVIDENDOS           TipoOpr = "Dividendos"
 	JSCP                 TipoOpr = "JSCP"
+	JSCP_NAO_PAGO        TipoOpr = "JSCP Não Pago"
 	REND_TRIB            TipoOpr = "Rend. Trib."
 	REDUCAO_CAPITAL      TipoOpr = "Red. Cap."
 	SUBSCRICAO_COMPRA    TipoOpr = "Compra Subscrição"
@@ -37,6 +38,7 @@ var tipoOprConfig = map[TipoOpr]TipoOprConfig{
 	LEILAO_FRACAO:        {Codigo: "99 ── Leilão de Fração", IsRendimentoIsentoNaoTributavel: true, IsPrejuizoAbativel: true},
 	DIVIDENDOS:           {Codigo: "09 ── Dividendos", IsRendimentoIsentoNaoTributavel: true},
 	JSCP:                 {Codigo: "10 ── JSCP", IsRendimentoSujeitoTributacaoExclusiva: true},
+	JSCP_NAO_PAGO:        {Codigo: "10 ── JSCP Não Pago", IsRendimentoSujeitoTributacaoExclusiva: true},
 	REND_TRIB:            {Codigo: "99 ── Rendimento Tributável", IsRendimentoSujeitoTributacaoExclusiva: true},
 	REDUCAO_CAPITAL:      {Codigo: "99 ── Redução do Capital - Restituição em Espécie", IsPrejuizoAbativel: true},
 	SUBSCRICAO_COMPRA:    {Codigo: "03"},
