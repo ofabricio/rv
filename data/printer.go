@@ -3,7 +3,6 @@ package data
 import (
 	"fmt"
 	"io"
-	"strings"
 	"time"
 
 	"github.com/aquasecurity/table"
@@ -56,15 +55,15 @@ func (p *TablePrinter) PrintOperacoesComAcoes(w io.Writer) {
 			lo.Ternary(o.Serie != "", fmt.Sprintf("%s %s", o.Ticker, o.Serie), o.Ticker),
 			lo.Ternary(!o.Vencimento.IsZero(), fmt.Sprintf("%s V %s", o.Data.Format(time.DateOnly), o.Vencimento.Format(time.DateOnly)), o.Data.Format(time.DateOnly)),
 			string(o.Tipo),
-			lo.Ternary(o.Fracao.IsPositive(), fmt.Sprintf("%s (%s)", o.Qtd, p.formatDecimal(o.Fracao)), o.Qtd.String()),
-			lo.Ternary(o.ValorExercicio.IsPositive(), fmt.Sprintf("(E %s) %s", p.formatDecimal(o.ValorExercicio), p.formatDecimal(o.ValorUnitario)), p.formatDecimal(o.ValorUnitario)),
-			lo.Ternary(o.ValorExercicio.IsPositive(), fmt.Sprintf("(E %s) %s", p.formatDecimal(o.ValorExercicio.Mul(o.Qtd)), p.formatDecimal(o.ValorTotal)), p.formatDecimal(o.ValorTotal)),
-			p.formatDecimal(o.Taxas),
+			lo.Ternary(o.Fracao.IsPositive(), fmt.Sprintf("%s (%s)", o.Qtd, p.c.Param.FormatDecimal(o.Fracao)), o.Qtd.String()),
+			lo.Ternary(o.ValorExercicio.IsPositive(), fmt.Sprintf("(E %s) %s", p.c.Param.FormatDecimal(o.ValorExercicio), p.c.Param.FormatDecimal(o.ValorUnitario)), p.c.Param.FormatDecimal(o.ValorUnitario)),
+			lo.Ternary(o.ValorExercicio.IsPositive(), fmt.Sprintf("(E %s) %s", p.c.Param.FormatDecimal(o.ValorExercicio.Mul(o.Qtd)), p.c.Param.FormatDecimal(o.ValorTotal)), p.c.Param.FormatDecimal(o.ValorTotal)),
+			p.c.Param.FormatDecimal(o.Taxas),
 			o.Agg.Qtd.String(),
-			p.formatDecimal(o.Agg.ValorTotal),
-			p.formatDecimal(o.Agg.PrecoMedio),
-			p.formatDecimal(o.ValorCompra),
-			lo.Ternary(o.Premio.IsPositive(), fmt.Sprintf("(P %s) %s", p.formatDecimal(o.Premio), p.formatDecimal(o.Lucro)), p.formatDecimal(o.Lucro)),
+			p.c.Param.FormatDecimal(o.Agg.ValorTotal),
+			p.c.Param.FormatDecimal(o.Agg.PrecoMedio),
+			p.c.Param.FormatDecimal(o.ValorCompra),
+			lo.Ternary(o.Premio.IsPositive(), fmt.Sprintf("(P %s) %s", p.c.Param.FormatDecimal(o.Premio), p.c.Param.FormatDecimal(o.Lucro)), p.c.Param.FormatDecimal(o.Lucro)),
 		)
 	}
 	t.Render()
@@ -88,8 +87,8 @@ func (p *TablePrinter) PrintBensDireitos(w io.Writer) {
 		for _, ticker := range bens.Tickers {
 			t.AddRow(
 				ticker.Ticker,
-				p.formatDecimal(ticker.SituacaoAnterior),
-				p.formatDecimal(ticker.SituacaoCorrente),
+				p.c.Param.FormatDecimal(ticker.SituacaoAnterior),
+				p.c.Param.FormatDecimal(ticker.SituacaoCorrente),
 				fmt.Sprintf("%s %s", ticker.Grupo, ticker.Codigo),
 				ticker.Discriminacao,
 			)
@@ -116,8 +115,8 @@ func (p *TablePrinter) PrintDividaOnusReais(w io.Writer) {
 		for _, ticker := range bens.Tickers {
 			t.AddRow(
 				ticker.Ticker,
-				p.formatDecimal(ticker.SituacaoAnterior),
-				p.formatDecimal(ticker.SituacaoCorrente),
+				p.c.Param.FormatDecimal(ticker.SituacaoAnterior),
+				p.c.Param.FormatDecimal(ticker.SituacaoCorrente),
 				ticker.Codigo,
 				ticker.Discriminacao,
 			)
@@ -135,7 +134,7 @@ func (p *TablePrinter) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {
 		t.AddHeaders("Ticker", "Valor", "Código")
 		t.SetAlignment(table.AlignLeft, table.AlignRight, table.AlignLeft)
 		for _, r := range ano.Rendimentos {
-			t.AddRow(r.Ticker, p.formatDecimal(r.Valor), r.Codigo)
+			t.AddRow(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo)
 		}
 		t.Render()
 	}
@@ -150,7 +149,7 @@ func (p *TablePrinter) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) 
 		t.AddHeaders("Ticker", "Valor", "Código")
 		t.SetAlignment(table.AlignLeft, table.AlignRight, table.AlignLeft)
 		for _, r := range ano.Rendimentos {
-			t.AddRow(r.Ticker, p.formatDecimal(r.Valor), r.Codigo)
+			t.AddRow(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo)
 		}
 		t.Render()
 	}
@@ -167,20 +166,16 @@ func (p *TablePrinter) PrintOperacoesComunsDayTrade(w io.Writer) {
 		for _, v := range r.Meses {
 			t.AddRow(
 				translateMonth[v.Mes],
-				p.formatDecimal(v.Lucro),
-				p.formatDecimal(v.LucroOp),
-				p.formatDecimal(v.LucroAc),
-				p.formatDecimal(v.IR),
+				p.c.Param.FormatDecimal(v.Lucro),
+				p.c.Param.FormatDecimal(v.LucroOp),
+				p.c.Param.FormatDecimal(v.LucroAc),
+				p.c.Param.FormatDecimal(v.IR),
 			)
 		}
 		t.SetFooterAlignment(table.AlignCenter, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight)
-		t.AddFooters("Total", p.formatDecimal(r.TotalAcoes), p.formatDecimal(r.TotalOpcao), p.formatDecimal(r.TotalAc), p.formatDecimal(r.TotalIR))
+		t.AddFooters("Total", p.c.Param.FormatDecimal(r.TotalAcoes), p.c.Param.FormatDecimal(r.TotalOpcao), p.c.Param.FormatDecimal(r.TotalAc), p.c.Param.FormatDecimal(r.TotalIR))
 		t.Render()
 	}
-}
-
-func (p *TablePrinter) formatDecimal(d decimal.Decimal) string {
-	return strings.Replace(d.StringFixed(2), ".", ",", 1)
 }
 
 var translateMonth = map[int]string{

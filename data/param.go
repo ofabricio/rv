@@ -2,12 +2,15 @@ package data
 
 import (
 	"strings"
+	"time"
 
 	"github.com/shopspring/decimal"
 )
 
 var DefaultParam = Param{
-	SeparadorDecimal: ",",
+	SeparadorDecimal:  ",",
+	FormatoData:       time.DateOnly,
+	MostrarValorExato: false,
 }
 
 type Param struct {
@@ -25,5 +28,8 @@ type Param struct {
 }
 
 func (p *Param) FormatDecimal(v decimal.Decimal) string {
+	if p.MostrarValorExato {
+		return strings.Replace(v.String(), ".", p.SeparadorDecimal, 1)
+	}
 	return strings.Replace(v.StringFixed(2), ".", p.SeparadorDecimal, 1)
 }
