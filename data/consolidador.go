@@ -99,6 +99,8 @@ func (*Consolidador) VisitJSCP(*Operacao) {}
 
 func (*Consolidador) VisitJSCPNaoPago(*Operacao) {}
 
+func (*Consolidador) VisitAluguel(*Operacao) {}
+
 func (*Consolidador) VisitRendTrib(*Operacao) {}
 
 func (c *Consolidador) VisitSubscricaoCompra(o *Operacao) {

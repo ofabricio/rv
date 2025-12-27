@@ -1,0 +1,3 @@
+{ "Data": "2025-01-01", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "10" }
+{ "Data": "2025-02-01", "Ticker": "PETR4", "Tipo": "Aluguel", "Qtd": "100", "Lucro": "200" }
+{ "Data": "2025-03-01", "Ticker": "PETR4", "Tipo": "Aluguel", "Qtd": "100", "Lucro": "100" }

@@ -22,6 +22,7 @@ Operações suportadas:
   - Redução de Capital
   - Rend. Trib.
   - Subscrição
+  - Aluguel
 
 - Opções
   - Compra/Venda de PUT

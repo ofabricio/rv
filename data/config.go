@@ -23,8 +23,9 @@ const (
 	CodigoRINTOutros    = "99"
 
 	// Rendimento Sujeito à Tributação Exclusiva/Definitiva.
-	CodigoJSCP       = "10"
-	CodigoRSTEOutros = "99"
+	CodigoRendimentos = "06"
+	CodigoJSCP        = "10"
+	CodigoRSTEOutros  = "99"
 
 	// Dívida e Ônus Reais.
 	CodigoOutrasDividasOnusReais = "16"
@@ -152,6 +153,9 @@ var DefaultTonfig = TonfigMap{
 	},
 	REND_TRIB: {
 		RendimentoSujeitoTributacaoExclusiva: GrupoCodigo{Codigo: CodigoRSTEOutros, Descr: "Rendimento Tributável"},
+	},
+	ALUGUEL: {
+		RendimentoSujeitoTributacaoExclusiva: GrupoCodigo{Codigo: CodigoRendimentos, Descr: "Aluguel de Ações"},
 	},
 	REDUCAO_CAPITAL: {
 		BensDireitos: GrupoCodigo{Grupo: GrupoParticipacaoSocietaria, Codigo: CodigoAcoes},

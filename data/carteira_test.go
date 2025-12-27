@@ -65,6 +65,10 @@ func TestStateLoad(t *testing.T) {
 			Then: "testdata/jscp.then",
 		},
 		{
+			Give: "testdata/aluguel.give",
+			Then: "testdata/aluguel.then",
+		},
+		{
 			Give: "testdata/bens_e_direitos.give",
 			Then: "testdata/bens_e_direitos.then",
 		},

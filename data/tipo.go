@@ -11,6 +11,7 @@ const (
 	JSCP                 Tipo = "JSCP"
 	JSCP_NAO_PAGO        Tipo = "JSCP Não Pago"
 	REND_TRIB            Tipo = "Rend. Trib."
+	ALUGUEL              Tipo = "Aluguel"
 	REDUCAO_CAPITAL      Tipo = "Red. Cap."
 	SUBSCRICAO_COMPRA    Tipo = "Compra Subscrição"
 	SUBSCRICAO_VENDA     Tipo = "Venda Subscrição"

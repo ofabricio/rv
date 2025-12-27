@@ -48,6 +48,7 @@ type Visitor interface {
 	VisitDividendos(*Operacao)
 	VisitJSCP(*Operacao)
 	VisitJSCPNaoPago(*Operacao)
+	VisitAluguel(*Operacao)
 	VisitRendTrib(*Operacao)
 	VisitReducaoCapital(*Operacao)
 	VisitSubscricaoCompra(*Operacao)
@@ -87,6 +88,8 @@ func (o *Operacao) Accept(v Visitor) {
 		v.VisitJSCP(o)
 	case JSCP_NAO_PAGO:
 		v.VisitJSCPNaoPago(o)
+	case ALUGUEL:
+		v.VisitAluguel(o)
 	case REND_TRIB:
 		v.VisitRendTrib(o)
 	case REDUCAO_CAPITAL:
