@@ -1,6 +1,7 @@
 # rv
 
-Esta ferramenta faz o controle de operações de ações do mercado brasileiro, gerando as guias de declaração de IR (Bens e Direitos, Operações Comuns/Day Trade, etc.)
+Esta ferramenta faz o controle de operações de ações do mercado brasileiro,
+gerando as guias de declaração de IR (Bens e Direitos, Operações Comuns/Day Trade, etc.)
 
 Se deseja usá-la **é por sua conta e risco**. :warning:
 
@@ -46,23 +47,23 @@ git clone --depth 1 https://github.com/ofabricio/rv.git ; cd rv
 docker run --rm -v $PWD:/src -w /src -e GOEXPERIMENT=jsonv2 golang:alpine go run .
 ```
 
-**Nota:** para gerar um executável use `go build` em vez de `go run .` e adicione `-e GOOS=darwin -e GOARCH=amd64` e altere os [valores](https://go.dev/doc/install/source#environment) conforme seu sistema operacional.
+**Nota:** para gerar um executável use `go build` em vez de `go run .` e adicione `-e GOOS=darwin -e GOARCH=amd64` e
+altere os [valores](https://go.dev/doc/install/source#environment) conforme seu sistema operacional.
 
-## Como usar
+## Como Usar
 
-Basta adicionar as operações e acompanhar a evolução.
+Basta adicionar as operações no arquivo [db.ndjson](/db.ndjson), que fica na raiz do projeto,
+rodar a ferramenta `./rv`, e ver o resultado no terminal.
+A ferramenta fará todos os cálculos necessários e mostrará o resultado final consolidado.
+Veja um exemplo abaixo.
 
-No momento só é possível adicionar as operações editando manualmente o arquivo [db.ndjson](/db.ndjson), que fica na raiz do projeto. No futuro será criado uma interface no terminal ou no navegador para facilitar isso. Importação de notas de corretagem ou extratos da B3 também estão nos planos.
+No momento só é possível adicionar as operações editando manualmente o arquivo `db.ndjson`.
+No futuro será criado uma interface no terminal ou no navegador para facilitar isso.
+Importação de notas de corretagem ou extratos da B3 também estão nos planos.
 
 Veja exemplos de uso de cada tipo de operação nos arquivos `*.give` do diretório [/data/testdata](/data/testdata).
 
-Para visualizar todas as operações:
-
-```sh
-./rv
-```
-
-## Exemplo de output
+## Exemplo de Resultado
 
 ```
 $ ./rv

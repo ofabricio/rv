@@ -4,10 +4,10 @@
 // Esses são os campos suportados no JSON.
 //
 // Campos que são comuns a todas as operações:
-//     "Ticker"
-//          Código da ação (ex. PETR4, VALE3).
 //     "Data"
 //          Data da operação no formato AAAA-MM-DD.
+//     "Ticker"
+//          Código da ação (ex. PETR4, VALE3).
 //     "Tipo"
 //          Tipo da operação:
 //          - Para Ações:
@@ -60,7 +60,7 @@
 //          Data de vencimento da opção no formato AAAA-MM-DD.
 // ----------------------------------------------------------
 
-{"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-01","Qtd":"10","ValorUnitario":"31.47","Taxas":"1.15"}
-{"Ticker":"PETR4","Tipo":"Compra","Data":"2025-01-02","Qtd":"20","ValorUnitario":"32.12","Taxas":"2.30"}
-{"Ticker":"VALE3","Tipo":"Compra","Data":"2025-02-01","Qtd":"20","ValorUnitario":"60.04","Taxas":"1.40"}
-{"Ticker":"VALE3","Tipo":"Venda","Data":"2025-02-02","Qtd":"10","ValorUnitario":"61.25","Taxas":"1.30"}
+{ "Data": "2025-01-01", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "10", "ValorUnitario": "31.47", "Taxas": "1.15" }
+{ "Data": "2025-01-02", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "20", "ValorUnitario": "32.12", "Taxas": "2.30" }
+{ "Data": "2025-02-01", "Ticker": "VALE3", "Tipo": "Compra", "Qtd": "20", "ValorUnitario": "60.04", "Taxas": "1.40" }
+{ "Data": "2025-02-02", "Ticker": "VALE3", "Tipo": "Venda", "Qtd": "10", "ValorUnitario": "61.25", "Taxas": "1.30" }
