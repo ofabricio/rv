@@ -95,6 +95,8 @@ func (c *Consolidador) VisitLeilaoFracao(o *Operacao) {
 
 func (*Consolidador) VisitDividendos(*Operacao) {}
 
+func (*Consolidador) VisitReembolso(*Operacao) {}
+
 func (*Consolidador) VisitJSCP(*Operacao) {}
 
 func (*Consolidador) VisitJSCPNaoPago(*Operacao) {}

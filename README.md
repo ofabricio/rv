@@ -16,6 +16,7 @@ Operações suportadas:
   - Grupamento
   - Desdobramento
   - Dividendos
+  - Reembolso
   - JSCP
   - JSCP Não Pago
   - Leilão de Fração

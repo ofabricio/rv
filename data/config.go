@@ -144,6 +144,9 @@ var DefaultTonfig = TonfigMap{
 	DIVIDENDOS: {
 		RendimentoIsentoNaoTributavel: GrupoCodigo{Codigo: CodigoDividendos, Descr: "Dividendos"},
 	},
+	REEMBOLSO: {
+		RendimentoIsentoNaoTributavel: GrupoCodigo{Codigo: CodigoRINTOutros, Descr: "Reembolso de proventos"},
+	},
 	JSCP: {
 		RendimentoSujeitoTributacaoExclusiva: GrupoCodigo{Codigo: CodigoJSCP, Descr: "JSCP"},
 	},

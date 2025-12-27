@@ -8,6 +8,7 @@ const (
 	GRUPAMENTO           Tipo = "Grupamento"
 	LEILAO_FRACAO        Tipo = "Leilão Fração"
 	DIVIDENDOS           Tipo = "Dividendos"
+	REEMBOLSO            Tipo = "Reembolso"
 	JSCP                 Tipo = "JSCP"
 	JSCP_NAO_PAGO        Tipo = "JSCP Não Pago"
 	REND_TRIB            Tipo = "Rend. Trib."

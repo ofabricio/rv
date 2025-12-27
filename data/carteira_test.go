@@ -29,6 +29,10 @@ func TestStateLoad(t *testing.T) {
 			Then: "testdata/dividendos.then",
 		},
 		{
+			Give: "testdata/reembolso.give",
+			Then: "testdata/reembolso.then",
+		},
+		{
 			Give: "testdata/bonificacao.give",
 			Then: "testdata/bonificacao.then",
 		},
