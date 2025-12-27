@@ -62,6 +62,9 @@ func (c *Consolidador) VisitBonificacao(o *Operacao) {
 		o.Fracao = c.Agg.Qtd.Mul(o.Fator)
 		o.Qtd = o.Fracao.Truncate(0)
 		o.Fracao = o.Fracao.Sub(o.Qtd).Abs()
+	} else {
+		o.Fracao = o.Qtd.Sub(o.Qtd.Truncate(0)).Abs()
+		o.Qtd = o.Qtd.Truncate(0)
 	}
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
 	o.Lucro = o.ValorTotal

@@ -1,0 +1,17 @@
+// Caso de teste tirado de https://www.youtube.com/watch?v=u6-fWAbwG0U
+{ "Data": "2025-01-01", "Tipo": "Config", "AlterarPrecoMedioNaBonificacao": true }
+{ "Data": "2025-01-03", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "190", "ValorUnitario": "3.92" }
+{ "Data": "2025-01-03", "Ticker": "KLBN11", "Tipo": "Compra", "Qtd": "210", "ValorUnitario": "13.94" }
+{ "Data": "2025-01-10", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "470", "ValorUnitario": "4.12" }
+{ "Data": "2025-01-10", "Ticker": "KLBN11", "Tipo": "Compra", "Qtd": "15", "ValorUnitario": "15.22" }
+{ "Data": "2025-02-02", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "350", "ValorUnitario": "4.18" }
+{ "Data": "2025-02-02", "Ticker": "KLBN11", "Tipo": "Compra", "Qtd": "182", "ValorUnitario": "11.50" }
+{ "Data": "2025-02-05", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "500", "ValorUnitario": "4.11" }
+{ "Data": "2025-02-05", "Ticker": "KLBN11", "Tipo": "Compra", "Qtd": "248", "ValorUnitario": "13.15" }
+{ "Data": "2025-02-08", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "350", "ValorUnitario": "4.08" }
+{ "Data": "2025-02-08", "Ticker": "KLBN11", "Tipo": "Compra", "Qtd": "35", "ValorUnitario": "12.98" }
+{ "Data": "2025-12-19", "Ticker": "KLBN4", "Tipo": "Bonificação", "Qtd": "18.6", "ValorUnitario": "12.94564988922" }
+{ "Data": "2025-12-19", "Ticker": "KLBN11", "Tipo": "Bonificação", "Qtd": "6.9", "ValorUnitario": "64.72824944610" }
+{ "Data": "2025-12-19", "Ticker": "KLBN4", "Tipo": "Bonificação", "Qtd": "3.6", "ValorUnitario": "12.94564988922" }
+{ "Data": "2025-12-19", "Ticker": "KLBN3", "Tipo": "Bonificação", "Qtd": "0.9", "ValorUnitario": "64.72824944610" }
+{ "Data": "2025-12-30", "Ticker": "KLBN3", "Tipo": "Leilão Fração", "Fracao": "0.9", "ValorUnitario": "64.72824944610" }
