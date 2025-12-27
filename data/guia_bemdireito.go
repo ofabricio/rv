@@ -2,6 +2,7 @@ package data
 
 import (
 	"fmt"
+	"iter"
 	"slices"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func (c *Carteira) bensDireitos(bemOuDivida bool) []BemDireito {
+func (c *Carteira) bensDireitos(v BensDireitosStrategy) []BemDireito {
 
 	var bens []BemDireito
 
@@ -22,18 +23,7 @@ func (c *Carteira) bensDireitos(bemOuDivida bool) []BemDireito {
 			AnoCorrente: ano.Ano,
 		}
 
-		f := it.Filter(ano.Iter(), func(o OperacaoConsolidada) bool {
-			return o.Tfg.IsBemDireito() == bemOuDivida || o.Tfg.IsDividaOnusReais() == !bemOuDivida
-		})
-
-		curr := map[string]BensDireitoTicker{}
-
-		v := BemDireitoVisitor{Param: &c.Param, Curr: curr}
-		for _, ano := range it.PartitionBy(f, func(o OperacaoConsolidada) string {
-			return o.Ticker + lo.Ternary(bemOuDivida, o.Tfg.BensDireitos, o.Tfg.DividaOnusReais).ID()
-		}) {
-			v.Visit(ano)
-		}
+		curr := v.SituacaoAnoCorrente(ano.Iter())
 
 		// Decide se adiciona os tickers do ano anterior no ano corrente.
 		for ticker, p := range prev {
@@ -81,25 +71,28 @@ type BensDireitoTicker struct {
 	Vencimento       time.Time
 }
 
-type BemDireitoVisitor struct {
+type BensDireitosStrategy interface {
+	SituacaoAnoCorrente(iter.Seq[OperacaoConsolidada]) map[string]BensDireitoTicker
+}
+
+type BemDireitoStrategy struct {
 	Curr  map[string]BensDireitoTicker
 	Param *Param
 	g     GrupoCodigo
 }
 
-func (v *BemDireitoVisitor) Visit(ano []OperacaoConsolidada) {
-	o := lo.FirstOrEmpty(ano)
-	switch {
-	case o.Tfg.IsBemDireito():
-		v.g = o.Tfg.BensDireitos
+func (v *BemDireitoStrategy) SituacaoAnoCorrente(ano iter.Seq[OperacaoConsolidada]) map[string]BensDireitoTicker {
+	v.Curr = map[string]BensDireitoTicker{}
+	Filter := func(o OperacaoConsolidada) bool { return o.Tfg.IsBemDireito() }
+	Partition := func(o OperacaoConsolidada) string { return o.Ticker + o.Tfg.BensDireitos.ID() }
+	for _, ano := range it.PartitionBy(it.Filter(ano, Filter), Partition) {
 		v.VisitBemDireito(ano)
-	case o.Tfg.IsDividaOnusReais():
-		v.g = o.Tfg.DividaOnusReais
-		v.VisitDividaOnusReais(ano)
 	}
+	return v.Curr
 }
 
-func (v *BemDireitoVisitor) VisitBemDireito(ano []OperacaoConsolidada) {
+func (v *BemDireitoStrategy) VisitBemDireito(ano []OperacaoConsolidada) {
+	v.g = lo.FirstOrEmpty(ano).Tfg.BensDireitos
 	if v.g.Grupo == GrupoParticipacaoSocietaria && v.g.Codigo == CodigoAcoes {
 		v.VisitBemDireito0301(ano)
 	} else if v.g.Grupo == GrupoAplicacaoInvestimento && v.g.Codigo == CodigoOpcoes {
@@ -109,13 +102,7 @@ func (v *BemDireitoVisitor) VisitBemDireito(ano []OperacaoConsolidada) {
 	}
 }
 
-func (v *BemDireitoVisitor) VisitDividaOnusReais(ano []OperacaoConsolidada) {
-	if v.g.Codigo == CodigoOutrasDividasOnusReais {
-		v.VisitDividaOnusReais0016(ano)
-	}
-}
-
-func (v *BemDireitoVisitor) VisitBemDireito0301(ano []OperacaoConsolidada) {
+func (v *BemDireitoStrategy) VisitBemDireito0301(ano []OperacaoConsolidada) {
 	op := lo.LastOrEmpty(ano)
 	bn := iterQtd(iterFilterByTipo(slices.Values(ano), BONIFICACAO))
 	id := op.Ticker + ".acao"
@@ -130,7 +117,7 @@ func (v *BemDireitoVisitor) VisitBemDireito0301(ano []OperacaoConsolidada) {
 	}
 }
 
-func (v *BemDireitoVisitor) VisitBemDireito9907(ano []OperacaoConsolidada) {
+func (v *BemDireitoStrategy) VisitBemDireito9907(ano []OperacaoConsolidada) {
 	op := lo.LastOrEmpty(ano)
 	id := op.Ticker + ".jscpnp"
 	v.Curr[id] = BensDireitoTicker{
@@ -144,13 +131,9 @@ func (v *BemDireitoVisitor) VisitBemDireito9907(ano []OperacaoConsolidada) {
 	}
 }
 
-func (v *BemDireitoVisitor) VisitDividaOnusReais0016(ano []OperacaoConsolidada) {
-	v.VisitBemDireito0404(ano, "VENDIDAS")
-}
-
-func (v *BemDireitoVisitor) VisitBemDireito0404(ano []OperacaoConsolidada, label string) {
-	f := it.Filter(slices.Values(ano), func(o OperacaoConsolidada) bool { return o.Vencimento.Year() > o.Data.Year() })
-	for _, ano := range it.PartitionBy(f, func(o OperacaoConsolidada) string { return o.Serie }) {
+func (v *BemDireitoStrategy) VisitBemDireito0404(ano []OperacaoConsolidada, label string) {
+	f := lo.Filter(ano, func(o OperacaoConsolidada, _ int) bool { return o.Vencimento.Year() > o.Data.Year() })
+	for _, ano := range lo.PartitionBy(f, func(o OperacaoConsolidada) string { return o.Serie }) {
 		qt := iterQtd(slices.Values(ano))
 		tt := lo.Reduce(ano, func(agg decimal.Decimal, o OperacaoConsolidada, _ int) decimal.Decimal {
 			return agg.Add(o.Premio.Mul(o.Qtd))
@@ -167,4 +150,32 @@ func (v *BemDireitoVisitor) VisitBemDireito0404(ano []OperacaoConsolidada, label
 			Discriminacao:    fmt.Sprintf("%s OPÇÕES %s SÉRIE %s VENCIMENTO %s", qt, label, op.Serie, op.Vencimento.Format("02/01/2006")),
 		}
 	}
+}
+
+type DividaOnusReaisStrategy struct {
+	Curr  map[string]BensDireitoTicker
+	Param *Param
+	g     GrupoCodigo
+}
+
+func (v *DividaOnusReaisStrategy) SituacaoAnoCorrente(ano iter.Seq[OperacaoConsolidada]) map[string]BensDireitoTicker {
+	v.Curr = map[string]BensDireitoTicker{}
+	Filter := func(o OperacaoConsolidada) bool { return o.Tfg.IsDividaOnusReais() }
+	Partition := func(o OperacaoConsolidada) string { return o.Ticker + o.Tfg.DividaOnusReais.ID() }
+	for _, ano := range it.PartitionBy(it.Filter(ano, Filter), Partition) {
+		v.VisitDividaOnusReais(ano)
+	}
+	return v.Curr
+}
+
+func (v *DividaOnusReaisStrategy) VisitDividaOnusReais(ano []OperacaoConsolidada) {
+	v.g = lo.FirstOrEmpty(ano).Tfg.DividaOnusReais
+	if v.g.Codigo == CodigoOutrasDividasOnusReais {
+		v.VisitDividaOnusReais0016(ano)
+	}
+}
+
+func (v *DividaOnusReaisStrategy) VisitDividaOnusReais0016(ano []OperacaoConsolidada) {
+	vv := BemDireitoStrategy{Curr: v.Curr, Param: v.Param, g: v.g}
+	vv.VisitBemDireito0404(ano, "VENDIDAS")
 }

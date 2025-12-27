@@ -9,11 +9,11 @@ import (
 )
 
 func (c *Carteira) BensDireitos() []BemDireito {
-	return c.bensDireitos(true)
+	return c.bensDireitos(&BemDireitoStrategy{Param: &c.Param})
 }
 
 func (c *Carteira) DividaOnusReais() []BemDireito {
-	return c.bensDireitos(false)
+	return c.bensDireitos(&DividaOnusReaisStrategy{Param: &c.Param})
 }
 
 func (c *Carteira) OperacoesComunsDayTrade() []RendimentosTributaveis {
