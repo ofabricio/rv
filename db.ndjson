@@ -6,28 +6,56 @@
 // Campos que são comuns a todas as operações:
 //     "Ticker"
 //          Código da ação (ex. PETR4, VALE3).
-//     "Tipo"
-//          Tipo da operação. Compra, Venda, Bonificação, Desdobramento, Grupamento, Leilão Fração, Dividendos, JSCP, Rend. Trib., Red. Cap., Subscrição Compra, Subscrição Venda, Subscrição Exercício).
 //     "Data"
 //          Data da operação no formato AAAA-MM-DD.
+//     "Tipo"
+//          Tipo da operação:
+//          - Para Ações:
+//              - Compra
+//              - Venda
+//              - Bonificação
+//              - Desdobramento
+//              - Grupamento
+//              - Leilão Fração
+//              - Dividendos
+//              - JSCP
+//              - JSCP Não Pago
+//              - Rend. Trib.
+//              - Red. Cap.
+//              - Compra Subscrição
+//              - Compra Subscrição (EX)
+//              - Venda Subscrição
+//          - Para Opções:
+//              - Compra PUT
+//              - Compra PUT (EX)
+//              - Compra PUT (NE)
+//              - Venda PUT
+//              - Venda PUT (EX)
+//              - Venda PUT (NE)
+//              - Compra CALL
+//              - Compra CALL (EX)
+//              - Compra CALL (NE)
+//              - Venda CALL
+//              - Venda CALL (EX)
+//              - Venda CALL (NE)
 // Campos que são específicos para cada tipo de operação:
 //     "Qtd"
-//          Quantidade de ações envolvidas nas operações de Compra, Venda e Bonificação.
+//          Quantidade de ações envolvidas nas operações de Compra, Venda e Bonificação (ex. 100).
 //     "ValorUnitario"
-//          Valor unitário da ação nas operações de Compra, Venda, Bonificação, Leilão Fração e Red. Cap. (ex. 10.4).
+//          Valor unitário da ação nas operações de Compra, Venda, Bonificação, Leilão Fração e Red. Cap. (ex. 10.40).
 //     "Taxas"
-//          Taxas associadas às operações de Compra, Venda, Subscrição Compra e Subscrição Venda. (ex. 2.30).
+//          Taxas associadas às operações de Compra, Venda, Subscrição Compra e Subscrição Venda (ex. 2.30).
 //     "Fator"
-//          Fator de Bonificação, Desdobramento, Grupamento e Redução de Capital. (ex. 0.1, 1.5, 2).
+//          Fator de Bonificação, Desdobramento, Grupamento e Redução de Capital (ex. 0.10).
 //     "Fracao"
-//        Parte fracionária resultante de Bonificação, Desdobramento, Grupamento e Leilão Fração. (ex. 0.4).
-// Para Opções:
+//          Parte fracionária resultante de Bonificação, Desdobramento, Grupamento e Leilão Fração (ex. 0.40).
+// Campos exclusivos de Opções:
 //     "Serie"
 //          Série da opção (ex. PETRA123, PETRM140).
 //     "ValorExercicio"
 //          Valor da ação no momento do exercício da opção (ex. 30.54).
 //     "Premio"
-//          Prêmio pago/recebido na compra/venda da opção (ex. 1.5).
+//          Prêmio pago/recebido na compra/venda da opção (ex. 1.50).
 //     "Vencimento"
 //          Data de vencimento da opção no formato AAAA-MM-DD.
 // ----------------------------------------------------------
