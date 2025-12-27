@@ -63,10 +63,6 @@ func (c *Carteira) bensDireitos(bemOuDivida bool) []BemDireito {
 		}
 	}
 
-	if len(bens)%2 == 0 && len(bens) > 0 {
-		bens = bens[1:] // Remove a primeira posição se o número de anos for par.
-	}
-
 	return bens
 }
 
@@ -138,6 +134,7 @@ func (v *BemDireitoVisitor) VisitBemDireito9907(ano []OperacaoConsolidada) {
 	op := lo.LastOrEmpty(ano)
 	id := op.Ticker + ".jscpnp"
 	v.Curr[id] = BensDireitoTicker{
+		Vencimento:       op.Vencimento,
 		Grupo:            v.g.Grupo,
 		Codigo:           v.g.Codigo,
 		Ticker:           op.Ticker,
