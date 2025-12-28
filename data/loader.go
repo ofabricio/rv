@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 )
 
 func LoadOperacoes(file string) ([]OperacaoDesconsolidada, error) {
@@ -22,6 +23,7 @@ func ReadOperacoes(r io.Reader) ([]OperacaoDesconsolidada, error) {
 	if err != nil {
 		return nil, err
 	}
+	prevYear := 1900
 	ooc := make([]OperacaoDesconsolidada, 0, 128)
 	cfg := DefaultConfig2025
 	tfg := DefaultTonfig2025
@@ -32,9 +34,19 @@ func ReadOperacoes(r io.Reader) ([]OperacaoDesconsolidada, error) {
 		}
 		var tipo struct {
 			Tipo string
+			Data time.Time `json:",format:DateOnly"`
 		}
 		if err := json.Unmarshal(line, &tipo); err != nil {
 			return nil, fmt.Errorf("error: %s; content: %s", err, line)
+		}
+		// Na mudança de ano atualiza para a configuração correspondente.
+		// Isso sobrescreve todas as alterações de configurações definidas
+		// no arquivo fonte, de modo que é necessário repeti-las todo novo
+		// ano para que continuem tendo efeito.
+		if currYear := tipo.Data.Year(); currYear != prevYear {
+			cfg = GetDefaultConfig(currYear, cfg)
+			tfg = GetDefaultTonfig(currYear, tfg)
+			prevYear = currYear
 		}
 		switch tipo.Tipo {
 		case "Config":

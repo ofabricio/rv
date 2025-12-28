@@ -29,6 +29,23 @@ const (
 	CodigoOutrasDividasOnusReais = "16"
 )
 
+func GetDefaultConfig(year int, def Config) Config {
+	if v, ok := DefaultConfigByYear[year]; ok {
+		return v
+	}
+	return def
+}
+
+func GetDefaultTonfig(year int, def TonfigMap) TonfigMap {
+	if v, ok := DefaultTonfigByYear[year]; ok {
+		return v
+	}
+	return def
+}
+
+var DefaultConfigByYear = map[int]Config{}
+var DefaultTonfigByYear = map[int]TonfigMap{}
+
 type Config struct {
 	// Determina a estratégia de Preço Médio usada na Bonificação.
 	//
