@@ -53,31 +53,29 @@ func (c *Carteira) Print(w io.Writer) {
 func (c *Carteira) Consolidar(all []OperacaoOuConfig) {
 	c.Param = DefaultParam
 	var con Consolidador
-	var cfg Config = DefaultConfig
+	con.Cfg = DefaultConfig
 	for _, year := range lo.PartitionBy(all, func(v OperacaoOuConfig) int { return v.Data.Year() }) {
-		oprs := lo.FilterMap(year, func(o OperacaoOuConfig, _ int) (Operacao, bool) { return o.Opr, !o.IsCfg() })
-		cfgs := lo.FilterMap(year, func(o OperacaoOuConfig, _ int) (ConfigOpcional, bool) { return o.Cfg, o.IsCfg() })
-		cfg = lo.Reduce(cfgs, func(agg Config, c ConfigOpcional, _ int) Config { return c.Merge(agg) }, cfg)
+		cfgs, oprs := lo.FilterReject(year, func(o OperacaoOuConfig, _ int) bool { return o.IsCfg() })
+		con.Cfg = lo.Reduce(cfgs, func(agg Config, c OperacaoOuConfig, _ int) Config { return c.Cfg.Merge(agg) }, con.Cfg)
 		if len(oprs) == 0 {
 			continue
 		}
-		con.Cfg = cfg
-		var om []OperacaoMensal
-		for _, month := range lo.PartitionBy(oprs, func(o Operacao) time.Month { return o.Data.Month() }) {
-			var opc []OperacaoConsolidada
+		opa := make([]OperacaoMensal, 0, 12)
+		for _, month := range lo.PartitionBy(oprs, func(o OperacaoOuConfig) time.Month { return o.Opr.Data.Month() }) {
+			opm := make([]OperacaoConsolidada, 0, len(month))
 			for _, o := range month {
-				opc = append(opc, con.Consolidar(&o))
+				opm = append(opm, con.Consolidar(&o.Opr))
 			}
-			om = append(om, OperacaoMensal{
+			opa = append(opa, OperacaoMensal{
 				Mes: int(month[0].Data.Month()),
-				Ops: opc,
-				Cfg: cfg,
+				Ops: opm,
+				Cfg: con.Cfg,
 			})
 		}
 		c.Acoes = append(c.Acoes, OperacaoAnual{
 			Ano: oprs[0].Data.Year(),
-			Ops: om,
-			Cfg: cfg,
+			Ops: opa,
+			Cfg: con.Cfg,
 		})
 	}
 }
@@ -89,7 +87,7 @@ type OperacaoOuConfig struct {
 }
 
 func (o *OperacaoOuConfig) IsCfg() bool {
-	return !o.Cfg.Data.IsZero()
+	return o.Opr.Data.IsZero()
 }
 
 func (a Acoes) Iter() iter.Seq[OperacaoConsolidada] {
