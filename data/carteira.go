@@ -22,8 +22,8 @@ type Acoes []OperacaoAnual
 
 type OperacaoAnual struct {
 	Ano int
-	Ops []OperacaoMensal
 	Cfg Config
+	Ops []OperacaoMensal
 }
 
 type OperacaoMensal struct {
@@ -49,34 +49,39 @@ func (c *Carteira) Print(w io.Writer) {
 	p.PrintOperacoesComunsDayTrade(w)
 }
 
-func (c *Carteira) Consolidar(all []OperacaoOuConfig) {
+func (c *Carteira) Consolidar(all []OperacaoDesconsolidada) {
 	c.Param = DefaultParam
 	var con Consolidador
-	for _, year := range lo.PartitionBy(all, func(v OperacaoOuConfig) int { return v.Data.Year() }) {
+	for _, year := range lo.PartitionBy(all, func(v OperacaoDesconsolidada) int { return v.Opr.Data.Year() }) {
 		opa := make([]OperacaoMensal, 0, 12)
-		for _, month := range lo.PartitionBy(year, func(o OperacaoOuConfig) time.Month { return o.Opr.Data.Month() }) {
+		for _, month := range lo.PartitionBy(year, func(o OperacaoDesconsolidada) time.Month { return o.Opr.Data.Month() }) {
 			opm := make([]OperacaoConsolidada, 0, len(month))
 			for _, o := range month {
-				con.Cfg = o.Cfg
-				opm = append(opm, con.Consolidar(&o.Opr))
+				opm = append(opm, con.Consolidar(o))
 			}
 			opa = append(opa, OperacaoMensal{
-				Mes: int(month[0].Data.Month()),
+				Mes: int(month[0].Opr.Data.Month()),
 				Ops: opm,
 			})
 		}
 		c.Acoes = append(c.Acoes, OperacaoAnual{
-			Ano: year[0].Data.Year(),
+			Ano: year[0].Opr.Data.Year(),
+			Cfg: year[0].Cfg,
 			Ops: opa,
-			Cfg: con.Cfg,
 		})
 	}
 }
 
-type OperacaoOuConfig struct {
-	Data time.Time
-	Opr  Operacao
-	Cfg  Config
+type OperacaoDesconsolidada struct {
+	Opr Operacao
+	Cfg Config
+	Tfg Tonfig
+}
+
+type OperacaoConsolidada struct {
+	Operacao
+	Agg Agregado
+	Tfg Tonfig
 }
 
 func (a Acoes) Iter() iter.Seq[OperacaoConsolidada] {

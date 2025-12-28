@@ -18,26 +18,21 @@ func (a *Agregado) CalcPrecoMedio() {
 	}
 }
 
-type OperacaoConsolidada struct {
-	Operacao
-	Agg Agregado
-	Tfg Tonfig
-}
-
 type Consolidador struct {
-	Map map[string]Agregado
+	agr map[string]Agregado
 	Agg Agregado
 	Cfg Config
 }
 
-func (c *Consolidador) Consolidar(o *Operacao) OperacaoConsolidada {
-	if c.Map == nil {
-		c.Map = make(map[string]Agregado)
+func (c *Consolidador) Consolidar(o OperacaoDesconsolidada) OperacaoConsolidada {
+	if c.agr == nil {
+		c.agr = make(map[string]Agregado)
 	}
-	c.Agg = c.Map[o.Ticker]
-	o.Accept(c)
-	c.Map[o.Ticker] = c.Agg
-	return OperacaoConsolidada{*o, c.Agg, c.Cfg.Tonfig[o.Tipo]}
+	c.Cfg = o.Cfg
+	c.Agg = c.agr[o.Opr.Ticker]
+	o.Opr.Accept(c)
+	c.agr[o.Opr.Ticker] = c.Agg
+	return OperacaoConsolidada{o.Opr, c.Agg, o.Tfg}
 }
 
 func (c *Consolidador) VisitCompra(o *Operacao) {

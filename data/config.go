@@ -1,8 +1,6 @@
 package data
 
 import (
-	"time"
-
 	"github.com/shopspring/decimal"
 )
 
@@ -31,13 +29,6 @@ const (
 	CodigoOutrasDividasOnusReais = "16"
 )
 
-var DefaultConfig = Config{
-	AlterarPrecoMedioNaBonificacao: false,
-	LimiteVendaIsenta:              decimal.NewFromInt(20000),
-	SwingTradeIR:                   decimal.NewFromFloat(0.15),
-	Tonfig:                         DefaultTonfig,
-}
-
 type Config struct {
 	// Determina a estratégia de Preço Médio usada na Bonificação.
 	//
@@ -45,27 +36,23 @@ type Config struct {
 	// É como se você tivesse pagado o valor que recebeu de bonificação.
 	// Significa que na hora de vender você pagará menos impostos.
 	//
-	// Se false, as Bonificações NÃO vão alterar seu preço médio.
+	// Se false (padrão), as Bonificações NÃO vão alterar seu preço médio.
 	// É como se você tivesse recebido as ações de bonificação de graça.
 	// Significa que na hora de vender você pagará mais impostos.
 	//
 	// Não há consenso sobre qual estratégia é a correta.
 	// Boatos afirmam que a maioria prefere a estratégia que reduz o imposto a pagar (true).
-	// Para nunca ter problemas com a Receita Federal use (false), pois pagará mais impostos.
+	//
+	// Para nunca ter problemas com a Receita Federal use false, pois você pagará mais impostos.
 	AlterarPrecoMedioNaBonificacao bool
 
 	LimiteVendaIsenta decimal.Decimal
 	SwingTradeIR      decimal.Decimal
-
-	Tonfig TonfigMap
 }
 
 type TonfigMap map[Tipo]Tonfig
 
 type Tonfig struct {
-	Data                                 time.Time `json:",format:DateOnly"`
-	Tipo                                 Tipo
-	Nome                                 string
 	LucroTributavel                      bool
 	PrejuizoAbativel                     bool
 	BensDireitos                         GrupoCodigo
@@ -82,6 +69,14 @@ func (c Tonfig) IsDividaOnusReais() bool {
 	return c.DividaOnusReais.Codigo != ""
 }
 
+func (c Tonfig) IsRendimentoIsentoNaoTributavel() bool {
+	return c.RendimentoIsentoNaoTributavel.Codigo != ""
+}
+
+func (c Tonfig) IsRendimentoSujeitoTributacaoExclusiva() bool {
+	return c.RendimentoSujeitoTributacaoExclusiva.Codigo != ""
+}
+
 type GrupoCodigo struct {
 	Grupo  string
 	Codigo string
@@ -92,7 +87,13 @@ func (g GrupoCodigo) ID() string {
 	return g.Grupo + g.Codigo
 }
 
-var DefaultTonfig = TonfigMap{
+var DefaultConfig2025 = Config{
+	AlterarPrecoMedioNaBonificacao: false,
+	LimiteVendaIsenta:              decimal.NewFromInt(20000),
+	SwingTradeIR:                   decimal.NewFromFloat(0.15),
+}
+
+var DefaultTonfig2025 = TonfigMap{
 	COMPRA: {
 		BensDireitos: GrupoCodigo{Grupo: GrupoParticipacaoSocietaria, Codigo: CodigoAcoes},
 	},

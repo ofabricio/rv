@@ -99,26 +99,22 @@ func (c *Carteira) RendimentosIsentosNaoTributaveis() []RendimentosIsentosNaoTri
 	for _, ano := range c.Acoes {
 		var r RendimentosIsentosNaoTributaveis
 		r.Ano = ano.Ano
-		for _, ops := range it.PartitionBy(ano.Iter(), func(o OperacaoConsolidada) string { return o.Ticker }) {
-			for _, ops := range lo.PartitionBy(ops, func(o OperacaoConsolidada) string { return o.Tfg.RendimentoIsentoNaoTributavel.Codigo }) {
-				ref := lo.FirstOrEmpty(ops)
-				cfg := ref.Tfg.RendimentoIsentoNaoTributavel
-				if cfg.Codigo == "" {
-					continue
-				}
-				lucro := decimal.Zero
-				if cfg.Codigo == CodigoIsencaoAte20k {
-					lucro = ano.LucrosIsentosVenda()
-				} else {
-					lucro = iterLucros(slices.Values(ops))
-				}
-				if lucro.IsPositive() {
-					r.Rendimentos = append(r.Rendimentos, RendimentoIsentoNaoTributavel{
-						Ticker: ref.Ticker,
-						Valor:  lucro,
-						Codigo: cfg.Codigo + " ── " + cfg.Descr,
-					})
-				}
+		f := it.Filter(ano.Iter(), func(o OperacaoConsolidada) bool { return o.Tfg.IsRendimentoIsentoNaoTributavel() })
+		for _, ops := range it.PartitionBy(f, func(o OperacaoConsolidada) string { return o.Ticker + o.Tfg.RendimentoIsentoNaoTributavel.Codigo }) {
+			ref := lo.FirstOrEmpty(ops)
+			cfg := ref.Tfg.RendimentoIsentoNaoTributavel
+			lucro := decimal.Zero
+			if cfg.Codigo == CodigoIsencaoAte20k {
+				lucro = ano.LucrosIsentosVenda()
+			} else {
+				lucro = iterLucros(slices.Values(ops))
+			}
+			if lucro.IsPositive() {
+				r.Rendimentos = append(r.Rendimentos, RendimentoIsentoNaoTributavel{
+					Ticker: ref.Ticker,
+					Valor:  lucro,
+					Codigo: cfg.Codigo + " ── " + cfg.Descr,
+				})
 			}
 		}
 		if len(r.Rendimentos) > 0 {
@@ -136,21 +132,19 @@ func (c *Carteira) RendimentosSujeitosTributacaoExclusiva() []RendimentosIsentos
 	for _, ano := range c.Acoes {
 		var r RendimentosIsentosNaoTributaveis
 		r.Ano = ano.Ano
-		for _, ops := range it.PartitionBy(ano.Iter(), func(o OperacaoConsolidada) string { return o.Ticker }) {
-			for _, ops := range lo.PartitionBy(ops, func(o OperacaoConsolidada) string { return o.Tfg.RendimentoSujeitoTributacaoExclusiva.Codigo }) {
-				ref := lo.FirstOrEmpty(ops)
-				cfg := ref.Tfg.RendimentoSujeitoTributacaoExclusiva
-				if cfg.Codigo == "" {
-					continue
-				}
-				lucro := iterLucros(slices.Values(ops))
-				if lucro.IsPositive() {
-					r.Rendimentos = append(r.Rendimentos, RendimentoIsentoNaoTributavel{
-						Ticker: ref.Ticker,
-						Valor:  lucro,
-						Codigo: cfg.Codigo + " ── " + cfg.Descr,
-					})
-				}
+		f := it.Filter(ano.Iter(), func(o OperacaoConsolidada) bool { return o.Tfg.IsRendimentoSujeitoTributacaoExclusiva() })
+		for _, ops := range it.PartitionBy(f, func(o OperacaoConsolidada) string {
+			return o.Ticker + o.Tfg.RendimentoSujeitoTributacaoExclusiva.Codigo
+		}) {
+			ref := lo.FirstOrEmpty(ops)
+			cfg := ref.Tfg.RendimentoSujeitoTributacaoExclusiva
+			lucro := iterLucros(slices.Values(ops))
+			if lucro.IsPositive() {
+				r.Rendimentos = append(r.Rendimentos, RendimentoIsentoNaoTributavel{
+					Ticker: ref.Ticker,
+					Valor:  lucro,
+					Codigo: cfg.Codigo + " ── " + cfg.Descr,
+				})
 			}
 		}
 		if len(r.Rendimentos) > 0 {
