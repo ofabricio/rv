@@ -60,32 +60,6 @@ type Config struct {
 	Tonfig TonfigMap
 }
 
-type ConfigOpcional struct {
-	Data time.Time `json:",format:DateOnly"`
-	Tipo string
-
-	LimiteVendaIsenta *decimal.Decimal
-	SwingTradeIR      *decimal.Decimal
-
-	AlterarPrecoMedioNaBonificacao *bool
-}
-
-func (co *ConfigOpcional) Merge(c Config) Config {
-	if co == nil {
-		return c
-	}
-	if co.LimiteVendaIsenta != nil {
-		c.LimiteVendaIsenta = *co.LimiteVendaIsenta
-	}
-	if co.SwingTradeIR != nil {
-		c.SwingTradeIR = *co.SwingTradeIR
-	}
-	if co.AlterarPrecoMedioNaBonificacao != nil {
-		c.AlterarPrecoMedioNaBonificacao = *co.AlterarPrecoMedioNaBonificacao
-	}
-	return c
-}
-
 type TonfigMap map[Tipo]Tonfig
 
 type Tonfig struct {

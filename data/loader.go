@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 )
 
 func LoadOperacoes(file string) ([]OperacaoOuConfig, error) {
@@ -22,7 +23,8 @@ func ReadOperacoes(r io.Reader) ([]OperacaoOuConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-	var ooc []OperacaoOuConfig
+	ooc := make([]OperacaoOuConfig, 0, 128)
+	cfg := DefaultConfig
 	for line := range bytes.SplitSeq(d, []byte("\n")) {
 		line = bytes.TrimSpace(line)
 		if len(line) == 0 || bytes.HasPrefix(line, []byte("//")) {
@@ -30,23 +32,22 @@ func ReadOperacoes(r io.Reader) ([]OperacaoOuConfig, error) {
 		}
 		var tipo struct {
 			Tipo string
+			Data time.Time `json:",format:DateOnly"`
 		}
 		if err := json.Unmarshal(line, &tipo); err != nil {
 			return nil, fmt.Errorf("error: %s; content: %s", err, line)
 		}
 		switch tipo.Tipo {
 		case "Config":
-			var v ConfigOpcional
-			if err := json.Unmarshal(line, &v); err != nil {
+			if err := json.Unmarshal(line, &cfg); err != nil {
 				return nil, fmt.Errorf("error: %s; content: %s", err, line)
 			}
-			ooc = append(ooc, OperacaoOuConfig{Data: v.Data, Cfg: v})
 		default:
-			var v Operacao
-			if err := json.Unmarshal(line, &v); err != nil {
+			var opr Operacao
+			if err := json.Unmarshal(line, &opr); err != nil {
 				return nil, fmt.Errorf("error: %s; content: %s", err, line)
 			}
-			ooc = append(ooc, OperacaoOuConfig{Data: v.Data, Opr: v})
+			ooc = append(ooc, OperacaoOuConfig{Data: tipo.Data, Opr: opr, Cfg: cfg})
 		}
 	}
 	return ooc, nil

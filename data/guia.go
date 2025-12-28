@@ -32,7 +32,7 @@ func (c *Carteira) OperacoesComunsDayTrade() []RendimentosTributaveis {
 			lucroNoMesAcoes := mes.LucroTributavelOuAbativelAcoes()
 			lucroNoMesOpcao := mes.LucroTributavelOuAbativelOpcao()
 
-			if mes.TotalVendas().GreaterThan(mes.Cfg.LimiteVendaIsenta) {
+			if mes.TotalVendas().GreaterThan(ano.Cfg.LimiteVendaIsenta) {
 				lucroNoMesAcoes = lucroNoMesAcoes.Add(mes.LucroVendas())
 			}
 
@@ -43,7 +43,7 @@ func (c *Carteira) OperacoesComunsDayTrade() []RendimentosTributaveis {
 			lucroAcumuladoPelosAnos = lucroAcumuladoPelosAnos.Add(lucroNoMesAcoes).Add(lucroNoMesOpcao)
 			rtm := RendimentoTributavelMensal{Mes: mes.Mes, Lucro: lucroNoMesAcoes, LucroOp: lucroNoMesOpcao, LucroAc: lucroAcumuladoPelosAnos}
 			if lucroAcumuladoPelosAnos.IsPositive() {
-				rtm.IR = lucroAcumuladoPelosAnos.Mul(mes.Cfg.SwingTradeIR)
+				rtm.IR = lucroAcumuladoPelosAnos.Mul(ano.Cfg.SwingTradeIR)
 				lucroAcumuladoPelosAnos = decimal.Zero
 			}
 			rt.Meses = append(rt.Meses, rtm)

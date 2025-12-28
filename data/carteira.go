@@ -29,7 +29,6 @@ type OperacaoAnual struct {
 type OperacaoMensal struct {
 	Mes int
 	Ops []OperacaoConsolidada
-	Cfg Config
 }
 
 func (c *Carteira) Load(file string) {
@@ -53,27 +52,21 @@ func (c *Carteira) Print(w io.Writer) {
 func (c *Carteira) Consolidar(all []OperacaoOuConfig) {
 	c.Param = DefaultParam
 	var con Consolidador
-	con.Cfg = DefaultConfig
 	for _, year := range lo.PartitionBy(all, func(v OperacaoOuConfig) int { return v.Data.Year() }) {
-		cfgs, oprs := lo.FilterReject(year, func(o OperacaoOuConfig, _ int) bool { return o.IsCfg() })
-		con.Cfg = lo.Reduce(cfgs, func(agg Config, c OperacaoOuConfig, _ int) Config { return c.Cfg.Merge(agg) }, con.Cfg)
-		if len(oprs) == 0 {
-			continue
-		}
 		opa := make([]OperacaoMensal, 0, 12)
-		for _, month := range lo.PartitionBy(oprs, func(o OperacaoOuConfig) time.Month { return o.Opr.Data.Month() }) {
+		for _, month := range lo.PartitionBy(year, func(o OperacaoOuConfig) time.Month { return o.Opr.Data.Month() }) {
 			opm := make([]OperacaoConsolidada, 0, len(month))
 			for _, o := range month {
+				con.Cfg = o.Cfg
 				opm = append(opm, con.Consolidar(&o.Opr))
 			}
 			opa = append(opa, OperacaoMensal{
 				Mes: int(month[0].Data.Month()),
 				Ops: opm,
-				Cfg: con.Cfg,
 			})
 		}
 		c.Acoes = append(c.Acoes, OperacaoAnual{
-			Ano: oprs[0].Data.Year(),
+			Ano: year[0].Data.Year(),
 			Ops: opa,
 			Cfg: con.Cfg,
 		})
@@ -83,11 +76,7 @@ func (c *Carteira) Consolidar(all []OperacaoOuConfig) {
 type OperacaoOuConfig struct {
 	Data time.Time
 	Opr  Operacao
-	Cfg  ConfigOpcional
-}
-
-func (o *OperacaoOuConfig) IsCfg() bool {
-	return o.Opr.Data.IsZero()
+	Cfg  Config
 }
 
 func (a Acoes) Iter() iter.Seq[OperacaoConsolidada] {
@@ -141,7 +130,7 @@ func (a *OperacaoAnual) LucrosIsentosVenda() decimal.Decimal {
 	for _, mes := range a.Ops {
 		vendaNoMes := mes.TotalVendas()
 		lucroNoMes := mes.LucroVendas()
-		if vendaNoMes.LessThanOrEqual(mes.Cfg.LimiteVendaIsenta) && lucroNoMes.IsPositive() {
+		if vendaNoMes.LessThanOrEqual(a.Cfg.LimiteVendaIsenta) && lucroNoMes.IsPositive() {
 			total = total.Add(lucroNoMes)
 		}
 	}
