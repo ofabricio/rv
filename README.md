@@ -1,7 +1,7 @@
 # rv
 
 Esta ferramenta faz o controle de operações de ações do mercado brasileiro,
-gerando as guias de declaração de IR (Bens e Direitos, Operações Comuns/Day Trade, etc.)
+gerando as guias de declaração de IR (Bens e Direitos, Operações Comuns/Day Trade, etc).
 
 Se deseja usá-la **é por sua conta e risco**. :warning:
 
@@ -29,30 +29,33 @@ Operações suportadas:
   - Compra/Venda de PUT
   - Compra/Venda de CALL
 
-## Build & Run
+## Build
 
-Se tiver Go [instalado](https://go.dev/dl):
+### Com Go
 
-```sh
-git clone --depth 1 https://github.com/ofabricio/rv.git ; cd rv
-GOEXPERIMENT=jsonv2 go run .
+Tendo [Go](https://go.dev/dl) instalado:
+
+```
+curl -fsSL https://raw.githubusercontent.com/ofabricio/rv/main/db.ndjson > db.ndjson
+GOBIN=$PWD GOEXPERIMENT=jsonv2 go install github.com/ofabricio/rv@latest
 ```
 
-**Nota:** para gerar um executável use `go build` em vez de `go run .`
+Um arquivo executável `rv` aparecerá na pasta onde o comando foi executado.
 
----
+### Com Docker
 
-Se tiver docker [instalado](https://www.docker.com):
+Opção para quem tem [docker](https://www.docker.com) e não quer instalar o Go:
 
 ```sh
-git clone --depth 1 https://github.com/ofabricio/rv.git ; cd rv
-docker run --rm -v $PWD:/src -w /src -e GOEXPERIMENT=jsonv2 golang:alpine go run .
+docker run --rm -v $PWD:/src -w /src -e GOEXPERIMENT=jsonv2 golang:alpine sh -c "
+    apk add --no-cache curl &&
+    curl -fsSL https://raw.githubusercontent.com/ofabricio/rv/main/db.ndjson > db.ndjson &&
+    GOBIN=$PWD GOEXPERIMENT=jsonv2 go install github.com/ofabricio/rv@latest"
 ```
 
-**Nota:** para gerar um executável use `go build` em vez de `go run .` e adicione `-e GOOS=darwin -e GOARCH=amd64` e
-altere os [valores](https://go.dev/doc/install/source#environment) conforme seu sistema operacional.
+Um arquivo executável `rv` aparecerá na pasta onde o comando foi executado.
 
-## Como Usar
+## Como usar
 
 Basta adicionar as operações no arquivo [db.ndjson](/db.ndjson), que fica na raiz do projeto,
 rodar a ferramenta `./rv`, e ver o resultado no terminal.
@@ -65,7 +68,7 @@ Importação de notas de corretagem ou extratos da B3 também estão nos planos.
 
 Veja exemplos de uso de cada tipo de operação nos arquivos `*.give` do diretório [/data/testdata](/data/testdata).
 
-## Exemplo de Resultado
+## Exemplo de resultado
 
 ```
 $ ./rv
