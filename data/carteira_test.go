@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestStateLoad(t *testing.T) {
+func TestCarteira(t *testing.T) {
 
 	tt := []struct {
 		Give string
@@ -116,9 +116,9 @@ func TestStateLoad(t *testing.T) {
 
 			var got bytes.Buffer
 
-			var c Carteira
+			c := NewCarteira()
 			c.Load(tc.Give)
-			c.Print(&got)
+			c.Print("table", &got)
 
 			// Then.
 

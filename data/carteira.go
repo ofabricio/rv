@@ -5,6 +5,7 @@ import (
 	"io"
 	"iter"
 	"maps"
+	"os"
 	"slices"
 	"time"
 
@@ -12,6 +13,12 @@ import (
 	"github.com/samber/lo/it"
 	"github.com/shopspring/decimal"
 )
+
+func NewCarteira() *Carteira {
+	return &Carteira{
+		Param: DefaultParam,
+	}
+}
 
 type Carteira struct {
 	Acoes Acoes
@@ -32,25 +39,28 @@ type OperacaoMensal struct {
 }
 
 func (c *Carteira) Load(file string) {
-	ops, err := LoadOperacoes(file)
+	f, err := os.Open(file)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	ops, err := ReadOperacoes(f)
+	if err != nil {
+		f.Close()
+		panic(err)
+	}
+	c.Consolidar(ops)
+}
+
+func (c *Carteira) Read(r io.Reader) {
+	ops, err := ReadOperacoes(r)
 	if err != nil {
 		panic(err)
 	}
 	c.Consolidar(ops)
 }
 
-func (c *Carteira) Print(w io.Writer) {
-	p := TablePrinter{c}
-	p.PrintOperacoesComAcoes(w)
-	p.PrintBensDireitos(w)
-	p.PrintDividaOnusReais(w)
-	p.PrintRendimentosIsentosNaoTributaveis(w)
-	p.PrintRendimentosSujeitosTributacaoExclusiva(w)
-	p.PrintOperacoesComunsDayTrade(w)
-}
-
 func (c *Carteira) Consolidar(all []OperacaoDesconsolidada) {
-	c.Param = DefaultParam
 	var con Consolidador
 	for _, year := range lo.PartitionBy(all, func(v OperacaoDesconsolidada) int { return v.Opr.Data.Year() }) {
 		opa := make([]OperacaoMensal, 0, 12)
@@ -70,6 +80,31 @@ func (c *Carteira) Consolidar(all []OperacaoDesconsolidada) {
 			Ops: opa,
 		})
 	}
+}
+
+func (c *Carteira) Print(frmt string, w io.Writer) {
+	var p Printer
+	switch frmt {
+	case "table":
+		p = &TablePrinter{c}
+	case "csv":
+		p = &CSVPrinter{c}
+	}
+	p.PrintOperacoesComAcoes(w)
+	p.PrintBensDireitos(w)
+	p.PrintDividaOnusReais(w)
+	p.PrintRendimentosIsentosNaoTributaveis(w)
+	p.PrintRendimentosSujeitosTributacaoExclusiva(w)
+	p.PrintOperacoesComunsDayTrade(w)
+}
+
+type Printer interface {
+	PrintOperacoesComAcoes(io.Writer)
+	PrintBensDireitos(io.Writer)
+	PrintDividaOnusReais(io.Writer)
+	PrintRendimentosIsentosNaoTributaveis(io.Writer)
+	PrintRendimentosSujeitosTributacaoExclusiva(io.Writer)
+	PrintOperacoesComunsDayTrade(io.Writer)
 }
 
 type OperacaoDesconsolidada struct {
@@ -92,18 +127,6 @@ func (a Acoes) Iter() iter.Seq[OperacaoConsolidada] {
 					return
 				}
 			}
-		}
-	}
-}
-
-func (a Acoes) IterI() iter.Seq2[int, OperacaoConsolidada] {
-	return func(yield func(int, OperacaoConsolidada) bool) {
-		i := 0
-		for o := range a.Iter() {
-			if !yield(i, o) {
-				return
-			}
-			i++
 		}
 	}
 }

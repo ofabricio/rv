@@ -5,18 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"os"
 	"time"
 )
-
-func LoadOperacoes(file string) ([]OperacaoDesconsolidada, error) {
-	f, err := os.Open(file)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	return ReadOperacoes(f)
-}
 
 func ReadOperacoes(r io.Reader) ([]OperacaoDesconsolidada, error) {
 	d, err := io.ReadAll(r)
