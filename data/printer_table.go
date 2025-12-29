@@ -60,7 +60,7 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 			// Data
 			lo.Ternary(!o.Vencimento.IsZero(), fmt.Sprintf("%s V %s", o.Data.Format(time.DateOnly), o.Vencimento.Format(time.DateOnly)), o.Data.Format(time.DateOnly)),
 			// Operação
-			string(o.Tipo), //+lo.Ternary(o.Fator.IsPositive(), fmt.Sprintf(" (%s)", p.c.Param.FormatDecimal(o.Fator)), ""),
+			lo.Ternary(o.Fator.IsPositive(), fmt.Sprintf("%s (%s)", o.Tipo, p.c.Param.FormatDecimal(o.Fator)), string(o.Tipo)),
 			// Qtd
 			lo.Ternary(o.Fracao.IsPositive(), fmt.Sprintf("%s (%s)", o.Qtd, p.c.Param.FormatDecimal(o.Fracao)), o.Qtd.String()),
 			// V. Unit.
