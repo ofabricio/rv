@@ -57,7 +57,7 @@ Um arquivo executável `rv` aparecerá na pasta onde o comando foi executado.
 
 ## Como usar
 
-Basta adicionar as operações no arquivo [db.ndjson](/db.ndjson), que fica na raiz do projeto,
+Basta adicionar as operações no arquivo [db.ndjson](/db.ndjson), que está na raiz do projeto,
 rodar a ferramenta `./rv`, e ver o resultado no terminal.
 A ferramenta fará todos os cálculos necessários e mostrará o resultado final consolidado.
 Veja um exemplo abaixo.
