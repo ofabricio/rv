@@ -3,8 +3,10 @@ package data
 import (
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/aquasecurity/table"
+	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 )
 
@@ -13,12 +15,25 @@ type PrinterTable struct {
 }
 
 func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
-	rb := OperacoesRowBuilder{Param: p.c.Param}
 	t := table.New(w)
 	t.SetRowLines(false)
 	t.SetHeaderColSpans(0, 13)
 	t.AddHeaders("OPERAÇÕES COM AÇÕES")
-	t.AddHeaders(rb.Headers()...)
+	t.AddHeaders(
+		"ID",
+		"Ticker",
+		"Data",
+		"Operação",
+		"Qtd",
+		"V. Unit.",
+		"V. Total",
+		"Taxas",
+		"Qtd Ac.",
+		"V. Total Ac.",
+		"PM",
+		"V. Compra",
+		"Lucro",
+	)
 	t.SetAlignment(
 		table.AlignLeft,  // ID
 		table.AlignLeft,  // Data
@@ -34,8 +49,37 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 		table.AlignRight, // V. Compra
 		table.AlignRight, // Lucro
 	)
+	i := 0
 	for o := range p.c.Acoes.Iter() {
-		t.AddRow(rb.Build(&o)...)
+		i++
+		t.AddRow(
+			// ID
+			fmt.Sprint(i),
+			// Ticker
+			lo.Ternary(o.Serie != "", fmt.Sprintf("%s %s", o.Ticker, o.Serie), o.Ticker),
+			// Data
+			lo.Ternary(!o.Vencimento.IsZero(), fmt.Sprintf("%s V %s", o.Data.Format(time.DateOnly), o.Vencimento.Format(time.DateOnly)), o.Data.Format(time.DateOnly)),
+			// Operação
+			string(o.Tipo), //+lo.Ternary(o.Fator.IsPositive(), fmt.Sprintf(" (%s)", p.c.Param.FormatDecimal(o.Fator)), ""),
+			// Qtd
+			lo.Ternary(o.Fracao.IsPositive(), fmt.Sprintf("%s (%s)", o.Qtd, p.c.Param.FormatDecimal(o.Fracao)), o.Qtd.String()),
+			// V. Unit.
+			lo.Ternary(o.ValorExercicio.IsPositive(), fmt.Sprintf("(E %s) %s", p.c.Param.FormatDecimal(o.ValorExercicio), p.c.Param.FormatDecimal(o.ValorUnitario)), p.c.Param.FormatDecimal(o.ValorUnitario)),
+			// V. Total
+			lo.Ternary(o.ValorExercicio.IsPositive(), fmt.Sprintf("(E %s) %s", p.c.Param.FormatDecimal(o.ValorExercicio.Mul(o.Qtd)), p.c.Param.FormatDecimal(o.ValorTotal)), p.c.Param.FormatDecimal(o.ValorTotal)),
+			// Taxas
+			p.c.Param.FormatDecimal(o.Taxas),
+			// Qtd Ac.
+			o.Agg.Qtd.String(),
+			// V. Total Ac.
+			p.c.Param.FormatDecimal(o.Agg.ValorTotal),
+			// PM
+			p.c.Param.FormatDecimal(o.Agg.PrecoMedio),
+			// V. Compra
+			p.c.Param.FormatDecimal(o.ValorCompra),
+			// Lucro
+			lo.Ternary(o.Premio.IsPositive(), fmt.Sprintf("(P %s) %s", p.c.Param.FormatDecimal(o.Premio), p.c.Param.FormatDecimal(o.Lucro)), p.c.Param.FormatDecimal(o.Lucro)),
+		)
 	}
 	t.Render()
 }
