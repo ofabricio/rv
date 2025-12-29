@@ -8,11 +8,11 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-type TablePrinter struct {
+type PrinterTable struct {
 	c *Carteira
 }
 
-func (p *TablePrinter) PrintOperacoesComAcoes(w io.Writer) {
+func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 	rb := OperacoesRowBuilder{Param: p.c.Param}
 	t := table.New(w)
 	t.SetRowLines(false)
@@ -40,7 +40,7 @@ func (p *TablePrinter) PrintOperacoesComAcoes(w io.Writer) {
 	t.Render()
 }
 
-func (p *TablePrinter) PrintBensDireitos(w io.Writer) {
+func (p *PrinterTable) PrintBensDireitos(w io.Writer) {
 
 	for _, bens := range p.c.BensDireitos() {
 		t := table.New(w)
@@ -68,7 +68,7 @@ func (p *TablePrinter) PrintBensDireitos(w io.Writer) {
 	}
 }
 
-func (p *TablePrinter) PrintDividaOnusReais(w io.Writer) {
+func (p *PrinterTable) PrintDividaOnusReais(w io.Writer) {
 
 	for _, bens := range p.c.DividaOnusReais() {
 		t := table.New(w)
@@ -96,7 +96,7 @@ func (p *TablePrinter) PrintDividaOnusReais(w io.Writer) {
 	}
 }
 
-func (p *TablePrinter) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {
+func (p *PrinterTable) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {
 	for _, ano := range p.c.RendimentosIsentosNaoTributaveis() {
 		t := table.New(w)
 		t.SetRowLines(false)
@@ -111,7 +111,7 @@ func (p *TablePrinter) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {
 	}
 }
 
-func (p *TablePrinter) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) {
+func (p *PrinterTable) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) {
 	for _, ano := range p.c.RendimentosSujeitosTributacaoExclusiva() {
 		t := table.New(w)
 		t.SetRowLines(false)
@@ -126,7 +126,7 @@ func (p *TablePrinter) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) 
 	}
 }
 
-func (p *TablePrinter) PrintOperacoesComunsDayTrade(w io.Writer) {
+func (p *PrinterTable) PrintOperacoesComunsDayTrade(w io.Writer) {
 	for _, r := range p.c.OperacoesComunsDayTrade() {
 		t := table.New(w)
 		t.SetRowLines(false)

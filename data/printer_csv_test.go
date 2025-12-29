@@ -23,7 +23,7 @@ ID,Ticker,Data,Operação,Qtd,V. Unit.,V. Total,Taxas,Qtd Ac.,V. Total Ac.,PM,V.
 
 	var got strings.Builder
 
-	p := CSVPrinter{c}
+	p := PrinterCSV{c}
 	p.PrintOperacoesComAcoes(&got)
 
 	if got := strings.TrimSpace(got.String()); got != then {

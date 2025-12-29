@@ -83,12 +83,19 @@ func (c *Carteira) Consolidar(all []OperacaoDesconsolidada) {
 }
 
 func (c *Carteira) Print(frmt string, w io.Writer) {
-	var p Printer
+	var p interface {
+		PrintOperacoesComAcoes(io.Writer)
+		PrintBensDireitos(io.Writer)
+		PrintDividaOnusReais(io.Writer)
+		PrintRendimentosIsentosNaoTributaveis(io.Writer)
+		PrintRendimentosSujeitosTributacaoExclusiva(io.Writer)
+		PrintOperacoesComunsDayTrade(io.Writer)
+	}
 	switch frmt {
 	case "table":
-		p = &TablePrinter{c}
+		p = &PrinterTable{c}
 	case "csv":
-		p = &CSVPrinter{c}
+		p = &PrinterCSV{c}
 	}
 	p.PrintOperacoesComAcoes(w)
 	p.PrintBensDireitos(w)
@@ -96,15 +103,6 @@ func (c *Carteira) Print(frmt string, w io.Writer) {
 	p.PrintRendimentosIsentosNaoTributaveis(w)
 	p.PrintRendimentosSujeitosTributacaoExclusiva(w)
 	p.PrintOperacoesComunsDayTrade(w)
-}
-
-type Printer interface {
-	PrintOperacoesComAcoes(io.Writer)
-	PrintBensDireitos(io.Writer)
-	PrintDividaOnusReais(io.Writer)
-	PrintRendimentosIsentosNaoTributaveis(io.Writer)
-	PrintRendimentosSujeitosTributacaoExclusiva(io.Writer)
-	PrintOperacoesComunsDayTrade(io.Writer)
 }
 
 type OperacaoDesconsolidada struct {

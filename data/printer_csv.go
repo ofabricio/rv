@@ -5,11 +5,11 @@ import (
 	"io"
 )
 
-type CSVPrinter struct {
+type PrinterCSV struct {
 	c *Carteira
 }
 
-func (p *CSVPrinter) PrintOperacoesComAcoes(w io.Writer) {
+func (p *PrinterCSV) PrintOperacoesComAcoes(w io.Writer) {
 	rb := OperacoesRowBuilder{Param: p.c.Param}
 	csv := csv.NewWriter(w)
 	csv.Write(rb.Headers())
@@ -19,12 +19,12 @@ func (p *CSVPrinter) PrintOperacoesComAcoes(w io.Writer) {
 	csv.Flush()
 }
 
-func (p *CSVPrinter) PrintBensDireitos(w io.Writer) {}
+func (p *PrinterCSV) PrintBensDireitos(w io.Writer) {}
 
-func (p *CSVPrinter) PrintDividaOnusReais(w io.Writer) {}
+func (p *PrinterCSV) PrintDividaOnusReais(w io.Writer) {}
 
-func (p *CSVPrinter) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {}
+func (p *PrinterCSV) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {}
 
-func (p *CSVPrinter) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) {}
+func (p *PrinterCSV) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) {}
 
-func (p *CSVPrinter) PrintOperacoesComunsDayTrade(w io.Writer) {}
+func (p *PrinterCSV) PrintOperacoesComunsDayTrade(w io.Writer) {}
