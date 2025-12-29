@@ -31,36 +31,36 @@ Operações suportadas:
 
 ## Build
 
+Escolha abaixo uma das opções de compilação da ferramenta; um arquivo
+executável `rv` aparecerá na pasta onde o comando for executado.
+
 ### Com Go
 
 Tendo [Go](https://go.dev/dl) instalado:
 
 ```
-curl -fsSL https://raw.githubusercontent.com/ofabricio/rv/main/db.ndjson > db.ndjson
-GOBIN=$PWD GOEXPERIMENT=jsonv2 go install github.com/ofabricio/rv@latest
+GOBIN=$(pwd) GOEXPERIMENT=jsonv2 go install github.com/ofabricio/rv@latest
 ```
-
-Um arquivo executável `rv` aparecerá na pasta onde o comando foi executado.
 
 ### Com Docker
 
-Opção para quem tem [docker](https://www.docker.com) e não quer instalar o Go:
+Tendo [Docker](https://www.docker.com) instalado:
 
 ```sh
-docker run --rm -v $PWD:/src -w /src -e GOEXPERIMENT=jsonv2 golang:alpine sh -c "
-    apk add --no-cache curl &&
-    curl -fsSL https://raw.githubusercontent.com/ofabricio/rv/main/db.ndjson > db.ndjson &&
-    GOBIN=$PWD GOEXPERIMENT=jsonv2 go install github.com/ofabricio/rv@latest"
+docker run --rm -v $(pwd):/src -w /src golang:alpine sh -c "
+    GOOS=darwin GOARCH=arm64 GOEXPERIMENT=jsonv2 go install github.com/ofabricio/rv@latest && cp /go/bin/*/rv ."
 ```
 
-Um arquivo executável `rv` aparecerá na pasta onde o comando foi executado.
+**Nota:** altere `GOOS=darwin GOARCH=arm64` para os [valores](https://go.dev/doc/install/source#environment) correspondentes ao seu sistema operacional.
 
 ## Como usar
 
-Basta adicionar as operações no arquivo [db.ndjson](/db.ndjson), que está na raiz do projeto,
+Basta adicionar as operações no arquivo [db.ndjson](/db.ndjson), que está na raiz deste repositório,
 rodar a ferramenta `./rv`, e ver o resultado no terminal.
-A ferramenta fará todos os cálculos necessários e mostrará o resultado final consolidado.
+A ferramenta fará os cálculos necessários e mostrará o resultado final consolidado.
 Veja um exemplo abaixo.
+
+**Nota:** o arquivo `db.ndjson` precisa estar na mesma pasta do executável; copie o arquivo modelo deste repositório ou crie um arquivo novo.
 
 No momento só é possível adicionar as operações editando manualmente o arquivo `db.ndjson`.
 No futuro será criado uma interface no terminal ou no navegador para facilitar isso.

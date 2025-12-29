@@ -2,6 +2,7 @@ package data
 
 import (
 	"cmp"
+	"fmt"
 	"io"
 	"iter"
 	"maps"
@@ -41,7 +42,8 @@ type OperacaoMensal struct {
 func (c *Carteira) Load(file string) {
 	f, err := os.Open(file)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 	defer f.Close()
 	ops, err := ReadOperacoes(f)
