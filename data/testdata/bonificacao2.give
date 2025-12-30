@@ -14,4 +14,4 @@
 { "Data": "2025-12-19", "Ticker": "KLBN11", "Tipo": "Bonificação", "Qtd": "6.9", "ValorUnitario": "64.72824944610" }
 { "Data": "2025-12-19", "Ticker": "KLBN4", "Tipo": "Bonificação", "Qtd": "3.6", "ValorUnitario": "12.94564988922" }
 { "Data": "2025-12-19", "Ticker": "KLBN3", "Tipo": "Bonificação", "Qtd": "0.9", "ValorUnitario": "64.72824944610" }
-{ "Data": "2025-12-30", "Ticker": "KLBN3", "Tipo": "Leilão Fração", "Fracao": "0.9", "ValorUnitario": "64.72824944610" }
+{ "Data": "2025-12-30", "Ticker": "KLBN3", "Tipo": "Leilão Fração", "Qtd": "0.9", "ValorUnitario": "64.72824944610" }

@@ -52,9 +52,9 @@ func (p *PrinterCSV) PrintOperacoesComAcoes(w io.Writer) {
 			// Operação
 			string(o.Tipo),
 			// Qtd
-			o.Qtd.String(),
+			o.QtdInt().String(),
 			// Fração
-			p.c.Param.FormatDecimal(o.Fracao),
+			p.c.Param.FormatDecimal(o.QtdFracao()),
 			// V. Unit.
 			p.c.Param.FormatDecimal(o.ValorUnitario),
 			// V. Total

@@ -10,13 +10,12 @@ type Operacao struct {
 	Data          time.Time `json:",format:DateOnly"` // Opções: Data de Compra/Venda da opção ou Data de Vencimento ou Data de Encerramento.
 	Ticker        string
 	Tipo          Tipo
-	Qtd           decimal.Decimal
-	ValorUnitario decimal.Decimal // Opções: Strike.
+	Qtd           decimal.Decimal // Pode estar fracionada em algumas operações como Bonificação, Grupamento, Desdobramento e Leilão Fração.
+	ValorUnitario decimal.Decimal // Também é o Strike nas Opções.
 	Taxas         decimal.Decimal
 	ValorTotal    decimal.Decimal
 	ValorCompra   decimal.Decimal
 	Lucro         decimal.Decimal // Lucro ou prejuízo da operação de Venda, Bonificação, Grupamento, Subscrição Compra, Redução de Capital, Opções.
-	Fracao        decimal.Decimal // Parte fracionária resultante de Bonificação, Grupamento ou Desdobramento.
 	Fator         decimal.Decimal // Fator de Bonificação, Grupamento ou Desdobramento e Redução de Capital.
 
 	// Opções.
@@ -32,6 +31,14 @@ func (o *Operacao) IsAcao() bool {
 
 func (o *Operacao) IsOpcao() bool {
 	return o.Serie != ""
+}
+
+func (o *Operacao) QtdInt() decimal.Decimal {
+	return o.Qtd.Truncate(0)
+}
+
+func (o *Operacao) QtdFracao() decimal.Decimal {
+	return o.Qtd.Sub(o.Qtd.Truncate(0))
 }
 
 type Operavel interface {

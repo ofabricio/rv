@@ -54,16 +54,11 @@ func (c *Consolidador) VisitVenda(o *Operacao) {
 
 func (c *Consolidador) VisitBonificacao(o *Operacao) {
 	if !o.Fator.IsZero() {
-		o.Fracao = c.Agg.Qtd.Mul(o.Fator)
-		o.Qtd = o.Fracao.Truncate(0)
-		o.Fracao = o.Fracao.Sub(o.Qtd).Abs()
-	} else {
-		o.Fracao = o.Qtd.Sub(o.Qtd.Truncate(0)).Abs()
-		o.Qtd = o.Qtd.Truncate(0)
+		o.Qtd = c.Agg.Qtd.Mul(o.Fator)
 	}
-	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd)
+	o.ValorTotal = o.ValorUnitario.Mul(o.QtdInt())
 	o.Lucro = o.ValorTotal
-	c.Agg.Qtd = c.Agg.Qtd.Add(o.Qtd)
+	c.Agg.Qtd = c.Agg.Qtd.Add(o.QtdInt())
 	c.Agg.ValorTotal = o.ValorTotal.Add(c.Agg.ValorTotal)
 	if c.Cfg.AlterarPrecoMedioNaBonificacao {
 		c.Agg.CalcPrecoMedio()
@@ -76,16 +71,17 @@ func (c *Consolidador) VisitDesdobramento(o *Operacao) {
 }
 
 func (c *Consolidador) VisitGrupamento(o *Operacao) {
-	qtdAcFra := c.Agg.Qtd.Div(o.Fator)
-	qtdAcInt := qtdAcFra.Truncate(0)
-	o.Fracao = qtdAcFra.Sub(qtdAcInt)
+	qtdAc := c.Agg.Qtd.Div(o.Fator)
+	qtdAcInt := qtdAc.Truncate(0)
+	o.Qtd = qtdAc.Sub(qtdAcInt)
 	c.Agg.Qtd = qtdAcInt
-	c.Agg.ValorTotal = qtdAcInt.Mul(c.Agg.ValorTotal.Div(qtdAcFra))
+	c.Agg.ValorTotal = qtdAcInt.Mul(c.Agg.ValorTotal.Div(qtdAc))
 	c.Agg.CalcPrecoMedio()
 }
 
 func (c *Consolidador) VisitLeilaoFracao(o *Operacao) {
-	o.Lucro = o.ValorUnitario.Mul(o.Fracao).Sub(c.Agg.PrecoMedio.Mul(o.Fracao))
+	f := o.QtdFracao()
+	o.Lucro = o.ValorUnitario.Mul(f).Sub(c.Agg.PrecoMedio.Mul(f))
 }
 
 func (*Consolidador) VisitDividendos(*Operacao) {}

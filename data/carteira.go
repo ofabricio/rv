@@ -242,7 +242,7 @@ func iterLucroTributavelOuAbativelOpcao(ops iter.Seq[OperacaoConsolidada]) decim
 }
 
 func iterQtd(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
-	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal { return agg.Add(o.Qtd) }, decimal.Zero)
+	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal { return agg.Add(o.QtdInt()) }, decimal.Zero)
 }
 
 func iterFilterByTipo(ops iter.Seq[OperacaoConsolidada], t Tipo) iter.Seq[OperacaoConsolidada] {

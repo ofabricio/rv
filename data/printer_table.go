@@ -62,7 +62,7 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 			// Operação
 			lo.Ternary(o.Fator.IsPositive(), fmt.Sprintf("%s (%s)", o.Tipo, p.c.Param.FormatDecimal(o.Fator)), string(o.Tipo)),
 			// Qtd
-			lo.Ternary(o.Fracao.IsPositive(), fmt.Sprintf("%s (%s)", o.Qtd, p.c.Param.FormatDecimal(o.Fracao)), o.Qtd.String()),
+			lo.Ternary(o.QtdFracao().IsPositive(), fmt.Sprintf("%s (%s)", o.QtdInt(), p.c.Param.FormatDecimal(o.QtdFracao())), o.QtdInt().String()),
 			// V. Unit.
 			lo.Ternary(o.ValorExercicio.IsPositive(), fmt.Sprintf("(E %s) %s", p.c.Param.FormatDecimal(o.ValorExercicio), p.c.Param.FormatDecimal(o.ValorUnitario)), p.c.Param.FormatDecimal(o.ValorUnitario)),
 			// V. Total

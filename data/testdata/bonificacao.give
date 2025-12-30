@@ -12,8 +12,8 @@
 // Testa leilão de fração com Prejuízo.
 { "Data": "2025-04-01", "Ticker": "BBSE3", "Tipo": "Compra", "Qtd": "99", "ValorUnitario": "50" }
 { "Data": "2025-04-02", "Ticker": "BBSE3", "Tipo": "Bonificação", "Fator": "0.3", "ValorUnitario": "10" }
-{ "Data": "2025-04-03", "Ticker": "BBSE3", "Tipo": "Leilão Fração", "Fracao": "0.7", "ValorUnitario": "10" }
+{ "Data": "2025-04-03", "Ticker": "BBSE3", "Tipo": "Leilão Fração", "Qtd": "0.7", "ValorUnitario": "10" }
 // Testa leilão de fração com Lucro.
 { "Data": "2025-05-01", "Ticker": "CXSE3", "Tipo": "Compra", "Qtd": "99", "ValorUnitario": "50" }
 { "Data": "2025-05-02", "Ticker": "CXSE3", "Tipo": "Bonificação", "Fator": "0.3", "ValorUnitario": "10" }
-{ "Data": "2025-05-03", "Ticker": "CXSE3", "Tipo": "Leilão Fração", "Fracao": "0.7", "ValorUnitario": "55" }
+{ "Data": "2025-05-03", "Ticker": "CXSE3", "Tipo": "Leilão Fração", "Qtd": "0.7", "ValorUnitario": "55" }
