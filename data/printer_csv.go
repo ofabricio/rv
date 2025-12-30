@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"time"
 
 	"github.com/samber/lo"
 )
@@ -46,9 +45,9 @@ func (p *PrinterCSV) PrintOperacoesComAcoes(w io.Writer) {
 			// Série
 			o.Serie,
 			// Data
-			o.Data.Format(time.DateOnly),
+			p.c.Param.FormatDate(o.Data),
 			// Vencimento
-			lo.Ternary(o.Vencimento.IsZero(), "", o.Vencimento.Format(time.DateOnly)),
+			lo.Ternary(o.Vencimento.IsZero(), "", p.c.Param.FormatDate(o.Vencimento)),
 			// Operação
 			string(o.Tipo),
 			// Qtd

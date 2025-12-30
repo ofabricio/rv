@@ -33,3 +33,7 @@ func (p *Param) FormatDecimal(v decimal.Decimal) string {
 	}
 	return strings.Replace(v.StringFixed(2), ".", p.SeparadorDecimal, 1)
 }
+
+func (p *Param) FormatDate(t time.Time) string {
+	return t.Format(p.FormatoData)
+}

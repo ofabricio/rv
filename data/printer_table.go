@@ -3,7 +3,6 @@ package data
 import (
 	"fmt"
 	"io"
-	"time"
 
 	"github.com/aquasecurity/table"
 	"github.com/samber/lo"
@@ -58,7 +57,7 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 			// Ticker
 			lo.Ternary(o.Serie != "", fmt.Sprintf("%s %s", o.Ticker, o.Serie), o.Ticker),
 			// Data
-			lo.Ternary(!o.Vencimento.IsZero(), fmt.Sprintf("%s V %s", o.Data.Format(time.DateOnly), o.Vencimento.Format(time.DateOnly)), o.Data.Format(time.DateOnly)),
+			lo.Ternary(!o.Vencimento.IsZero(), fmt.Sprintf("%s V %s", p.c.Param.FormatDate(o.Data), p.c.Param.FormatDate(o.Vencimento)), p.c.Param.FormatDate(o.Data)),
 			// Operação
 			lo.Ternary(o.Fator.IsPositive(), fmt.Sprintf("%s (%s)", o.Tipo, p.c.Param.FormatDecimal(o.Fator)), string(o.Tipo)),
 			// Qtd
