@@ -117,6 +117,17 @@ func (c *Carteira) RendimentosIsentosNaoTributaveis() []RendimentosIsentosNaoTri
 				})
 			}
 		}
+		if reembolsos := slices.Collect(iterFilterByTipo(ano.Iter(), REEMBOLSO)); len(reembolsos) > 1 {
+			if lucros := iterLucros(slices.Values(reembolsos)); lucros.IsPositive() {
+				ref := lo.FirstOrEmpty(reembolsos)
+				cfg := ref.Tfg.RendimentoIsentoNaoTributavel
+				r.Totais = append(r.Totais, RendimentoIsentoNaoTributavel{
+					Ticker: "TOTAL",
+					Valor:  lucros,
+					Codigo: cfg.Codigo + " ── " + cfg.Descr,
+				})
+			}
+		}
 		if len(r.Rendimentos) > 0 {
 			rs = append(rs, r)
 		}
@@ -158,6 +169,7 @@ func (c *Carteira) RendimentosSujeitosTributacaoExclusiva() []RendimentosIsentos
 type RendimentosIsentosNaoTributaveis struct {
 	Ano         int
 	Rendimentos []RendimentoIsentoNaoTributavel
+	Totais      []RendimentoIsentoNaoTributavel
 }
 
 type RendimentoIsentoNaoTributavel struct {

@@ -150,6 +150,10 @@ func (p *PrinterTable) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {
 		for _, r := range ano.Rendimentos {
 			t.AddRow(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo)
 		}
+		t.SetFooterAlignment(table.AlignLeft, table.AlignRight, table.AlignLeft)
+		for _, r := range ano.Totais {
+			t.AddFooters(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo)
+		}
 		t.Render()
 	}
 }
