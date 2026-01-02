@@ -36,6 +36,7 @@ type OperacaoAnual struct {
 
 type OperacaoMensal struct {
 	Mes int
+	Cfg Config
 	Ops []OperacaoConsolidada
 }
 
@@ -73,6 +74,7 @@ func (c *Carteira) Consolidar(all []OperacaoDesconsolidada) {
 			}
 			opa = append(opa, OperacaoMensal{
 				Mes: int(month[0].Opr.Data.Month()),
+				Cfg: year[0].Cfg,
 				Ops: opm,
 			})
 		}
@@ -156,9 +158,8 @@ func (a *OperacaoMensal) Iter() iter.Seq[OperacaoConsolidada] {
 func (a *OperacaoAnual) LucrosIsentosVenda() decimal.Decimal {
 	total := decimal.Zero
 	for _, mes := range a.Ops {
-		vendaNoMes := mes.TotalVendas()
 		lucroNoMes := mes.LucroVendas()
-		if vendaNoMes.LessThanOrEqual(a.Cfg.LimiteVendaIsenta) && lucroNoMes.IsPositive() {
+		if mes.IsVendaIsenta() && lucroNoMes.IsPositive() {
 			total = total.Add(lucroNoMes)
 		}
 	}
@@ -175,6 +176,10 @@ func (m *OperacaoMensal) LucroTributavelOuAbativelAcoes() decimal.Decimal {
 
 func (m *OperacaoMensal) LucroTributavelOuAbativelOpcao() decimal.Decimal {
 	return iterLucroTributavelOuAbativelOpcao(m.Iter())
+}
+
+func (m *OperacaoMensal) IsVendaIsenta() bool {
+	return m.TotalVendas().LessThanOrEqual(m.Cfg.LimiteVendaIsenta)
 }
 
 func (m *OperacaoMensal) TotalVendas() decimal.Decimal {

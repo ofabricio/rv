@@ -94,6 +94,10 @@ func (c Tonfig) IsRendimentoSujeitoTributacaoExclusiva() bool {
 	return c.RendimentoSujeitoTributacaoExclusiva.Codigo != ""
 }
 
+func (c Tonfig) IsLimiteIsentoAplicavel() bool {
+	return c.RendimentoIsentoNaoTributavel.Codigo == CodigoIsencaoAte20k
+}
+
 type GrupoCodigo struct {
 	Grupo  string
 	Codigo string
@@ -118,6 +122,7 @@ var DefaultTonfig2025 = TonfigMap{
 		BensDireitos:                  GrupoCodigo{Grupo: GrupoParticipacaoSocietaria, Codigo: CodigoAcoes},
 		RendimentoIsentoNaoTributavel: GrupoCodigo{Codigo: CodigoIsencaoAte20k, Descr: "Isenção até R$ 20000"},
 		PrejuizoAbativel:              true,
+		LucroTributavel:               true,
 	},
 	BONIFICACAO: {
 		BensDireitos:                  GrupoCodigo{Grupo: GrupoParticipacaoSocietaria, Codigo: CodigoAcoes},

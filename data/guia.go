@@ -32,8 +32,8 @@ func (c *Carteira) OperacoesComunsDayTrade() []RendimentosTributaveis {
 			lucroNoMesAcoes := mes.LucroTributavelOuAbativelAcoes()
 			lucroNoMesOpcao := mes.LucroTributavelOuAbativelOpcao()
 
-			if mes.TotalVendas().GreaterThan(ano.Cfg.LimiteVendaIsenta) {
-				lucroNoMesAcoes = lucroNoMesAcoes.Add(mes.LucroVendas())
+			if mes.IsVendaIsenta() && mes.LucroVendas().IsPositive() {
+				lucroNoMesAcoes = lucroNoMesAcoes.Sub(mes.LucroVendas())
 			}
 
 			if lucroNoMesAcoes.IsZero() && lucroNoMesOpcao.IsZero() {
@@ -99,17 +99,18 @@ func (c *Carteira) RendimentosIsentosNaoTributaveis() []RendimentosIsentosNaoTri
 	for _, ano := range c.Acoes {
 		var r RendimentosIsentosNaoTributaveis
 		r.Ano = ano.Ano
+		lucroIsentoVendas := ano.LucrosIsentosVenda()
 		f := it.Filter(ano.Iter(), func(o OperacaoConsolidada) bool { return o.Tfg.IsRendimentoIsentoNaoTributavel() })
 		for _, ops := range it.PartitionBy(f, func(o OperacaoConsolidada) string { return o.Ticker + o.Tfg.RendimentoIsentoNaoTributavel.Codigo }) {
 			ref := lo.FirstOrEmpty(ops)
-			cfg := ref.Tfg.RendimentoIsentoNaoTributavel
 			lucro := decimal.Zero
-			if cfg.Codigo == CodigoIsencaoAte20k {
-				lucro = ano.LucrosIsentosVenda()
+			if ref.Tfg.IsLimiteIsentoAplicavel() {
+				lucro = lucroIsentoVendas
 			} else {
 				lucro = iterLucros(slices.Values(ops))
 			}
 			if lucro.IsPositive() {
+				cfg := ref.Tfg.RendimentoIsentoNaoTributavel
 				r.Rendimentos = append(r.Rendimentos, RendimentoIsentoNaoTributavel{
 					Ticker: ref.Ticker,
 					Valor:  lucro,
