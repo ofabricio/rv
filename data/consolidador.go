@@ -81,7 +81,7 @@ func (c *Consolidador) VisitGrupamento(o *Operacao) {
 
 func (c *Consolidador) VisitLeilaoFracao(o *Operacao) {
 	f := o.QtdFracao()
-	o.Lucro = o.ValorUnitario.Mul(f).Sub(c.Agg.PrecoMedio.Mul(f))
+	o.Lucro = o.ValorUnitario.Sub(c.Agg.PrecoMedio).Mul(f)
 }
 
 func (*Consolidador) VisitDividendos(*Operacao) {}
