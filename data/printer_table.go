@@ -179,7 +179,27 @@ func (p *PrinterTable) PrintOperacoesComunsDayTrade(w io.Writer) {
 		t.SetRowLines(false)
 		t.SetHeaderColSpans(0, 1, 4)
 		t.AddHeaders(fmt.Sprintf("%s %d", r.Ticker, r.Ano), "OPERAÇÕES COMUNS/DAY-TRADE")
-		t.AddHeaders("Mês", "Ações", "Opções", "Acumulado", fmt.Sprintf("IR (%s%%)", r.SwingTradeIR.Mul(decimal.NewFromInt(100))))
+		t.AddHeaders("Mês", "Ações", "Opções", "Acumulado", fmt.Sprintf("IR (%s%%)", r.IR.Mul(decimal.NewFromInt(100))))
+		t.SetAlignment(table.AlignCenter, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight)
+		for _, v := range r.Meses {
+			t.AddRow(
+				translateMonth[v.Mes],
+				p.c.Param.FormatDecimal(v.Lucro),
+				p.c.Param.FormatDecimal(v.LucroOp),
+				p.c.Param.FormatDecimal(v.LucroAc),
+				p.c.Param.FormatDecimal(v.IR),
+			)
+		}
+		t.SetFooterAlignment(table.AlignCenter, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight)
+		t.AddFooters("Total", p.c.Param.FormatDecimal(r.TotalAcoes), p.c.Param.FormatDecimal(r.TotalOpcao), p.c.Param.FormatDecimal(r.TotalAc), p.c.Param.FormatDecimal(r.TotalIR))
+		t.Render()
+	}
+	for _, r := range p.c.OperacoesComunsDayTradeDayTrade() {
+		t := table.New(w)
+		t.SetRowLines(false)
+		t.SetHeaderColSpans(0, 1, 4)
+		t.AddHeaders(fmt.Sprintf("%s %d", r.Ticker, r.Ano), "OPERAÇÕES COMUNS/DAY-TRADE [DAY TRADE]")
+		t.AddHeaders("Mês", "Ações", "Opções", "Acumulado", fmt.Sprintf("IR (%s%%)", r.IR.Mul(decimal.NewFromInt(100))))
 		t.SetAlignment(table.AlignCenter, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight)
 		for _, v := range r.Meses {
 			t.AddRow(

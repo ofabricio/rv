@@ -108,6 +108,10 @@ func TestCarteira(t *testing.T) {
 			Give: "testdata/opcoes_serie_duplicada.give",
 			Then: "testdata/opcoes_serie_duplicada.then",
 		},
+		{
+			Give: "testdata/day_trade.give",
+			Then: "testdata/day_trade.then",
+		},
 	}
 
 	for _, tc := range tt {

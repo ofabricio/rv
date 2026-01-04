@@ -155,35 +155,44 @@ func (a *OperacaoMensal) Iter() iter.Seq[OperacaoConsolidada] {
 	}
 }
 
-func (a *OperacaoAnual) LucrosIsentosVenda() decimal.Decimal {
+func iterLucrosIsentosVenda(ops iter.Seq[OperacaoConsolidada], limit decimal.Decimal) decimal.Decimal {
 	total := decimal.Zero
-	for _, mes := range a.Ops {
-		lucroNoMes := mes.LucroVendas()
-		if mes.IsVendaIsenta() && lucroNoMes.IsPositive() {
+	for _, mes := range it.PartitionBy(ops, func(o OperacaoConsolidada) time.Month { return o.Data.Month() }) {
+		lucroNoMes := iterLucroVendas(slices.Values(mes))
+		if iterTotalVendas(slices.Values(mes)).LessThanOrEqual(limit) && lucroNoMes.IsPositive() {
 			total = total.Add(lucroNoMes)
 		}
 	}
 	return total
 }
 
-func (m *OperacaoMensal) LucroVendas() decimal.Decimal {
-	return iterLucroVendas(m.Iter())
+func (a *OperacaoAnual) SwingTrades() iter.Seq[OperacaoConsolidada] {
+	return it.Filter(a.Iter(), func(o OperacaoConsolidada) bool { return !o.DayTrade })
 }
 
-func (m *OperacaoMensal) LucroTributavelOuAbativelAcoes() decimal.Decimal {
-	return iterLucroTributavelOuAbativelAcao(m.Iter())
+func (a *OperacaoAnual) DayTrades() iter.Seq[OperacaoConsolidada] {
+	return it.Filter(a.Iter(), func(o OperacaoConsolidada) bool { return o.DayTrade })
 }
 
-func (m *OperacaoMensal) LucroTributavelOuAbativelOpcao() decimal.Decimal {
-	return iterLucroTributavelOuAbativelOpcao(m.Iter())
+func (m *OperacaoMensal) SwingTrades() iter.Seq[OperacaoConsolidada] {
+	return it.Filter(m.Iter(), func(o OperacaoConsolidada) bool { return !o.DayTrade })
 }
 
-func (m *OperacaoMensal) IsVendaIsenta() bool {
-	return m.TotalVendas().LessThanOrEqual(m.Cfg.LimiteVendaIsenta)
+func (m *OperacaoMensal) DayTrades() iter.Seq[OperacaoConsolidada] {
+	return it.Filter(m.Iter(), func(o OperacaoConsolidada) bool { return o.DayTrade })
 }
 
-func (m *OperacaoMensal) TotalVendas() decimal.Decimal {
-	return iterTotalVendas(m.Iter())
+func (m *OperacaoMensal) IsVendaIsenta(ops iter.Seq[OperacaoConsolidada]) bool {
+	return iterTotalVendas(ops).LessThanOrEqual(m.Cfg.LimiteVendaIsenta)
+}
+
+func (m *OperacaoMensal) LucroTributavelOuAbativelAcoes(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
+	lucroNoMesAcoes := iterLucroTributavelOuAbativelAcao(ops)
+	lucroVendas := iterLucroVendas(ops)
+	if m.IsVendaIsenta(ops) && lucroVendas.IsPositive() {
+		lucroNoMesAcoes = lucroNoMesAcoes.Sub(lucroVendas)
+	}
+	return lucroNoMesAcoes
 }
 
 func sortKeysIter[K cmp.Ordered, V any](m map[K]V) iter.Seq2[K, V] {
@@ -216,6 +225,24 @@ func iterLucroVendas(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
 
 func iterLucros(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
 	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal { return agg.Add(o.Lucro) }, decimal.Zero)
+}
+
+func iterLucrosAcoes(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
+	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal {
+		if o.IsAcao() {
+			return agg.Add(o.Lucro)
+		}
+		return agg
+	}, decimal.Zero)
+}
+
+func iterLucrosOpcoes(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
+	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal {
+		if o.IsOpcao() {
+			return agg.Add(o.Lucro)
+		}
+		return agg
+	}, decimal.Zero)
 }
 
 func iterLucroTributavelOuAbativelAcao(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {

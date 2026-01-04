@@ -65,6 +65,7 @@ type Config struct {
 
 	LimiteVendaIsenta decimal.Decimal
 	SwingTradeIR      decimal.Decimal
+	DayTradeIR        decimal.Decimal
 }
 
 type TonfigMap map[Tipo]Tonfig
@@ -112,6 +113,7 @@ var DefaultConfig2025 = Config{
 	AlterarPrecoMedioNaBonificacao: false,
 	LimiteVendaIsenta:              decimal.NewFromInt(20000),
 	SwingTradeIR:                   decimal.NewFromFloat(0.15),
+	DayTradeIR:                     decimal.NewFromFloat(0.20),
 }
 
 var DefaultTonfig2025 = TonfigMap{

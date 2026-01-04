@@ -23,6 +23,9 @@ type Operacao struct {
 	ValorExercicio decimal.Decimal // Valor da ação no dia do exercício da opção.
 	Premio         decimal.Decimal
 	Vencimento     time.Time `json:",format:DateOnly"`
+
+	// DayTrade.
+	DayTrade bool
 }
 
 func (o *Operacao) IsAcao() bool {
