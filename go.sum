@@ -2,8 +2,16 @@ github.com/aquasecurity/table v1.11.0 h1:SzgCAv7dZcv/gyAyzxorS6OgEk7w/WU5iT2pStI
 github.com/aquasecurity/table v1.11.0/go.mod h1:eqOmvjjB7AhXFgFqpJUEE/ietg7RrMSJZXyTN8E/wZw=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/ledongthuc/pdf v0.0.0-20250511090121-5959a4027728 h1:QwWKgMY28TAXaDl+ExRDqGQltzXqN/xypdKP86niVn8=
+github.com/ledongthuc/pdf v0.0.0-20250511090121-5959a4027728/go.mod h1:1fEHWurg7pvf5SG6XNE5Q8UZmOwex51Mkx3SLhrW5B4=
 github.com/mattn/go-runewidth v0.0.16 h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6TULQc=
 github.com/mattn/go-runewidth v0.0.16/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
+github.com/ofabricio/bnf v0.0.0-20241125205821-a5821a2bf079 h1:Jfq2uaQfOx1/JO7U4gaUkD6AuOnDvqSCh1Nv8YnBRjQ=
+github.com/ofabricio/bnf v0.0.0-20241125205821-a5821a2bf079/go.mod h1:LpsQvPmQCdC5Ok1P6U4XfNnneE9SZ5715YbCVwqKhwE=
+github.com/ofabricio/bnf v0.0.0-20260106204618-8cc6777e4743 h1:xllEeSEvS+/SGHBbM+DpboTvTRCgQZ/aTW42mQ4xM4I=
+github.com/ofabricio/bnf v0.0.0-20260106204618-8cc6777e4743/go.mod h1:LpsQvPmQCdC5Ok1P6U4XfNnneE9SZ5715YbCVwqKhwE=
+github.com/ofabricio/scan v0.0.0-20241122215634-a35d2e549c63 h1:DkUFuNvndlNKerBA5WFYVZKXTb2J93XwvIo6X/J/2ko=
+github.com/ofabricio/scan v0.0.0-20241122215634-a35d2e549c63/go.mod h1:1V+jT+s4Hc66+GxylfkZhQltpLML0b4d47JFnYuasPU=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=

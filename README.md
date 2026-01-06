@@ -29,6 +29,9 @@ Operações suportadas:
   - Compra/Venda de PUT
   - Compra/Venda de CALL
 
+- Importação de Notas de Corretagem
+  - Clear Corretora
+
 ## Build
 
 Escolha abaixo uma das opções de compilação da ferramenta; um arquivo

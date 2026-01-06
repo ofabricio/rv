@@ -20,7 +20,14 @@ func (c *Carteira) CommandLine() {
 	flag.StringVar(&c.Param.FormatoData, "date-format", "2006-01-02", "formato de data (ex. 02/01/2006)")
 	flag.BoolVar(&c.Param.MostrarValorExato, "exact-value", false, "mostra valores exatos (ex. 0,14952765 em vez de 0,15)")
 
+	nota := flag.Bool("notas", false, "importa notas de corretagem de arquivos pdf que estiverem no diretório corrente")
+
 	flag.Parse()
+
+	if *nota {
+		ImportarNotas(os.Stdout)
+		os.Exit(0)
+	}
 
 	c.Load(*file)
 	c.Print(*frmt, os.Stdout)

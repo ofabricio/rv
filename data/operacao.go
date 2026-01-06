@@ -10,22 +10,22 @@ type Operacao struct {
 	Data          time.Time `json:",format:DateOnly"` // Opções: Data de Compra/Venda da opção ou Data de Vencimento ou Data de Encerramento.
 	Ticker        string
 	Tipo          Tipo
-	Qtd           decimal.Decimal // Pode estar fracionada em algumas operações como Bonificação, Grupamento, Desdobramento e Leilão Fração.
-	ValorUnitario decimal.Decimal // Também é o Strike nas Opções.
-	Taxas         decimal.Decimal
-	ValorTotal    decimal.Decimal
-	ValorCompra   decimal.Decimal
-	Lucro         decimal.Decimal // Lucro ou prejuízo da operação de Venda, Bonificação, Grupamento, Subscrição Compra, Redução de Capital, Opções.
-	Fator         decimal.Decimal // Fator de Bonificação, Grupamento ou Desdobramento e Redução de Capital.
+	Qtd           decimal.Decimal `json:",omitzero"` // Pode estar fracionada em algumas operações como Bonificação, Grupamento, Desdobramento e Leilão Fração.
+	ValorUnitario decimal.Decimal `json:",omitzero"` // Também é o Strike nas Opções.
+	Taxas         decimal.Decimal `json:",omitzero"`
+	ValorTotal    decimal.Decimal `json:",omitzero"`
+	ValorCompra   decimal.Decimal `json:",omitzero"`
+	Lucro         decimal.Decimal `json:",omitzero"` // Lucro ou prejuízo da operação de Venda, Bonificação, Grupamento, Subscrição Compra, Redução de Capital, Opções.
+	Fator         decimal.Decimal `json:",omitzero"` // Fator de Bonificação, Grupamento ou Desdobramento e Redução de Capital.
 
 	// Opções.
-	Serie          string
-	ValorExercicio decimal.Decimal // Valor da ação no dia do exercício da opção.
-	Premio         decimal.Decimal
-	Vencimento     time.Time `json:",format:DateOnly"`
+	Serie          string          `json:",omitempty"`
+	ValorExercicio decimal.Decimal `json:",omitzero"` // Valor da ação no dia do exercício da opção.
+	Premio         decimal.Decimal `json:",omitzero"`
+	Vencimento     time.Time       `json:",omitzero,format:DateOnly"`
 
 	// DayTrade.
-	DayTrade bool
+	DayTrade bool `json:"DayTrade,omitzero"`
 }
 
 func (o *Operacao) IsAcao() bool {
