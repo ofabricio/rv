@@ -1,0 +1,16 @@
+// Caso de teste tirado de https://www.youtube.com/watch?v=o01gZHzGx4M
+// Situação 1
+{ "Data": "2025-01-01", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "10", "Taxas": "0.50" }
+{ "Data": "2025-01-02", "Ticker": "PETR4", "Tipo": "Venda", "Qtd": "100", "ValorUnitario": "15", "Taxas": "0.70" }
+// Situação 2
+{ "Data": "2025-02-01", "Ticker": "VALE3", "Tipo": "Compra", "Qtd": "5", "ValorUnitario": "10", "Taxas": "0.50" }
+{ "Data": "2025-02-02", "Ticker": "VALE3", "Tipo": "Compra", "Qtd": "6", "ValorUnitario": "11", "Taxas": "0.55" }
+{ "Data": "2025-02-03", "Ticker": "VALE3", "Tipo": "Compra", "Qtd": "8", "ValorUnitario": "12", "Taxas": "0.60" }
+{ "Data": "2025-02-04", "Ticker": "VALE3", "Tipo": "Venda", "Qtd": "19", "ValorUnitario": "15", "Taxas": "0.80" }
+// Situação 3
+{ "Data": "2025-03-01", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "5", "ValorUnitario": "10", "Taxas": "0.50" }
+{ "Data": "2025-03-02", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "8", "ValorUnitario": "11", "Taxas": "0.55" }
+{ "Data": "2025-03-03", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "6", "ValorUnitario": "12", "Taxas": "0.60" }
+{ "Data": "2025-03-04", "Ticker": "KLBN4", "Tipo": "Venda", "Qtd": "5", "ValorUnitario": "12", "Taxas": "0.50" }
+{ "Data": "2025-03-05", "Ticker": "KLBN4", "Tipo": "Venda", "Qtd": "6", "ValorUnitario": "12.50", "Taxas": "0.55" }
+{ "Data": "2025-03-06", "Ticker": "KLBN4", "Tipo": "Venda", "Qtd": "8", "ValorUnitario": "13", "Taxas": "0.60" }
