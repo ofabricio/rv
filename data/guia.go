@@ -16,14 +16,16 @@ func (c *Carteira) DividaOnusReais() []BemDireito {
 	return c.bensDireitos(&DividaOnusReaisStrategy{Param: &c.Param})
 }
 
-func (c *Carteira) OperacoesComunsDayTrade() []RendimentosTributaveis {
+func (c *Carteira) OperacoesComunsDayTradeSwingTrade() []RendimentosTributaveis {
 	ir := func(ano OperacaoAnual) decimal.Decimal {
 		return ano.Cfg.SwingTradeIR
 	}
 	lucros := func(mes OperacaoMensal) (decimal.Decimal, decimal.Decimal) {
-		swng := mes.SwingTrades()
-		lucroNoMesAcoes := mes.LucroTributavelOuAbativelAcoes(swng)
-		lucroNoMesOpcao := iterLucroTributavelOuAbativelOpcao(swng)
+		swng := iterSwingTrades(mes.Iter())
+		acoes := filterAcoes(swng)
+		opcao := filterOpcao(swng)
+		lucroNoMesAcoes := iterLucroTributavelOuAbativel(acoes).Sub(LucroIsentoVendaMes(acoes, mes.Cfg.LimiteVendaIsenta))
+		lucroNoMesOpcao := iterLucroTributavelOuAbativel(opcao)
 		return lucroNoMesAcoes, lucroNoMesOpcao
 	}
 	return c.operacoesComunsDayTrade(ir, lucros)
@@ -34,9 +36,9 @@ func (c *Carteira) OperacoesComunsDayTradeDayTrade() []RendimentosTributaveis {
 		return ano.Cfg.DayTradeIR
 	}
 	lucros := func(mes OperacaoMensal) (decimal.Decimal, decimal.Decimal) {
-		dayt := mes.DayTrades()
-		lucroNoMesAcoes := iterLucrosAcoes(dayt)
-		lucroNoMesOpcao := iterLucrosOpcoes(dayt)
+		dayt := iterDayTrades(mes.Iter())
+		lucroNoMesAcoes := iterLucrosPejuizos(filterAcoes(dayt))
+		lucroNoMesOpcao := iterLucrosPejuizos(filterOpcao(dayt))
 		return lucroNoMesAcoes, lucroNoMesOpcao
 	}
 	return c.operacoesComunsDayTrade(ir, lucros)
@@ -120,12 +122,13 @@ func (c *Carteira) RendimentosIsentosNaoTributaveis() []RendimentosIsentosNaoTri
 	for _, ano := range c.Acoes {
 		var r RendimentosIsentosNaoTributaveis
 		r.Ano = ano.Ano
-		f := it.Filter(ano.SwingTrades(), func(o OperacaoConsolidada) bool { return o.Tfg.IsRendimentoIsentoNaoTributavel() })
-		for _, ops := range it.PartitionBy(f, func(o OperacaoConsolidada) string { return o.Ticker + o.Tfg.RendimentoIsentoNaoTributavel.Codigo }) {
+		rnIseTri := it.Filter(iterSwingTrades(ano.Iter()), func(o OperacaoConsolidada) bool { return o.Tfg.IsRendimentoIsentoNaoTributavel() })
+		byTicker := it.PartitionBy(rnIseTri, func(o OperacaoConsolidada) string { return o.Ticker + o.Tfg.RendimentoIsentoNaoTributavel.Codigo })
+		for _, ops := range byTicker {
 			ref := lo.FirstOrEmpty(ops)
 			lucro := decimal.Zero
 			if ref.Tfg.IsLimiteIsentoAplicavel() {
-				lucro = iterLucrosIsentosVenda(slices.Values(ops), ano.Cfg.LimiteVendaIsenta)
+				lucro = LucroIsentoVendaAno(slices.Values(ops), ano.Cfg.LimiteVendaIsenta)
 			} else {
 				lucro = iterLucros(slices.Values(ops))
 			}
@@ -170,7 +173,7 @@ func (c *Carteira) RendimentosSujeitosTributacaoExclusiva() []RendimentosIsentos
 		}) {
 			ref := lo.FirstOrEmpty(ops)
 			cfg := ref.Tfg.RendimentoSujeitoTributacaoExclusiva
-			lucro := iterLucros(slices.Values(ops))
+			lucro := iterLucrosPejuizos(slices.Values(ops))
 			if lucro.IsPositive() {
 				r.Rendimentos = append(r.Rendimentos, RendimentoIsentoNaoTributavel{
 					Ticker: ref.Ticker,

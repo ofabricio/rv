@@ -65,7 +65,9 @@ type Config struct {
 
 	LimiteVendaIsenta decimal.Decimal
 	SwingTradeIR      decimal.Decimal
+	SwingTradeIRRF    decimal.Decimal // Dedo Duro.
 	DayTradeIR        decimal.Decimal
+	DayTradeIRRF      decimal.Decimal // Dedo Duro.
 }
 
 type TonfigMap map[Tipo]Tonfig
@@ -113,7 +115,9 @@ var DefaultConfig2025 = Config{
 	AlterarPrecoMedioNaBonificacao: false,
 	LimiteVendaIsenta:              decimal.NewFromInt(20000),
 	SwingTradeIR:                   decimal.NewFromFloat(0.15),
+	SwingTradeIRRF:                 decimal.NewFromFloat(0.005),
 	DayTradeIR:                     decimal.NewFromFloat(0.20),
+	DayTradeIRRF:                   decimal.NewFromFloat(0.01),
 }
 
 var DefaultTonfig2025 = TonfigMap{

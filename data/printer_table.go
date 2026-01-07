@@ -174,7 +174,7 @@ func (p *PrinterTable) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) 
 }
 
 func (p *PrinterTable) PrintOperacoesComunsDayTrade(w io.Writer) {
-	for _, r := range p.c.OperacoesComunsDayTrade() {
+	for _, r := range p.c.OperacoesComunsDayTradeSwingTrade() {
 		t := table.New(w)
 		t.SetRowLines(false)
 		t.SetHeaderColSpans(0, 1, 4)

@@ -155,44 +155,27 @@ func (a *OperacaoMensal) Iter() iter.Seq[OperacaoConsolidada] {
 	}
 }
 
-func iterLucrosIsentosVenda(ops iter.Seq[OperacaoConsolidada], limit decimal.Decimal) decimal.Decimal {
-	total := decimal.Zero
+func LucroIsentoVendaAno(ops iter.Seq[OperacaoConsolidada], limit decimal.Decimal) decimal.Decimal {
+	lucros := decimal.Zero
 	for _, mes := range it.PartitionBy(ops, func(o OperacaoConsolidada) time.Month { return o.Data.Month() }) {
-		lucroNoMes := iterLucroVendas(slices.Values(mes))
-		if iterTotalVendas(slices.Values(mes)).LessThanOrEqual(limit) && lucroNoMes.IsPositive() {
-			total = total.Add(lucroNoMes)
-		}
+		lucros = lucros.Add(LucroIsentoVendaMes(slices.Values(mes), limit))
 	}
-	return total
+	return lucros
 }
 
-func (a *OperacaoAnual) SwingTrades() iter.Seq[OperacaoConsolidada] {
-	return it.Filter(a.Iter(), func(o OperacaoConsolidada) bool { return !o.DayTrade })
-}
-
-func (a *OperacaoAnual) DayTrades() iter.Seq[OperacaoConsolidada] {
-	return it.Filter(a.Iter(), func(o OperacaoConsolidada) bool { return o.DayTrade })
-}
-
-func (m *OperacaoMensal) SwingTrades() iter.Seq[OperacaoConsolidada] {
-	return it.Filter(m.Iter(), func(o OperacaoConsolidada) bool { return !o.DayTrade })
-}
-
-func (m *OperacaoMensal) DayTrades() iter.Seq[OperacaoConsolidada] {
-	return it.Filter(m.Iter(), func(o OperacaoConsolidada) bool { return o.DayTrade })
-}
-
-func (m *OperacaoMensal) IsVendaIsenta(ops iter.Seq[OperacaoConsolidada]) bool {
-	return iterTotalVendas(ops).LessThanOrEqual(m.Cfg.LimiteVendaIsenta)
-}
-
-func (m *OperacaoMensal) LucroTributavelOuAbativelAcoes(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
-	lucroNoMesAcoes := iterLucroTributavelOuAbativelAcao(ops)
-	lucroVendas := iterLucroVendas(ops)
-	if m.IsVendaIsenta(ops) && lucroVendas.IsPositive() {
-		lucroNoMesAcoes = lucroNoMesAcoes.Sub(lucroVendas)
+func LucroIsentoVendaMes(ops iter.Seq[OperacaoConsolidada], limit decimal.Decimal) decimal.Decimal {
+	if iterTotalVendas(ops).LessThanOrEqual(limit) {
+		return iterLucroVendas(ops)
 	}
-	return lucroNoMesAcoes
+	return decimal.Zero
+}
+
+func iterSwingTrades(ops iter.Seq[OperacaoConsolidada]) iter.Seq[OperacaoConsolidada] {
+	return it.Filter(ops, func(o OperacaoConsolidada) bool { return !o.DayTrade })
+}
+
+func iterDayTrades(ops iter.Seq[OperacaoConsolidada]) iter.Seq[OperacaoConsolidada] {
+	return it.Filter(ops, func(o OperacaoConsolidada) bool { return o.DayTrade })
 }
 
 func sortKeysIter[K cmp.Ordered, V any](m map[K]V) iter.Seq2[K, V] {
@@ -211,10 +194,6 @@ func sortKeys[K cmp.Ordered, V any](m map[K]V) []K {
 	return keys
 }
 
-func iterValorTotal(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
-	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal { return agg.Add(o.ValorTotal) }, decimal.Zero)
-}
-
 func iterTotalVendas(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
 	return iterValorTotal(iterFilterByTipo(ops, VENDA))
 }
@@ -223,54 +202,33 @@ func iterLucroVendas(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
 	return iterLucros(iterFilterByTipo(ops, VENDA))
 }
 
-func iterLucros(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
+func iterLucrosPejuizos(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
 	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal { return agg.Add(o.Lucro) }, decimal.Zero)
 }
 
-func iterLucrosAcoes(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
+func iterLucros(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
 	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal {
-		if o.IsAcao() {
+		if o.Lucro.IsPositive() {
 			return agg.Add(o.Lucro)
 		}
 		return agg
 	}, decimal.Zero)
 }
 
-func iterLucrosOpcoes(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
+func iterLucroTributavelOuAbativel(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
 	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal {
-		if o.IsOpcao() {
+		if o.Tfg.LucroTributavel && o.Lucro.IsPositive() {
+			return agg.Add(o.Lucro)
+		}
+		if o.Tfg.PrejuizoAbativel && o.Lucro.IsNegative() {
 			return agg.Add(o.Lucro)
 		}
 		return agg
 	}, decimal.Zero)
 }
 
-func iterLucroTributavelOuAbativelAcao(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
-	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal {
-		if o.IsAcao() {
-			if o.Tfg.LucroTributavel && o.Lucro.IsPositive() {
-				return agg.Add(o.Lucro)
-			}
-			if o.Tfg.PrejuizoAbativel && o.Lucro.IsNegative() {
-				return agg.Add(o.Lucro)
-			}
-		}
-		return agg
-	}, decimal.Zero)
-}
-
-func iterLucroTributavelOuAbativelOpcao(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
-	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal {
-		if o.IsOpcao() {
-			if o.Tfg.LucroTributavel && o.Lucro.IsPositive() {
-				return agg.Add(o.Lucro)
-			}
-			if o.Tfg.PrejuizoAbativel && o.Lucro.IsNegative() {
-				return agg.Add(o.Lucro)
-			}
-		}
-		return agg
-	}, decimal.Zero)
+func iterValorTotal(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
+	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal { return agg.Add(o.ValorTotal) }, decimal.Zero)
 }
 
 func iterQtd(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
@@ -279,4 +237,12 @@ func iterQtd(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
 
 func iterFilterByTipo(ops iter.Seq[OperacaoConsolidada], t Tipo) iter.Seq[OperacaoConsolidada] {
 	return it.Filter(ops, func(o OperacaoConsolidada) bool { return o.Tipo == t })
+}
+
+func filterAcoes(ops iter.Seq[OperacaoConsolidada]) iter.Seq[OperacaoConsolidada] {
+	return it.Filter(ops, func(o OperacaoConsolidada) bool { return o.IsAcao() })
+}
+
+func filterOpcao(ops iter.Seq[OperacaoConsolidada]) iter.Seq[OperacaoConsolidada] {
+	return it.Filter(ops, func(o OperacaoConsolidada) bool { return o.IsOpcao() })
 }
