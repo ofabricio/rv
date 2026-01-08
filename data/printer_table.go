@@ -148,11 +148,11 @@ func (p *PrinterTable) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {
 		t.AddHeaders("Ticker", "Valor", "Código")
 		t.SetAlignment(table.AlignLeft, table.AlignRight, table.AlignLeft)
 		for _, r := range ano.Rendimentos {
-			t.AddRow(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo)
+			t.AddRow(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo+" ── "+r.Descr)
 		}
 		t.SetFooterAlignment(table.AlignLeft, table.AlignRight, table.AlignLeft)
 		for _, r := range ano.Totais {
-			t.AddFooters(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo)
+			t.AddFooters(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo+" ── "+r.Descr)
 		}
 		t.Render()
 	}

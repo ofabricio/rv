@@ -124,11 +124,13 @@ func (c *Carteira) RendimentosIsentosNaoTributaveis() []RendimentosIsentosNaoTri
 		r.Ano = ano.Ano
 		rnIseTri := it.Filter(iterSwingTrades(ano.Iter()), func(o OperacaoConsolidada) bool { return o.Tfg.IsRendimentoIsentoNaoTributavel() })
 		byTicker := it.PartitionBy(rnIseTri, func(o OperacaoConsolidada) string { return o.Ticker + o.Tfg.RendimentoIsentoNaoTributavel.Codigo })
+		totalLucroIsentoVendas := decimal.Zero
 		for _, ops := range byTicker {
 			ref := lo.FirstOrEmpty(ops)
 			lucro := decimal.Zero
 			if ref.Tfg.IsLimiteIsentoAplicavel() {
 				lucro = LucroIsentoVendaAno(slices.Values(ops), ano.Cfg.LimiteVendaIsenta)
+				totalLucroIsentoVendas = totalLucroIsentoVendas.Add(lucro)
 			} else {
 				lucro = iterLucros(slices.Values(ops))
 			}
@@ -137,7 +139,8 @@ func (c *Carteira) RendimentosIsentosNaoTributaveis() []RendimentosIsentosNaoTri
 				r.Rendimentos = append(r.Rendimentos, RendimentoIsentoNaoTributavel{
 					Ticker: ref.Ticker,
 					Valor:  lucro,
-					Codigo: cfg.Codigo + " ── " + cfg.Descr,
+					Codigo: cfg.Codigo,
+					Descr:  cfg.Descr,
 				})
 			}
 		}
@@ -146,11 +149,20 @@ func (c *Carteira) RendimentosIsentosNaoTributaveis() []RendimentosIsentosNaoTri
 				ref := lo.FirstOrEmpty(reembolsos)
 				cfg := ref.Tfg.RendimentoIsentoNaoTributavel
 				r.Totais = append(r.Totais, RendimentoIsentoNaoTributavel{
-					Ticker: "TOTAL",
+					Ticker: "Total",
 					Valor:  lucros,
-					Codigo: cfg.Codigo + " ── " + cfg.Descr,
+					Codigo: cfg.Codigo,
+					Descr:  cfg.Descr,
 				})
 			}
+		}
+		if totalLucroIsentoVendas.IsPositive() {
+			r.Totais = append(r.Totais, RendimentoIsentoNaoTributavel{
+				Ticker: "Total",
+				Valor:  totalLucroIsentoVendas,
+				Codigo: CodigoIsencaoAte20k,
+				Descr:  "Isenção até R$ 20000",
+			})
 		}
 		if len(r.Rendimentos) > 0 {
 			rs = append(rs, r)
@@ -200,4 +212,5 @@ type RendimentoIsentoNaoTributavel struct {
 	Ticker string
 	Valor  decimal.Decimal
 	Codigo string
+	Descr  string
 }
