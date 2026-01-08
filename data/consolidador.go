@@ -44,10 +44,15 @@ func (c *Consolidador) VisitCompra(o *Operacao) {
 }
 
 func (c *Consolidador) VisitVenda(o *Operacao) {
-	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Sub(o.Taxas)
-	o.IRRF = o.ValorTotal.Mul(c.Cfg.SwingTradeIRRF).Div(decimal.NewFromInt(100))
+	valorTotal := o.ValorUnitario.Mul(o.Qtd)
+	o.ValorTotal = valorTotal.Sub(o.Taxas)
 	o.ValorCompra = c.Agg.PrecoMedio.Mul(o.Qtd)
 	o.Lucro = o.ValorTotal.Add(o.Premio.Mul(o.Qtd)).Sub(o.ValorCompra)
+	if o.DayTrade {
+		o.IRRF = o.Lucro.Mul(c.Cfg.DayTradeIRRF)
+	} else {
+		o.IRRF = valorTotal.Mul(c.Cfg.SwingTradeIRRF)
+	}
 	c.Agg.Qtd = c.Agg.Qtd.Sub(o.Qtd)
 	c.Agg.ValorTotal = c.Agg.ValorTotal.Sub(o.ValorCompra)
 	c.Agg.CalcPrecoMedio()

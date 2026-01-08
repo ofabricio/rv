@@ -1,0 +1,7 @@
+// Caso de teste tirado de https://ajuda.nelogica.com.br/hc/pt-br/articles/360052124371-Saiba-como-%C3%A9-o-c%C3%A1lculo-do-IR-sobre-os-lucros-das-suas-opera%C3%A7%C3%B5es-e-como-gerar-DARFs
+// Day Trade
+{ "Data" : "2025-01-01", "Ticker" : "VALE3", "Tipo" : "Compra", "Qtd" : "3700", "ValorUnitario" : "17.00", "DayTrade": true }
+{ "Data" : "2025-01-01", "Ticker" : "VALE3", "Tipo" : "Venda", "Qtd" : "3700", "ValorUnitario" : "17.75", "Taxas": "188", "DayTrade": true }
+// Swing Trade
+{ "Data" : "2025-01-01", "Ticker" : "PETR4", "Tipo" : "Compra", "Qtd" : "100", "ValorUnitario" : "222.25" }
+{ "Data" : "2025-01-01", "Ticker" : "PETR4", "Tipo" : "Venda", "Qtd" : "100", "ValorUnitario" : "250.00", "Taxas": "188" }

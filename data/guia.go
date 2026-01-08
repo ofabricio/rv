@@ -17,34 +17,39 @@ func (c *Carteira) DividaOnusReais() []BemDireito {
 }
 
 func (c *Carteira) OperacoesComunsDayTradeSwingTrade() []RendimentosTributaveis {
-	ir := func(ano OperacaoAnual) decimal.Decimal {
-		return ano.Cfg.SwingTradeIR
+	ir := func(ano OperacaoAnual) (decimal.Decimal, decimal.Decimal) {
+		return ano.Cfg.SwingTradeIR, ano.Cfg.SwingTradeIRRF
 	}
-	lucros := func(mes OperacaoMensal) (decimal.Decimal, decimal.Decimal) {
+	lucros := func(mes OperacaoMensal) (decimal.Decimal, decimal.Decimal, decimal.Decimal) {
 		swng := iterSwingTrades(mes.Iter())
 		acoes := filterAcoes(swng)
 		opcao := filterOpcao(swng)
-		lucroNoMesAcoes := iterLucroTributavelOuAbativel(acoes).Sub(LucroIsentoVendaMes(acoes, mes.Cfg.LimiteVendaIsenta))
+		lucroIsento := LucroIsentoVendaMes(acoes, mes.Cfg.LimiteVendaIsenta)
+		lucroNoMesAcoes := iterLucroTributavelOuAbativel(acoes).Sub(lucroIsento)
 		lucroNoMesOpcao := iterLucroTributavelOuAbativel(opcao)
-		return lucroNoMesAcoes, lucroNoMesOpcao
+		irrf := iterIRRF(acoes).Add(iterIRRF(opcao)).Sub(IRRFIsentoVendaMes(acoes, mes.Cfg.LimiteVendaIsenta))
+		return lucroNoMesAcoes, lucroNoMesOpcao, irrf
 	}
 	return c.operacoesComunsDayTrade(ir, lucros)
 }
 
 func (c *Carteira) OperacoesComunsDayTradeDayTrade() []RendimentosTributaveis {
-	ir := func(ano OperacaoAnual) decimal.Decimal {
-		return ano.Cfg.DayTradeIR
+	ir := func(ano OperacaoAnual) (decimal.Decimal, decimal.Decimal) {
+		return ano.Cfg.DayTradeIR, ano.Cfg.DayTradeIRRF
 	}
-	lucros := func(mes OperacaoMensal) (decimal.Decimal, decimal.Decimal) {
+	lucros := func(mes OperacaoMensal) (decimal.Decimal, decimal.Decimal, decimal.Decimal) {
 		dayt := iterDayTrades(mes.Iter())
-		lucroNoMesAcoes := iterLucrosPejuizos(filterAcoes(dayt))
-		lucroNoMesOpcao := iterLucrosPejuizos(filterOpcao(dayt))
-		return lucroNoMesAcoes, lucroNoMesOpcao
+		acoes := filterAcoes(dayt)
+		opcao := filterOpcao(dayt)
+		lucroNoMesAcoes := iterLucrosPejuizos(acoes)
+		lucroNoMesOpcao := iterLucrosPejuizos(opcao)
+		irrf := iterIRRF(acoes).Add(iterIRRF(opcao))
+		return lucroNoMesAcoes, lucroNoMesOpcao, irrf
 	}
 	return c.operacoesComunsDayTrade(ir, lucros)
 }
 
-func (c *Carteira) operacoesComunsDayTrade(ir func(OperacaoAnual) decimal.Decimal, lucros func(OperacaoMensal) (decimal.Decimal, decimal.Decimal)) []RendimentosTributaveis {
+func (c *Carteira) operacoesComunsDayTrade(ir func(OperacaoAnual) (decimal.Decimal, decimal.Decimal), lucros func(OperacaoMensal) (decimal.Decimal, decimal.Decimal, decimal.Decimal)) []RendimentosTributaveis {
 
 	var rts []RendimentosTributaveis
 
@@ -53,27 +58,36 @@ func (c *Carteira) operacoesComunsDayTrade(ir func(OperacaoAnual) decimal.Decima
 
 		var rt RendimentosTributaveis
 		rt.Ano = ano.Ano
-		rt.IR = ir(ano)
+		rt.IR, rt.IRRF = ir(ano)
 
 		for _, mes := range ano.Ops {
 
-			lucroNoMesAcoes, lucroNoMesOpcao := lucros(mes)
+			lucroNoMesAcoes, lucroNoMesOpcao, irrf := lucros(mes)
 
 			if lucroNoMesAcoes.IsZero() && lucroNoMesOpcao.IsZero() {
 				continue
 			}
 
 			lucroAcumuladoPelosAnos = lucroAcumuladoPelosAnos.Add(lucroNoMesAcoes).Add(lucroNoMesOpcao)
-			rtm := RendimentoTributavelMensal{Mes: mes.Mes, Lucro: lucroNoMesAcoes, LucroOp: lucroNoMesOpcao, LucroAc: lucroAcumuladoPelosAnos}
+			rtm := RendimentoTributavelMensal{
+				Mes:     mes.Mes,
+				Lucro:   lucroNoMesAcoes,
+				LucroOp: lucroNoMesOpcao,
+				LucroAc: lucroAcumuladoPelosAnos,
+				IRRF:    irrf,
+			}
 			if lucroAcumuladoPelosAnos.IsPositive() {
-				rtm.IR = lucroAcumuladoPelosAnos.Mul(ir(ano))
+				rtm.IR = lucroAcumuladoPelosAnos.Mul(rt.IR)
 				lucroAcumuladoPelosAnos = decimal.Zero
 			}
+			rtm.DARF = rtm.IR.Sub(rtm.IRRF)
 			rt.Meses = append(rt.Meses, rtm)
 			rt.TotalAcoes = rt.TotalAcoes.Add(lucroNoMesAcoes)
 			rt.TotalOpcao = rt.TotalOpcao.Add(lucroNoMesOpcao)
 			rt.TotalAc = lucroAcumuladoPelosAnos
 			rt.TotalIR = rt.TotalIR.Add(rtm.IR)
+			rt.TotalIRRF = rt.TotalIRRF.Add(rtm.IRRF)
+			rt.TotalDARF = rt.TotalDARF.Add(rtm.DARF)
 		}
 
 		if len(rt.Meses) > 0 {
@@ -89,10 +103,13 @@ type RendimentosTributaveis struct {
 	Ano        int
 	Meses      []RendimentoTributavelMensal
 	IR         decimal.Decimal
+	IRRF       decimal.Decimal
 	TotalAcoes decimal.Decimal
 	TotalOpcao decimal.Decimal
 	TotalAc    decimal.Decimal
 	TotalIR    decimal.Decimal
+	TotalIRRF  decimal.Decimal
+	TotalDARF  decimal.Decimal
 }
 
 type RendimentoTributavelMensal struct {
@@ -101,6 +118,8 @@ type RendimentoTributavelMensal struct {
 	LucroOp decimal.Decimal
 	LucroAc decimal.Decimal
 	IR      decimal.Decimal
+	IRRF    decimal.Decimal
+	DARF    decimal.Decimal
 }
 
 type RendimentosIsentosAteLimite struct {

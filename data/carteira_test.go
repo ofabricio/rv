@@ -21,6 +21,10 @@ func TestCarteira(t *testing.T) {
 			Then: "testdata/dedo_duro.then",
 		},
 		{
+			Give: "testdata/dedo_duro2.give",
+			Then: "testdata/dedo_duro2.then",
+		},
+		{
 			Give: "testdata/alteracao_config.give",
 			Then: "testdata/alteracao_config.then",
 		},

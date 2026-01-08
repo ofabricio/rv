@@ -116,7 +116,7 @@ var DefaultConfig2025 = Config{
 	AlterarPrecoMedioNaBonificacao: false,
 	LimiteVendaIsenta:              decimal.RequireFromString("20000"),
 	SwingTradeIR:                   decimal.RequireFromString("0.15"),
-	SwingTradeIRRF:                 decimal.RequireFromString("0.005"),
+	SwingTradeIRRF:                 decimal.RequireFromString("0.00005"),
 	DayTradeIR:                     decimal.RequireFromString("0.20"),
 	DayTradeIRRF:                   decimal.RequireFromString("0.01"),
 }

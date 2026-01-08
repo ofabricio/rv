@@ -170,6 +170,13 @@ func LucroIsentoVendaMes(ops iter.Seq[OperacaoConsolidada], limit decimal.Decima
 	return decimal.Zero
 }
 
+func IRRFIsentoVendaMes(ops iter.Seq[OperacaoConsolidada], limit decimal.Decimal) decimal.Decimal {
+	if iterTotalVendas(ops).LessThanOrEqual(limit) {
+		return iterIRRF(ops)
+	}
+	return decimal.Zero
+}
+
 func iterSwingTrades(ops iter.Seq[OperacaoConsolidada]) iter.Seq[OperacaoConsolidada] {
 	return it.Filter(ops, func(o OperacaoConsolidada) bool { return !o.DayTrade })
 }
@@ -225,6 +232,10 @@ func iterLucroTributavelOuAbativel(ops iter.Seq[OperacaoConsolidada]) decimal.De
 		}
 		return agg
 	}, decimal.Zero)
+}
+
+func iterIRRF(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
+	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal { return agg.Add(o.IRRF) }, decimal.Zero)
 }
 
 func iterValorTotal(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
