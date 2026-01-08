@@ -29,6 +29,10 @@ type Operacao struct {
 	DayTrade bool `json:"DayTrade,omitzero"`
 }
 
+func (o *Operacao) ValorTotalBruto() decimal.Decimal {
+	return o.ValorUnitario.Mul(o.Qtd)
+}
+
 func (o *Operacao) IsAcao() bool {
 	return o.Serie == ""
 }

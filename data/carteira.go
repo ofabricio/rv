@@ -202,7 +202,7 @@ func sortKeys[K cmp.Ordered, V any](m map[K]V) []K {
 }
 
 func iterTotalVendas(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
-	return iterValorTotal(iterFilterByTipo(ops, VENDA))
+	return iterValorTotalBruto(iterFilterByTipo(ops, VENDA))
 }
 
 func iterLucroVendas(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
@@ -238,8 +238,8 @@ func iterIRRF(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
 	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal { return agg.Add(o.IRRF) }, decimal.Zero)
 }
 
-func iterValorTotal(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
-	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal { return agg.Add(o.ValorTotal) }, decimal.Zero)
+func iterValorTotalBruto(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
+	return it.Reduce(ops, func(agg decimal.Decimal, o OperacaoConsolidada) decimal.Decimal { return agg.Add(o.ValorTotalBruto()) }, decimal.Zero)
 }
 
 func iterQtd(ops iter.Seq[OperacaoConsolidada]) decimal.Decimal {
