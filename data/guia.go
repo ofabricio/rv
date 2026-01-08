@@ -99,7 +99,6 @@ func (c *Carteira) operacoesComunsDayTrade(ir func(OperacaoAnual) (decimal.Decim
 }
 
 type RendimentosTributaveis struct {
-	Ticker     string
 	Ano        int
 	Meses      []RendimentoTributavelMensal
 	IR         decimal.Decimal

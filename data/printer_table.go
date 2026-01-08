@@ -1,8 +1,10 @@
 package data
 
 import (
+	"bytes"
 	"fmt"
 	"io"
+	"unicode/utf8"
 
 	"github.com/aquasecurity/table"
 	"github.com/samber/lo"
@@ -178,12 +180,13 @@ func (p *PrinterTable) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) 
 }
 
 func (p *PrinterTable) PrintOperacoesComunsDayTrade(w io.Writer) {
-	print := func(rs []RendimentosTributaveis, title string) {
+
+	print := func(w io.Writer, rs []RendimentosTributaveis, title string) {
 		for _, r := range rs {
 			t := table.New(w)
 			t.SetRowLines(false)
 			t.SetHeaderColSpans(0, 1, 6)
-			t.AddHeaders(fmt.Sprintf("%s %d", r.Ticker, r.Ano), title)
+			t.AddHeaders(fmt.Sprint(r.Ano), title)
 			t.AddHeaders(
 				"Mês",
 				"Ações",
@@ -218,6 +221,24 @@ func (p *PrinterTable) PrintOperacoesComunsDayTrade(w io.Writer) {
 			t.Render()
 		}
 	}
-	print(p.c.OperacoesComunsDayTradeSwingTrade(), "OPERAÇÕES COMUNS/DAY-TRADE")
-	print(p.c.OperacoesComunsDayTradeDayTrade(), "OPERAÇÕES COMUNS/DAY-TRADE [DAY TRADE]")
+
+	var a, b bytes.Buffer
+	print(&a, p.c.OperacoesComunsDayTradeSwingTrade(), "OPERAÇÕES COMUNS/DAY-TRADE [SWING TRADE]")
+	print(&b, p.c.OperacoesComunsDayTradeDayTrade(), "OPERAÇÕES COMUNS/DAY-TRADE [DAY TRADE]")
+
+	// Mescla as duas tabelas lado a lado.
+	sa := bytes.Split(a.Bytes(), []byte("\n"))
+	sb := bytes.Split(b.Bytes(), []byte("\n"))
+	pd := bytes.Repeat([]byte(" "), utf8.RuneCount(sa[0]))
+	for _, v := range lo.Zip2(sa, sb) {
+		w.Write(v.A)
+		if len(v.A) == 0 {
+			w.Write(pd)
+		}
+		if len(v.B) != 0 {
+			w.Write([]byte(" "))
+			w.Write(v.B)
+		}
+		w.Write([]byte("\n"))
+	}
 }
