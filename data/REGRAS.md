@@ -7,6 +7,17 @@ Este arquivo contém as regras de cálculo e declaração de IR de cada operaç�
 - Bonificação
     - Deve ser declarado em **RENDIMENTOS ISENTOS E NÃO TRIBUTÁVEIS**; a quantidade deve ser declarada na discriminação de **BENS E DIREITOS**.
 
+- Dedo-Duro (IRRF)
+    - Nas vendas abaixo de 20 mil o dedo-duro não é recolhido, você pode verificar isso somando os valores nas notas de corretagem.
+    Ele aparece na nota, mas é desconsiderado quando o valor de negociação é inferior a 20 mil.
+    Caso o valor das vendas brutas no mês ultrapasse esse montante a corretora desconta ele da conta.
+    Logo não devemos informar o dedo-duro em meses onde a soma das vendas seja inferior a 20 mil no Swing Trade.
+    ([ref](https://www.youtube.com/watch?v=31zeJEf4bo4&lc=Ugyv0R7MepCxtWgipdZ4AaABAg.9hNmE_x5Hx19hO87rLk4g5))
+    - Resumo
+        1. Vendas no mês <= 20 mil: não descontar IRRF.
+        1. Vendas no mês > 20 mil com prejuízo: restituir o IRRF.
+        1. Vendas no mês > 20 mil com lucro: descontar o IRRF no lucro.
+
 ## Opções
 
 1. Não há isenção de IR, sempre paga IR de 15% (swing trade) ou 20% (day trade) sobre o lucro independente do valor.

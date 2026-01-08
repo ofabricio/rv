@@ -17,6 +17,7 @@ type Operacao struct {
 	ValorCompra   decimal.Decimal `json:",omitzero"`
 	Lucro         decimal.Decimal `json:",omitzero"` // Lucro ou prejuízo da operação de Venda, Bonificação, Grupamento, Subscrição Compra, Redução de Capital, Opções.
 	Fator         decimal.Decimal `json:",omitzero"` // Fator de Bonificação, Grupamento ou Desdobramento e Redução de Capital.
+	IRRF          decimal.Decimal `json:",omitzero"` // Dedo-Duro.
 
 	// Opções.
 	Serie          string          `json:",omitempty"`

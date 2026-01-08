@@ -45,6 +45,7 @@ func (c *Consolidador) VisitCompra(o *Operacao) {
 
 func (c *Consolidador) VisitVenda(o *Operacao) {
 	o.ValorTotal = o.ValorUnitario.Mul(o.Qtd).Sub(o.Taxas)
+	o.IRRF = o.ValorTotal.Mul(c.Cfg.SwingTradeIRRF).Div(decimal.NewFromInt(100))
 	o.ValorCompra = c.Agg.PrecoMedio.Mul(o.Qtd)
 	o.Lucro = o.ValorTotal.Add(o.Premio.Mul(o.Qtd)).Sub(o.ValorCompra)
 	c.Agg.Qtd = c.Agg.Qtd.Sub(o.Qtd)

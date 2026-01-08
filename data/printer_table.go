@@ -16,7 +16,7 @@ type PrinterTable struct {
 func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 	t := table.New(w)
 	t.SetRowLines(false)
-	t.SetHeaderColSpans(0, 13)
+	t.SetHeaderColSpans(0, 14)
 	t.AddHeaders("OPERAÇÕES COM AÇÕES")
 	t.AddHeaders(
 		"ID",
@@ -27,6 +27,7 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 		"V. Unit.",
 		"V. Total",
 		"Taxas",
+		"IRRF",
 		"Qtd Ac.",
 		"V. Total Ac.",
 		"PM",
@@ -42,6 +43,7 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 		table.AlignRight, // V. Unit.
 		table.AlignRight, // V. Total
 		table.AlignRight, // Taxas
+		table.AlignRight, // IRRF
 		table.AlignRight, // Qtd Ac.
 		table.AlignRight, // V. Total Ac.
 		table.AlignRight, // PM
@@ -68,6 +70,8 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 			lo.Ternary(o.ValorExercicio.IsPositive(), fmt.Sprintf("(E %s) %s", p.c.Param.FormatDecimal(o.ValorExercicio.Mul(o.Qtd)), p.c.Param.FormatDecimal(o.ValorTotal)), p.c.Param.FormatDecimal(o.ValorTotal)),
 			// Taxas
 			p.c.Param.FormatDecimal(o.Taxas),
+			// IRRF
+			lo.Ternary(o.IRRF.IsPositive(), p.c.Param.FormatDecimal(o.IRRF.Truncate(2)), "-"),
 			// Qtd Ac.
 			o.Agg.Qtd.String(),
 			// V. Total Ac.

@@ -1,0 +1,2 @@
+{ "Data" : "2025-01-01" , "Ticker" : "PETR4" , "Tipo" : "Compra" , "Qtd" : "1000" , "ValorUnitario" : "7.00" }
+{ "Data" : "2025-02-01" , "Ticker" : "PETR4" , "Tipo" : "Venda" , "Qtd" : "800" , "ValorUnitario" : "7.20", "Taxas": "1.7581776765" }

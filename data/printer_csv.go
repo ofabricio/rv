@@ -26,6 +26,7 @@ func (p *PrinterCSV) PrintOperacoesComAcoes(w io.Writer) {
 		"V. Unit.",
 		"V. Total",
 		"Taxas",
+		"IRRF",
 		"Qtd Ac.",
 		"V. Total Ac.",
 		"PM",
@@ -60,6 +61,8 @@ func (p *PrinterCSV) PrintOperacoesComAcoes(w io.Writer) {
 			p.c.Param.FormatDecimal(o.ValorTotal),
 			// Taxas
 			p.c.Param.FormatDecimal(o.Taxas),
+			// IRRF
+			p.c.Param.FormatDecimal(o.IRRF),
 			// Qtd Ac.
 			o.Agg.Qtd.String(),
 			// V. Total Ac.
