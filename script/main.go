@@ -10,15 +10,18 @@ import (
 )
 
 func main() {
+	updateTests()
+}
 
-	// Script para atualizar todos os arquivos de testes.
-	//
-	// Este script lê os arquivos .give na pasta data/testdata,
-	// gera a saída e grava no arquivo .then correspondente.
-	//
-	// Para rodar o script execute na pasta raiz do projeto:
-	//   go run ./cmd/script/main.go
-
+// Script para atualizar todos os arquivos de resultados de testes.
+//
+// Este script lê os arquivos .give na pasta data/testdata,
+// gera a saída e grava no arquivo .then correspondente.
+//
+// Para rodar o script execute na pasta raiz do projeto:
+//
+//	go run ./script/main.go
+func updateTests() {
 	target := "data/testdata"
 
 	dir, err := os.ReadDir(target)
