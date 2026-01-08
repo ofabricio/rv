@@ -122,47 +122,33 @@ func (c *Carteira) RendimentosIsentosNaoTributaveis() []RendimentosIsentosNaoTri
 	for _, ano := range c.Acoes {
 		var r RendimentosIsentosNaoTributaveis
 		r.Ano = ano.Ano
-		rnIseTri := it.Filter(iterSwingTrades(ano.Iter()), func(o OperacaoConsolidada) bool { return o.Tfg.IsRendimentoIsentoNaoTributavel() })
-		byTicker := it.PartitionBy(rnIseTri, func(o OperacaoConsolidada) string { return o.Ticker + o.Tfg.RendimentoIsentoNaoTributavel.Codigo })
-		totalLucroIsentoVendas := decimal.Zero
-		for _, ops := range byTicker {
+
+		process := func(ops []OperacaoConsolidada) {
 			ref := lo.FirstOrEmpty(ops)
 			lucro := decimal.Zero
 			if ref.Tfg.IsLimiteIsentoAplicavel() {
 				lucro = LucroIsentoVendaAno(slices.Values(ops), ano.Cfg.LimiteVendaIsenta)
-				totalLucroIsentoVendas = totalLucroIsentoVendas.Add(lucro)
 			} else {
 				lucro = iterLucros(slices.Values(ops))
 			}
 			if lucro.IsPositive() {
 				cfg := ref.Tfg.RendimentoIsentoNaoTributavel
 				r.Rendimentos = append(r.Rendimentos, RendimentoIsentoNaoTributavel{
-					Ticker: ref.Ticker,
+					Ticker: lo.Ternary(cfg.Agregar, "Total", ref.Ticker),
 					Valor:  lucro,
 					Codigo: cfg.Codigo,
 					Descr:  cfg.Descr,
 				})
 			}
 		}
-		if reembolsos := slices.Collect(iterFilterByTipo(ano.Iter(), REEMBOLSO)); len(reembolsos) > 1 {
-			if lucros := iterLucros(slices.Values(reembolsos)); lucros.IsPositive() {
-				ref := lo.FirstOrEmpty(reembolsos)
-				cfg := ref.Tfg.RendimentoIsentoNaoTributavel
-				r.Totais = append(r.Totais, RendimentoIsentoNaoTributavel{
-					Ticker: "Total",
-					Valor:  lucros,
-					Codigo: cfg.Codigo,
-					Descr:  cfg.Descr,
-				})
-			}
+
+		rnIseTri := it.Filter(iterSwingTrades(ano.Iter()), func(o OperacaoConsolidada) bool { return o.Tfg.IsRendimentoIsentoNaoTributavel() })
+		agregado, desagreg := lo.FilterReject(slices.Collect(rnIseTri), func(o OperacaoConsolidada, _ int) bool { return o.Tfg.RendimentoIsentoNaoTributavel.Agregar })
+		for _, ops := range lo.PartitionBy(desagreg, func(o OperacaoConsolidada) string { return o.Ticker + o.Tfg.RendimentoIsentoNaoTributavel.Codigo }) {
+			process(ops)
 		}
-		if totalLucroIsentoVendas.IsPositive() {
-			r.Totais = append(r.Totais, RendimentoIsentoNaoTributavel{
-				Ticker: "Total",
-				Valor:  totalLucroIsentoVendas,
-				Codigo: CodigoIsencaoAte20k,
-				Descr:  "Isenção até R$ 20000",
-			})
+		for _, ops := range lo.PartitionBy(agregado, func(o OperacaoConsolidada) string { return o.Tfg.RendimentoIsentoNaoTributavel.Codigo }) {
+			process(ops)
 		}
 		if len(r.Rendimentos) > 0 {
 			rs = append(rs, r)

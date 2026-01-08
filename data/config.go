@@ -102,9 +102,10 @@ func (c Tonfig) IsLimiteIsentoAplicavel() bool {
 }
 
 type GrupoCodigo struct {
-	Grupo  string
-	Codigo string
-	Descr  string
+	Grupo   string
+	Codigo  string
+	Descr   string
+	Agregar bool
 }
 
 func (g GrupoCodigo) ID() string {
@@ -126,7 +127,7 @@ var DefaultTonfig2025 = TonfigMap{
 	},
 	VENDA: {
 		BensDireitos:                  GrupoCodigo{Grupo: GrupoParticipacaoSocietaria, Codigo: CodigoAcoes},
-		RendimentoIsentoNaoTributavel: GrupoCodigo{Codigo: CodigoIsencaoAte20k, Descr: "Isenção até R$ 20000"},
+		RendimentoIsentoNaoTributavel: GrupoCodigo{Codigo: CodigoIsencaoAte20k, Descr: "Isenção até R$ 20000", Agregar: true},
 		PrejuizoAbativel:              true,
 		LucroTributavel:               true,
 	},
@@ -148,7 +149,7 @@ var DefaultTonfig2025 = TonfigMap{
 		RendimentoIsentoNaoTributavel: GrupoCodigo{Codigo: CodigoDividendos, Descr: "Dividendos"},
 	},
 	REEMBOLSO: {
-		RendimentoIsentoNaoTributavel: GrupoCodigo{Codigo: CodigoRINTOutros, Descr: "Reembolso de proventos"},
+		RendimentoIsentoNaoTributavel: GrupoCodigo{Codigo: CodigoRINTOutros, Descr: "Reembolso de proventos", Agregar: true},
 	},
 	JSCP: {
 		RendimentoSujeitoTributacaoExclusiva: GrupoCodigo{Codigo: CodigoJSCP, Descr: "JSCP"},
