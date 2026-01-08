@@ -1,13 +1,13 @@
 # rv
 
 Esta ferramenta faz o controle de operações de ações do mercado brasileiro,
-gerando as guias de declaração de IR (Bens e Direitos, Operações Comuns/Day Trade, etc).
+gerando o informe anual de IR (Bens e Direitos, Operações Comuns/Day Trade, etc).
 
 Se deseja usá-la **é por sua conta e risco**. :warning:
 
 ## Features
 
-Operações suportadas:
+#### Operações suportadas
 
 - Ações
   - Compra
@@ -29,8 +29,17 @@ Operações suportadas:
   - Compra/Venda de PUT
   - Compra/Venda de CALL
 
-- Importação de Notas de Corretagem
-  - Clear Corretora
+#### Importação de Notas de Corretagem de corretoras
+
+  - [Clear](https://corretora.clear.com.br)
+
+#### Informe anual de Imposto de Renda
+
+  - Bens e Direitos
+  - Dívida e Ônus Reais
+  - Rendimentos Isentos e Não Tributáveis
+  - Rendimentos Sujeitos à Tributação Exclusiva/Definitiva
+  - Renda Variável: Operações Comuns/Day Trade
 
 ## Build
 
