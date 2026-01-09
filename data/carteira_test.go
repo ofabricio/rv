@@ -37,6 +37,10 @@ func TestCarteira(t *testing.T) {
 			Then: "testdata/compra_venda2.then",
 		},
 		{
+			Give: "testdata/compra_venda3.give",
+			Then: "testdata/compra_venda3.then",
+		},
+		{
 			Give: "testdata/dividendos.give",
 			Then: "testdata/dividendos.then",
 		},

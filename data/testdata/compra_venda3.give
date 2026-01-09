@@ -1,0 +1,19 @@
+// Caso de teste tirado de https://www.youtube.com/watch?v=PuDdd7P0bGM
+{ "Data": "2025-02-01", "Ticker": "PRIO3", "Tipo": "Compra", "Qtd": "80", "ValorUnitario": "60", "Taxas": "0" }
+{ "Data": "2025-02-02", "Ticker": "PRIO3", "Tipo": "Venda", "Qtd": "80", "ValorUnitario": "65", "Taxas": "6.46" }
+{ "Data": "2025-02-03", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "50", "ValorUnitario": "13", "Taxas": "0" }
+{ "Data": "2025-02-04", "Ticker": "PETR4", "Tipo": "Venda", "Qtd": "50", "ValorUnitario": "43", "Taxas": "5.55" }
+{ "Data": "2025-02-05", "Ticker": "PRIO3", "Tipo": "Compra", "Qtd": "20", "ValorUnitario": "66", "Taxas": "0" }
+{ "Data": "2025-02-06", "Ticker": "PRIO3", "Tipo": "Venda", "Qtd": "20", "ValorUnitario": "68.50", "Taxas": "5.31" }
+{ "Data": "2025-02-07", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "20", "ValorUnitario": "42", "Taxas": "0" }
+{ "Data": "2025-02-08", "Ticker": "PETR4", "Tipo": "Venda", "Qtd": "20", "ValorUnitario": "40", "Taxas": "5.14" }
+{ "Data": "2025-02-09", "Ticker": "MGLU3", "Tipo": "Compra", "Qtd": "60", "ValorUnitario": "12", "Taxas": "0" }
+{ "Data": "2025-02-10", "Ticker": "MGLU3", "Tipo": "Venda", "Qtd": "60", "ValorUnitario": "5", "Taxas": "4.99" }
+{ "Data": "2025-02-11", "Ticker": "IRBR3", "Tipo": "Compra", "Qtd": "40", "ValorUnitario": "12", "Taxas": "0" }
+{ "Data": "2025-02-12", "Ticker": "IRBR3", "Tipo": "Venda", "Qtd": "40", "ValorUnitario": "11", "Taxas": "5.03" }
+{ "Data": "2025-02-13", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "40", "ValorUnitario": "40.50", "Taxas": "0" }
+{ "Data": "2025-02-14", "Ticker": "PETR4", "Tipo": "Venda", "Qtd": "40", "ValorUnitario": "37", "Taxas": "5.34" }
+{ "Data": "2025-02-15", "Ticker": "ITUB3", "Tipo": "Compra", "Qtd": "9", "ValorUnitario": "25.08", "Taxas": "0" }
+{ "Data": "2025-02-16", "Ticker": "ITUB3", "Tipo": "Venda", "Qtd": "9", "ValorUnitario": "36", "Taxas": "5.00" }
+{ "Data": "2025-02-17", "Ticker": "RENT3", "Tipo": "Compra", "Qtd": "15", "ValorUnitario": "25", "Taxas": "0" }
+{ "Data": "2025-02-18", "Ticker": "RENT3", "Tipo": "Venda", "Qtd": "15", "ValorUnitario": "28", "Taxas": "5.03" }
