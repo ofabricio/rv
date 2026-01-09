@@ -1,3 +1,5 @@
+// Estratégia 1
+
 // * [Caso de teste] tirado de https://www.youtube.com/watch?v=CdMy-CGv57A
 // - No video é dito que redução de capital pode gerar lucro ou prejuízo.
 // - Apresenta um cálculo complexo considerando a porcentagem e valor unitário da redução de capital.
@@ -12,6 +14,8 @@
 { "Data": "2025-03-01", "Ticker": "VALE3", "Tipo": "Compra", "Qtd": "500", "ValorUnitario": "5.30" }
 { "Data": "2025-03-02", "Ticker": "VALE3", "Tipo": "Red. Cap.", "Fator": "0.3604164635", "ValorUnitario": "2.52713563580" }
 
+// Estratégia 2
+
 // * [Caso de teste] tirado de https://youtu.be/5B90MG1J3-Y?t=1663
 // - Não há menção sobre lucro ou prejuízo em redução de capital.
 // - Apresenta cálculo simples reduzindo do seu valor total acumulado o valor recebido na redução de capital.
@@ -20,3 +24,16 @@
 { "Data": "2025-04-01", "Ticker": "KLBN3", "Tipo": "Compra", "Qtd": "550", "ValorUnitario": "14.25689" }
 { "Data": "2025-04-02", "Ticker": "KLBN3", "Tipo": "Red. Cap.", "ValorTotal": "96.01" }
 
+// * [Caso de teste] tirado de https://www.reddit.com/r/investimentos/comments/1pkpzwy/comment/ntn6r1x/
+// - Afirma que não deve declarar em "Rendimentos Isentos e Não Tributáveis".
+{ "Data": "2025-05-01", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "5000", "ValorUnitario": "10", "Taxas": "0" }
+{ "Data": "2025-05-02", "Ticker": "KLBN4", "Tipo": "Red. Cap.", "ValorTotal": "10000" }
+
+// Estratégia 3
+
+// * [Caso de teste] tirado de https://www.youtube.com/watch?v=MXJI0xSRGGw
+// - Afirma que deve declarar em "Rendimentos Isentos e Não Tributáveis".
+{ "Data": "2025-06-01", "Ticker": "MELI3", "Tipo": "Compra", "Qtd": "99", "ValorUnitario": "5.00", "Taxas": "0" }
+{ "Data": "2025-06-02", "Ticker": "MELI3", "Tipo": "Red. Cap.", "ValorUnitario": "2.41" }
+
+// Escolha a sua estratégia e boa sorte.

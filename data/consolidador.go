@@ -122,14 +122,17 @@ func (c *Consolidador) VisitSubscricaoExercicio(o *Operacao) {
 }
 
 func (c *Consolidador) VisitReducaoCapital(o *Operacao) {
-	if o.Fator.IsPositive() {
+	switch {
+	case o.Fator.IsPositive():
 		redcap := c.Agg.ValorTotal.Mul(o.Fator)
 		restituicao := c.Agg.Qtd.Mul(o.ValorUnitario)
 		o.ValorTotal = restituicao
 		o.ValorCompra = redcap
 		o.Lucro = restituicao.Sub(redcap)
 		c.Agg.ValorTotal = c.Agg.ValorTotal.Sub(redcap)
-	} else {
+	case o.ValorUnitario.IsPositive():
+		c.Agg.ValorTotal = c.Agg.PrecoMedio.Sub(o.ValorUnitario).Mul(c.Agg.Qtd)
+	case o.ValorTotal.IsPositive():
 		c.Agg.ValorTotal = c.Agg.ValorTotal.Sub(o.ValorTotal)
 	}
 	c.Agg.CalcPrecoMedio()
