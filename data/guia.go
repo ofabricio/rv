@@ -152,7 +152,7 @@ func (c *Carteira) RendimentosIsentosNaoTributaveis() []RendimentosIsentosNaoTri
 			if lucro.IsPositive() {
 				cfg := ref.Tfg.RendimentoIsentoNaoTributavel
 				r.Rendimentos = append(r.Rendimentos, RendimentoIsentoNaoTributavel{
-					Ticker: lo.Ternary(cfg.Agregar, "Total", ref.Ticker),
+					Ticker: lo.Ternary(cfg.Agregar, "(SOMA)", ref.Ticker),
 					Valor:  lucro,
 					Codigo: cfg.Codigo,
 					Descr:  cfg.Descr,
@@ -194,7 +194,8 @@ func (c *Carteira) RendimentosSujeitosTributacaoExclusiva() []RendimentosIsentos
 				r.Rendimentos = append(r.Rendimentos, RendimentoIsentoNaoTributavel{
 					Ticker: ref.Ticker,
 					Valor:  lucro,
-					Codigo: cfg.Codigo + " ── " + cfg.Descr,
+					Codigo: cfg.Codigo,
+					Descr:  cfg.Descr,
 				})
 			}
 		}

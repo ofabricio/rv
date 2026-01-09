@@ -143,16 +143,12 @@ func (p *PrinterTable) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {
 	for _, ano := range p.c.RendimentosIsentosNaoTributaveis() {
 		t := table.New(w)
 		t.SetRowLines(false)
-		t.SetHeaderColSpans(0, 1, 2)
+		t.SetHeaderColSpans(0, 1, 3)
 		t.AddHeaders(fmt.Sprint(ano.Ano), "RENDIMENTOS ISENTOS E NÃO TRIBUTÁVEIS")
-		t.AddHeaders("Ticker", "Valor", "Código")
-		t.SetAlignment(table.AlignLeft, table.AlignRight, table.AlignLeft)
+		t.AddHeaders("Ticker", "Valor", "Código", "Descrição")
+		t.SetAlignment(table.AlignLeft, table.AlignRight, table.AlignCenter, table.AlignLeft)
 		for _, r := range ano.Rendimentos {
-			t.AddRow(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo+" ── "+r.Descr)
-		}
-		t.SetFooterAlignment(table.AlignLeft, table.AlignRight, table.AlignLeft)
-		for _, r := range ano.Totais {
-			t.AddFooters(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo+" ── "+r.Descr)
+			t.AddRow(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo, r.Descr)
 		}
 		t.Render()
 	}
@@ -162,12 +158,12 @@ func (p *PrinterTable) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) 
 	for _, ano := range p.c.RendimentosSujeitosTributacaoExclusiva() {
 		t := table.New(w)
 		t.SetRowLines(false)
-		t.SetHeaderColSpans(0, 1, 2)
+		t.SetHeaderColSpans(0, 1, 3)
 		t.AddHeaders(fmt.Sprint(ano.Ano), "RENDIMENTOS SUJEITOS À TRIBUTAÇÃO EXCLUSIVA")
-		t.AddHeaders("Ticker", "Valor", "Código")
-		t.SetAlignment(table.AlignLeft, table.AlignRight, table.AlignLeft)
+		t.AddHeaders("Ticker", "Valor", "Código", "Descrição")
+		t.SetAlignment(table.AlignLeft, table.AlignRight, table.AlignCenter, table.AlignLeft)
 		for _, r := range ano.Rendimentos {
-			t.AddRow(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo)
+			t.AddRow(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo, r.Descr)
 		}
 		t.Render()
 	}
