@@ -18,10 +18,9 @@ type PrinterTable struct {
 func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 	t := table.New(w)
 	t.SetRowLines(false)
-	t.SetHeaderColSpans(0, 14)
+	t.SetHeaderColSpans(0, 13)
 	t.AddHeaders("OPERAÇÕES COM AÇÕES")
 	t.AddHeaders(
-		"ID",
 		"Ticker",
 		"Data",
 		"Operação",
@@ -37,7 +36,6 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 		"Lucro",
 	)
 	t.SetAlignment(
-		table.AlignLeft,  // ID
 		table.AlignLeft,  // Data
 		table.AlignLeft,  // Ticker
 		table.AlignLeft,  // Operação
@@ -52,12 +50,8 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 		table.AlignRight, // V. Compra
 		table.AlignRight, // Lucro
 	)
-	i := 0
 	for o := range p.c.Acoes.Iter() {
-		i++
 		t.AddRow(
-			// ID
-			fmt.Sprint(i),
 			// Ticker
 			lo.Ternary(o.Serie != "", fmt.Sprintf("%s %s", o.Ticker, o.Serie), o.Ticker),
 			// Data

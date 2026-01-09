@@ -2,7 +2,6 @@ package data
 
 import (
 	"encoding/csv"
-	"fmt"
 	"io"
 
 	"github.com/samber/lo"
@@ -15,7 +14,6 @@ type PrinterCSV struct {
 func (p *PrinterCSV) PrintOperacoesComAcoes(w io.Writer) {
 	csv := csv.NewWriter(w)
 	csv.Write([]string{
-		"ID",
 		"Ticker",
 		"Série",
 		"Data",
@@ -36,12 +34,8 @@ func (p *PrinterCSV) PrintOperacoesComAcoes(w io.Writer) {
 		"Prêmio",
 		"V. Exercício",
 	})
-	i := 0
 	for o := range p.c.Acoes.Iter() {
-		i++
 		csv.Write([]string{
-			// ID
-			fmt.Sprint(i),
 			// Ticker
 			o.Ticker,
 			// Série
