@@ -1,47 +1,46 @@
 # rv
 
-Esta ferramenta faz o controle de operações de ações do mercado brasileiro,
-gerando o informe anual de IR (Bens e Direitos, Operações Comuns/Day Trade, etc).
+Ferramenta em linha de comando para controle de operações com ações do mercado brasileiro
+e geração dos dados necessários para o informe anual de Imposto de Renda.
 
-Se deseja usá-la **é por sua conta e risco**. :warning:
+- ⚠️ Se deseja usá-la, **é por sua conta e risco**.
 
-## Features
+## Funcionalidades
 
-#### Operações suportadas
+- Registro e consolidação de operações
+  - Compra / Venda
+  - Swing Trade / Day Trade
+  - Cálculo automático de preço médio, lucros e prejuízos, IR e DARF
 
-- Ações
-  - Compra
-  - Venda
-  - Bonificação
-  - Grupamento
-  - Desdobramento
+- Suporte a eventos corporativos e proventos
   - Dividendos
+  - JSCP / JSCP Não Pago
   - Reembolso
-  - JSCP
-  - JSCP Não Pago
-  - Leilão de Fração
+  - Bonificação
+  - Grupamento / Desdobramento
+  - Rendimentos Tributáveis
   - Redução de Capital
-  - Rend. Trib.
+  - Leilão de Fração
   - Subscrição
   - Aluguel
 
-- Opções
-  - Compra/Venda de PUT
-  - Compra/Venda de CALL
-
-#### Importação de Notas de Corretagem de corretoras
-
-  - [Clear](https://corretora.clear.com.br)
-
-#### Informe anual de Imposto de Renda
-
+- Geração de informe anual de Imposto de Renda
   - Bens e Direitos
   - Dívida e Ônus Reais
   - Rendimentos Isentos e Não Tributáveis
   - Rendimentos Sujeitos à Tributação Exclusiva/Definitiva
   - Renda Variável: Operações Comuns/Day Trade
 
-## Build
+- Suporte a Opções
+  - Compra/Venda de PUT
+  - Compra/Venda de CALL
+
+- Importação de Notas de Corretagem
+  - [Clear](https://corretora.clear.com.br)
+
+- Exportação em CSV
+
+## Compilação
 
 Escolha abaixo uma das opções de compilação da ferramenta; um arquivo
 executável `rv` aparecerá na pasta onde o comando for executado.
@@ -68,9 +67,8 @@ docker run --rm -v $(pwd):/src -w /src golang:alpine sh -c "
 ## Como usar
 
 Basta adicionar as operações no arquivo [db.ndjson](/db.ndjson), que está na raiz deste repositório,
-rodar a ferramenta `./rv`, e ver o resultado no terminal.
-A ferramenta fará os cálculos necessários e mostrará o resultado final consolidado.
-Veja um exemplo abaixo.
+executar a ferramenta `./rv` e analisar o resultado exibido no terminal.
+Veja um exemplo de resultado abaixo.
 
 **Nota:** o arquivo `db.ndjson` precisa estar na mesma pasta do executável; copie o arquivo modelo deste repositório ou crie um arquivo novo.
 
@@ -78,7 +76,7 @@ No momento só é possível adicionar as operações editando manualmente o arqu
 No futuro será criado uma interface no terminal ou no navegador para facilitar isso.
 Importação de notas de corretagem ou extratos da B3 também estão nos planos.
 
-Veja exemplos de uso de cada tipo de operação nos arquivos `*.give` do diretório [/data/testdata](/data/testdata).
+Veja exemplos de uso de cada tipo de operação nos arquivos `.give` do diretório [/data/testdata](/data/testdata).
 
 ## Exemplo de resultado
 
