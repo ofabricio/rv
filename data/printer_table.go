@@ -51,7 +51,7 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 		table.AlignRight, // Lucro
 	)
 	for o := range p.c.Acoes.Iter() {
-		if !p.c.Param.ShouldShowYear(o.Data.Year()) {
+		if !p.c.Param.FilterOperacao(o) {
 			continue
 		}
 		t.AddRow(
@@ -97,7 +97,7 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 func (p *PrinterTable) PrintBensDireitos(w io.Writer) {
 
 	for _, bens := range p.c.BensDireitos() {
-		if !p.c.Param.ShouldShowYear(bens.AnoCorrente) {
+		if !p.c.Param.FilterYear(bens.AnoCorrente) {
 			continue
 		}
 		t := table.New(w)
@@ -113,6 +113,9 @@ func (p *PrinterTable) PrintBensDireitos(w io.Writer) {
 		)
 		t.SetAlignment(table.AlignLeft, table.AlignCenter, table.AlignCenter, table.AlignCenter, table.AlignLeft)
 		for _, ticker := range bens.Tickers {
+			if !p.c.Param.FilterTicker(ticker.Ticker) {
+				continue
+			}
 			t.AddRow(
 				ticker.Ticker,
 				p.c.Param.FormatDecimal(ticker.SituacaoAnterior),
@@ -128,7 +131,7 @@ func (p *PrinterTable) PrintBensDireitos(w io.Writer) {
 func (p *PrinterTable) PrintDividaOnusReais(w io.Writer) {
 
 	for _, bens := range p.c.DividaOnusReais() {
-		if !p.c.Param.ShouldShowYear(bens.AnoCorrente) {
+		if !p.c.Param.FilterYear(bens.AnoCorrente) {
 			continue
 		}
 		t := table.New(w)
@@ -144,6 +147,9 @@ func (p *PrinterTable) PrintDividaOnusReais(w io.Writer) {
 		)
 		t.SetAlignment(table.AlignLeft, table.AlignCenter, table.AlignCenter, table.AlignCenter, table.AlignLeft)
 		for _, ticker := range bens.Tickers {
+			if !p.c.Param.FilterTicker(ticker.Ticker) {
+				continue
+			}
 			t.AddRow(
 				ticker.Ticker,
 				p.c.Param.FormatDecimal(ticker.SituacaoAnterior),
@@ -158,7 +164,7 @@ func (p *PrinterTable) PrintDividaOnusReais(w io.Writer) {
 
 func (p *PrinterTable) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {
 	for _, ano := range p.c.RendimentosIsentosNaoTributaveis() {
-		if !p.c.Param.ShouldShowYear(ano.Ano) {
+		if !p.c.Param.FilterYear(ano.Ano) {
 			continue
 		}
 		t := table.New(w)
@@ -168,6 +174,9 @@ func (p *PrinterTable) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {
 		t.AddHeaders("Ticker", "Valor", "Código", "Descrição")
 		t.SetAlignment(table.AlignLeft, table.AlignRight, table.AlignCenter, table.AlignLeft)
 		for _, r := range ano.Rendimentos {
+			if !p.c.Param.FilterTicker(r.Ticker) {
+				continue
+			}
 			t.AddRow(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo, r.Descr)
 		}
 		t.Render()
@@ -176,7 +185,7 @@ func (p *PrinterTable) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {
 
 func (p *PrinterTable) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) {
 	for _, ano := range p.c.RendimentosSujeitosTributacaoExclusiva() {
-		if !p.c.Param.ShouldShowYear(ano.Ano) {
+		if !p.c.Param.FilterYear(ano.Ano) {
 			continue
 		}
 		t := table.New(w)
@@ -186,6 +195,9 @@ func (p *PrinterTable) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) 
 		t.AddHeaders("Ticker", "Valor", "Código", "Descrição")
 		t.SetAlignment(table.AlignLeft, table.AlignRight, table.AlignCenter, table.AlignLeft)
 		for _, r := range ano.Rendimentos {
+			if !p.c.Param.FilterTicker(r.Ticker) {
+				continue
+			}
 			t.AddRow(r.Ticker, p.c.Param.FormatDecimal(r.Valor), r.Codigo, r.Descr)
 		}
 		t.Render()
@@ -196,7 +208,7 @@ func (p *PrinterTable) PrintOperacoesComunsDayTrade(w io.Writer) {
 
 	print := func(w io.Writer, rs []RendimentosTributaveis, title string) {
 		for _, r := range rs {
-			if !p.c.Param.ShouldShowYear(r.Ano) {
+			if !p.c.Param.FilterYear(r.Ano) {
 				continue
 			}
 			t := table.New(w)

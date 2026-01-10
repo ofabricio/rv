@@ -11,6 +11,8 @@ var DefaultParam = Param{
 	SeparadorDecimal:  ",",
 	FormatoData:       time.DateOnly,
 	MostrarValorExato: false,
+	FiltrarAno:        0,
+	FiltrarTicker:     "",
 }
 
 type Param struct {
@@ -28,6 +30,9 @@ type Param struct {
 
 	// Filtra operações por ano (0 para mostrar todos os anos).
 	FiltrarAno int
+
+	// Filtra operações por ticker (vazio para mostrar todos os tickers).
+	FiltrarTicker string
 }
 
 func (p *Param) FormatDecimal(v decimal.Decimal) string {
@@ -41,6 +46,14 @@ func (p *Param) FormatDate(t time.Time) string {
 	return t.Format(p.FormatoData)
 }
 
-func (p *Param) ShouldShowYear(year int) bool {
+func (p *Param) FilterOperacao(o OperacaoConsolidada) bool {
+	return p.FilterYear(o.Data.Year()) && p.FilterTicker(o.Ticker)
+}
+
+func (p *Param) FilterYear(year int) bool {
 	return p.FiltrarAno == 0 || year == p.FiltrarAno
+}
+
+func (p *Param) FilterTicker(ticker string) bool {
+	return p.FiltrarTicker == "" || ticker == p.FiltrarTicker
 }

@@ -35,7 +35,7 @@ func (p *PrinterCSV) PrintOperacoesComAcoes(w io.Writer) {
 		"V. Exercício",
 	})
 	for o := range p.c.Acoes.Iter() {
-		if !p.c.Param.ShouldShowYear(o.Data.Year()) {
+		if !p.c.Param.FilterOperacao(o) {
 			continue
 		}
 		csv.Write([]string{
