@@ -51,6 +51,9 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 		table.AlignRight, // Lucro
 	)
 	for o := range p.c.Acoes.Iter() {
+		if !p.c.Param.ShouldShowYear(o.Data.Year()) {
+			continue
+		}
 		t.AddRow(
 			// Ticker
 			lo.Ternary(o.Serie != "", fmt.Sprintf("%s %s", o.Ticker, o.Serie), o.Ticker),
@@ -94,6 +97,9 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 func (p *PrinterTable) PrintBensDireitos(w io.Writer) {
 
 	for _, bens := range p.c.BensDireitos() {
+		if !p.c.Param.ShouldShowYear(bens.AnoCorrente) {
+			continue
+		}
 		t := table.New(w)
 		t.SetColumnMaxWidth(100)
 		t.SetHeaderColSpans(0, 5)
@@ -122,6 +128,9 @@ func (p *PrinterTable) PrintBensDireitos(w io.Writer) {
 func (p *PrinterTable) PrintDividaOnusReais(w io.Writer) {
 
 	for _, bens := range p.c.DividaOnusReais() {
+		if !p.c.Param.ShouldShowYear(bens.AnoCorrente) {
+			continue
+		}
 		t := table.New(w)
 		t.SetColumnMaxWidth(100)
 		t.SetHeaderColSpans(0, 5)
@@ -149,6 +158,9 @@ func (p *PrinterTable) PrintDividaOnusReais(w io.Writer) {
 
 func (p *PrinterTable) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {
 	for _, ano := range p.c.RendimentosIsentosNaoTributaveis() {
+		if !p.c.Param.ShouldShowYear(ano.Ano) {
+			continue
+		}
 		t := table.New(w)
 		t.SetRowLines(false)
 		t.SetHeaderColSpans(0, 1, 3)
@@ -164,6 +176,9 @@ func (p *PrinterTable) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {
 
 func (p *PrinterTable) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) {
 	for _, ano := range p.c.RendimentosSujeitosTributacaoExclusiva() {
+		if !p.c.Param.ShouldShowYear(ano.Ano) {
+			continue
+		}
 		t := table.New(w)
 		t.SetRowLines(false)
 		t.SetHeaderColSpans(0, 1, 3)
@@ -181,6 +196,9 @@ func (p *PrinterTable) PrintOperacoesComunsDayTrade(w io.Writer) {
 
 	print := func(w io.Writer, rs []RendimentosTributaveis, title string) {
 		for _, r := range rs {
+			if !p.c.Param.ShouldShowYear(r.Ano) {
+				continue
+			}
 			t := table.New(w)
 			t.SetRowLines(false)
 			t.SetHeaderColSpans(0, 1, 6)

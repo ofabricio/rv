@@ -25,6 +25,9 @@ type Param struct {
 	// Formata datas usando esse formato.
 	// Exemplo: "02/01/2006" (padrão).
 	FormatoData string
+
+	// Filtra operações por ano (0 para mostrar todos os anos).
+	FiltrarAno int
 }
 
 func (p *Param) FormatDecimal(v decimal.Decimal) string {
@@ -36,4 +39,8 @@ func (p *Param) FormatDecimal(v decimal.Decimal) string {
 
 func (p *Param) FormatDate(t time.Time) string {
 	return t.Format(p.FormatoData)
+}
+
+func (p *Param) ShouldShowYear(year int) bool {
+	return p.FiltrarAno == 0 || year == p.FiltrarAno
 }

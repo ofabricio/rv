@@ -35,6 +35,9 @@ func (p *PrinterCSV) PrintOperacoesComAcoes(w io.Writer) {
 		"V. Exercício",
 	})
 	for o := range p.c.Acoes.Iter() {
+		if !p.c.Param.ShouldShowYear(o.Data.Year()) {
+			continue
+		}
 		csv.Write([]string{
 			// Ticker
 			o.Ticker,
