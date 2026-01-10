@@ -60,14 +60,14 @@ func (t *ImportadorNotas) processaNota(n pdf.Nota) []Operacao {
 	var ops []Operacao
 	for _, neg := range n.Negociacoes {
 		if neg.CV == "C" {
-			taxa := totalTaxas.Div(n.ComprasAVista).Mul(neg.ValorOperacao).Round(2)
+			taxa := totalTaxas.Div(n.ComprasAVista).Mul(neg.ValorTotal).Round(2)
 			sumTaxas = sumTaxas.Add(taxa)
 			ops = append(ops, Operacao{
 				Data:          n.DataPregao,
 				Tipo:          COMPRA,
 				Ticker:        neg.Titulo,
 				Qtd:           neg.Qtd,
-				ValorUnitario: neg.Preco,
+				ValorUnitario: neg.ValorUnitario,
 				Taxas:         taxa,
 			})
 		}
