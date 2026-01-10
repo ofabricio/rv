@@ -1,9 +1,12 @@
 # rv
 
-Ferramenta em linha de comando para controle de operações com ações do mercado brasileiro
-e geração dos dados necessários para o informe anual de Imposto de Renda.
+Criei esta ferramenta para meu uso pessoal, ela controla minhas operações com ações do mercado brasileiro,
+calcula lucros, prejuízos, impostos, DARF e consolida os dados para meu informe anual de Imposto de Renda.
 
-- ⚠️ Se deseja usá-la, **é por sua conta e risco**.
+⚠️ Se deseja usá-la, **é por sua conta e risco**.
+
+⚠️ Esta ferramenta **não oferece qualquer garantia de exatidão fiscal ou conformidade legal**.
+Seu uso **é de inteira responsabilidade do usuário.**
 
 ## Funcionalidades
 
@@ -67,14 +70,13 @@ docker run --rm -v $(pwd):/src -w /src golang:alpine sh -c "
 ## Como usar
 
 Basta adicionar as operações no arquivo [db.ndjson](/db.ndjson), que está na raiz deste repositório,
-executar a ferramenta `./rv` e analisar o resultado exibido no terminal.
+executar a ferramenta `./rv` e ver o resultado exibido no terminal.
 Veja um exemplo de resultado abaixo.
 
 **Nota:** o arquivo `db.ndjson` precisa estar na mesma pasta do executável; copie o arquivo modelo deste repositório ou crie um arquivo novo.
 
 No momento só é possível adicionar as operações editando manualmente o arquivo `db.ndjson`.
-No futuro será criado uma interface no terminal ou no navegador para facilitar isso.
-Importação de notas de corretagem ou extratos da B3 também estão nos planos.
+Importação de notas de corretagem ou extratos da B3 também estão nos planos para facilitar esse processo.
 
 Veja exemplos de uso de cada tipo de operação nos arquivos `.give` do diretório [/data/testdata](/data/testdata).
 
