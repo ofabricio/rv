@@ -59,13 +59,19 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 			// Operação
 			lo.Ternary(o.Fator.IsPositive(), fmt.Sprintf("%s (%s)", o.Tipo, p.c.Param.FormatDecimal(o.Fator)), string(o.Tipo)),
 			// Qtd
-			lo.Ternary(o.QtdFracao().IsPositive(), fmt.Sprintf("%s (%s)", o.QtdInt(), p.c.Param.FormatDecimal(o.QtdFracao())), o.QtdInt().String()),
+			lo.Ternary(o.Qtd.IsZero() && o.Tipo != VENDA, "-",
+				lo.Ternary(o.QtdFracao().IsPositive(), fmt.Sprintf("%s (%s)", o.QtdInt(), p.c.Param.FormatDecimal(o.QtdFracao())), o.QtdInt().String()),
+			),
 			// V. Unit.
-			lo.Ternary(o.ValorExercicio.IsPositive(), fmt.Sprintf("(E %s) %s", p.c.Param.FormatDecimal(o.ValorExercicio), p.c.Param.FormatDecimal(o.ValorUnitario)), p.c.Param.FormatDecimal(o.ValorUnitario)),
+			lo.Ternary(o.ValorUnitario.IsZero(), "-",
+				lo.Ternary(o.ValorExercicio.IsPositive(), fmt.Sprintf("(E %s) %s", p.c.Param.FormatDecimal(o.ValorExercicio), p.c.Param.FormatDecimal(o.ValorUnitario)), p.c.Param.FormatDecimal(o.ValorUnitario)),
+			),
 			// V. Total
-			lo.Ternary(o.ValorExercicio.IsPositive(), fmt.Sprintf("(E %s) %s", p.c.Param.FormatDecimal(o.ValorExercicio.Mul(o.Qtd)), p.c.Param.FormatDecimal(o.ValorTotal)), p.c.Param.FormatDecimal(o.ValorTotal)),
+			lo.Ternary(o.ValorTotal.IsZero(), "-",
+				lo.Ternary(o.ValorExercicio.IsPositive(), fmt.Sprintf("(E %s) %s", p.c.Param.FormatDecimal(o.ValorExercicio.Mul(o.Qtd)), p.c.Param.FormatDecimal(o.ValorTotal)), p.c.Param.FormatDecimal(o.ValorTotal)),
+			),
 			// Taxas
-			p.c.Param.FormatDecimal(o.Taxas),
+			lo.Ternary(o.Taxas.IsZero(), "-", p.c.Param.FormatDecimal(o.Taxas)),
 			// IRRF
 			lo.Ternary(o.IRRF.IsPositive(), p.c.Param.FormatDecimal(o.IRRF.Truncate(2)), "-"),
 			// Qtd Ac.
@@ -75,9 +81,11 @@ func (p *PrinterTable) PrintOperacoesComAcoes(w io.Writer) {
 			// PM
 			p.c.Param.FormatDecimal(o.Agg.PrecoMedio),
 			// V. Compra
-			p.c.Param.FormatDecimal(o.ValorCompra),
+			lo.Ternary(o.ValorCompra.IsZero(), "-", p.c.Param.FormatDecimal(o.ValorCompra)),
 			// Lucro
-			lo.Ternary(o.Premio.IsPositive(), fmt.Sprintf("(P %s) %s", p.c.Param.FormatDecimal(o.Premio), p.c.Param.FormatDecimal(o.Lucro)), p.c.Param.FormatDecimal(o.Lucro)),
+			lo.Ternary(o.Premio.Add(o.Lucro).IsZero(), "-",
+				lo.Ternary(o.Premio.IsPositive(), fmt.Sprintf("(P %s) %s", p.c.Param.FormatDecimal(o.Premio), p.c.Param.FormatDecimal(o.Lucro)), p.c.Param.FormatDecimal(o.Lucro)),
+			),
 		)
 	}
 	t.Render()
