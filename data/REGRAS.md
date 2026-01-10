@@ -18,6 +18,9 @@ Este arquivo contém as regras de cálculo e declaração de IR de cada operaç�
         1. Vendas no mês > 20 mil com prejuízo: restituir o IRRF.
         1. Vendas no mês > 20 mil com lucro: descontar o IRRF no lucro.
 
+- Nota de Corretagem
+    - Fórmula para dividir as taxas proporcionalmente entre os ativos `TotalTaxas / TotalCompras * ValorIndividualTicker`.
+
 ## Opções
 
 1. Não há isenção de IR, sempre paga IR de 15% (swing trade) ou 20% (day trade) sobre o lucro independente do valor.
