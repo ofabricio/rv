@@ -31,7 +31,7 @@ func (c *Carteira) CommandLine() error {
 	}
 
 	if *nota {
-		return ImportarNotas(os.Stdout)
+		return ImportarNotas(".", os.Stdout)
 	}
 
 	if isPipe() {
