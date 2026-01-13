@@ -138,3 +138,52 @@ $ ./rv
 │ Total │ 18000,00 │   0,00 │      0,00 │  2700,00 │          1,10 │ 2698,90 │
 └───────┴──────────┴────────┴───────────┴──────────┴───────────────┴─────────┘
 ```
+
+## Documentação
+
+Para ver tudo o que pode ser feito com esta ferramenta, use o comando de ajuda `./rv -h`:
+
+```sh
+$ ./rv -h
+
+Usage: rv [flags]
+
+-date-format string
+      formato de data (ex. 02/01/2006) (default "2006-01-02")
+-exact-value
+      mostra valores exatos (ex. 0,14952765 em vez de 0,15) (default false)
+-file string
+      arquivo de operações (default "db.ndjson")
+-filter-ticker string
+      filtra operações por ticker 
+-filter-year int
+      filtra operações por ano (YYYY para mostrar o ano em questão; 0 para mostrar todos os anos; -1 para mostrar apenas o ano atual) (default 0)
+-format string
+      mostra resultado no formato especificado (table, csv) (default "table")
+-notas
+      importa notas de corretagem de arquivos pdf que estiverem no diretório corrente
+```
+
+### Importar notas de corretagem
+
+Para importar notas de corretagem, coloque os arquivos PDF no mesmo diretório do arquivo executável e execute:
+
+```sh
+./rv -notas
+```
+
+O resultado é exibido no terminal. Para salvar esse resultado no seu arquivo `db.ndjson` redirecione a saída:
+
+```sh
+./rv -notas >> db.ndjson
+```
+
+Em seguida visualize o resultado com `./rv`
+
+### Exportar para CSV
+
+Para exportar o histórico de operações para CSV:
+
+```sh
+./rv -format csv
+```
