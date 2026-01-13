@@ -5,43 +5,49 @@ import (
 	"io"
 	"log/slog"
 	"os"
-	"slices"
 	"strings"
 
 	"github.com/ofabricio/rv/pdf"
 	"github.com/shopspring/decimal"
 )
 
-func ImportarNotas(w io.Writer) {
+func ImportarNotas(w io.Writer) error {
 	var inp ImportadorNotas
-	for _, op := range inp.Importar(".") {
+	ops, err := inp.Importar(".")
+	if err != nil {
+		return err
+	}
+	for _, op := range ops {
 		_ = json.MarshalWrite(w, &op)
 		w.Write([]byte("\n"))
 	}
+	return nil
 }
 
 type ImportadorNotas struct{}
 
-func (t *ImportadorNotas) Importar(dir string) []Operacao {
+func (t *ImportadorNotas) Importar(dir string) ([]Operacao, error) {
 
 	var ops []Operacao
-	for _, file := range t.getPDFFiles(dir) {
+	files, err := t.getPDFFiles(dir)
+	if err != nil {
+		return nil, err
+	}
+	for _, file := range files {
 		n, err := pdf.ParseNota(file)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 		ops = append(ops, t.processaNota(n)...)
 	}
 
-	slices.SortStableFunc(ops, func(a, b Operacao) int { return a.Data.Compare(b.Data) })
-
-	return ops
+	return ops, nil
 }
 
-func (t *ImportadorNotas) getPDFFiles(dir string) []string {
+func (t *ImportadorNotas) getPDFFiles(dir string) ([]string, error) {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	var files []string
 	for _, entry := range entries {
@@ -49,7 +55,7 @@ func (t *ImportadorNotas) getPDFFiles(dir string) []string {
 			files = append(files, entry.Name())
 		}
 	}
-	return files
+	return files, nil
 }
 
 func (t *ImportadorNotas) processaNota(n pdf.Nota) []Operacao {

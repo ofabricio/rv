@@ -2,7 +2,6 @@ package data
 
 import (
 	"cmp"
-	"fmt"
 	"io"
 	"iter"
 	"maps"
@@ -40,27 +39,25 @@ type OperacaoMensal struct {
 	Ops []OperacaoConsolidada
 }
 
-func (c *Carteira) Load(file string) {
+func (c *Carteira) Load(file string) error {
 	f, err := os.Open(file)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 	defer f.Close()
-	ops, err := ReadOperacoes(f)
-	if err != nil {
-		f.Close()
-		panic(err)
+	if err := c.Read(f); err != nil {
+		return err
 	}
-	c.Consolidar(ops)
+	return nil
 }
 
-func (c *Carteira) Read(r io.Reader) {
+func (c *Carteira) Read(r io.Reader) error {
 	ops, err := ReadOperacoes(r)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	c.Consolidar(ops)
+	return nil
 }
 
 func (c *Carteira) Consolidar(all []OperacaoDesconsolidada) {

@@ -7,5 +7,7 @@ import (
 func main() {
 
 	c := data.NewCarteira()
-	c.CommandLine()
+	if err := c.CommandLine(); err != nil {
+		panic(err)
+	}
 }
