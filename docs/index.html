@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rv</title>
+    <script src="wasm_exec.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+        }
+
+        textarea {
+            background: #fff;
+            color: #2c3e50;
+            padding: 1rem;
+            border: 0;
+            outline: 0;
+            resize: none;
+            font-size: 1.1em;
+            white-space: pre;
+            text-wrap: nowrap;
+        }
+
+        .content {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            height: 100%;
+
+            .header {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                align-items: center;
+                padding: 1rem;
+
+                h1 {
+                    color: #1e3a5f;
+                }
+            }
+
+            .main {
+                display: grid;
+                grid-template-rows: auto 1fr auto 3fr;
+
+                .header-line {
+                    border-bottom: 1px solid #dee2e6;
+                    border-top: 1px solid #dee2e6;
+                    padding: 0.5rem 1rem;
+                    gap: 1rem;
+                    align-items: center;
+                    background: #f8f9fa;
+
+                    .copied {
+                        background: #10b981;
+                        color: white;
+                        transition: all 0.1s;
+                    }
+                }
+
+                .inp-header {
+                    display: grid;
+                    grid-template-columns: 1fr auto auto auto auto auto auto;
+                    gap: 0.5rem;
+                }
+
+                .vertical-separator {
+                    width: 1px;
+                    background: #dee2e6;
+                    margin: 0 0.25rem;
+                    align-self: stretch;
+                }
+
+                .out-header {
+                    display: grid;
+                    grid-template-columns: auto 1fr auto auto;
+                    grid-template-areas: "label filters btn btn";
+                    gap: 0.5rem;
+                }
+
+                .filters {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, 128px);
+                    gap: 0.25rem;
+                    justify-content: center;
+                }
+
+                .lbl-header {
+                    text-transform: uppercase;
+                    font-weight: 600;
+                    font-size: 0.85em;
+                    color: #495057;
+                    letter-spacing: 0.5px;
+                }
+
+                input,
+                select,
+                button {
+                    padding: 0.25rem 0.5rem;
+                    border: 1px solid #dee2e6;
+                    outline: 0;
+                    background: #fff;
+                }
+
+                .icon-btn {
+                    cursor: pointer;
+                    display: grid;
+                    align-items: center;
+                    width: 32px;
+                    height: 32px;
+                    padding: 0.3rem;
+                }
+
+                button:hover {
+                    background: #e9ecef;
+                }
+
+                @media (max-width: 1024px) {
+                    .filters {
+                        gap: 0.1rem;
+                    }
+
+                    .out-header {
+                        display: grid;
+                        grid-template-columns: auto 1fr auto auto;
+                        grid-template-areas: "label label btn btn" "filters filters filters filters";
+                    }
+                }
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="content">
+
+        <div class="header">
+            <h1>rv</h1>
+            <a title="Go to repository" href="https://github.com/ofabricio/rv">
+                <img src="https://img.shields.io/badge/github-rv-blue.svg?logo=github" alt="Go to repository">
+            </a>
+        </div>
+
+        <div class="main">
+            <div class="header-line inp-header">
+                <span class="lbl-header">db.ndjson</span>
+                <button class="icon-btn" title="Importar Notas de Corretagem em PDF"
+                    onclick="document.getElementById('pdfInput').click()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 17v-6m0 0l-2 2m2-2l2 2" />
+                    </svg>
+                </button>
+                <button class="icon-btn" title="Importar diretório de Notas de Corretagem em PDF"
+                    onclick="document.getElementById('pdfDirInput').click()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 14v-4m0 0l-2 2m2-2l2 2" />
+                    </svg>
+                </button>
+                <div class="vertical-separator"></div>
+                <button class="icon-btn" title="Abrir db.ndjson" onclick="document.getElementById('fileInput').click()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
+                    </svg>
+                </button>
+                <button class="icon-btn" title="Baixar" onclick="downloadDB()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                </button>
+                <button class="icon-btn" title="Copiar" onclick="copyToClipboard('inp', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                </button>
+                <input type="file" id="fileInput" style="display: none;" accept=".ndjson,.txt,.json"
+                    onchange="handleDBFileUpload(event)">
+                <input type="file" id="pdfInput" style="display: none;" accept=".pdf" multiple
+                    onchange="handlePDFUpload(event)">
+                <input type="file" id="pdfDirInput" style="display: none;" accept=".pdf" multiple webkitdirectory
+                    onchange="handlePDFUpload(event)">
+            </div>
+            <textarea id="inp" onkeyup="runRV()" placeholder="Cole aqui o conteúdo do db.ndjson"></textarea>
+            <div class="header-line out-header">
+                <span class="lbl-header" style="grid-area: label">Resultado</span>
+                <button class="icon-btn" title="Baixar" onclick="downloadResult()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                </button>
+                <button class="icon-btn" title="Copiar" onclick="copyToClipboard('out', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                </button>
+                <div class="filters" style="grid-area: filters">
+                    <input type="text" id="argticker" placeholder="Filtrar por Ticker" onchange="runRV()" />
+                    <input type="number" id="argano" placeholder="Filtrar por Ano" onchange="runRV()" />
+                    <select id="argexact" onchange="runRV()">
+                        <option value="round">Arredondar</option>
+                        <option value="exact">Exato</option>
+                    </select>
+                    <select id="argfmt" onchange="runRV()">
+                        <option value="table">Tabela</option>
+                        <option value="csv">CSV</option>
+                    </select>
+                    <select id="argdatefmt" onchange="runRV()">
+                        <option value="02/01/2006">DD/MM/YYYY</option>
+                        <option value="2006-01-02">YYYY-MM-DD</option>
+                    </select>
+                </div>
+            </div>
+            <textarea id="out" readonly>Loading...</textarea>
+        </div>
+    </div>
+
+    <script>
+        const inp = document.querySelector('#inp');
+        const out = document.querySelector('#out');
+
+        const argFmt = document.querySelector('#argfmt');
+        const argTicker = document.querySelector('#argticker');
+        const argAno = document.querySelector('#argano');
+        const argExact = document.querySelector('#argexact');
+        const argDateFmt = document.querySelector('#argdatefmt');
+
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("webapp.wasm"), go.importObject).then((res) => {
+            go.run(res.instance);
+            initDefault();
+            inp.focus();
+            runRV();
+        });
+
+        function initDefault() {
+            inp.value = `
+{ "Data": "2025-01-01", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "30.15" }
+{ "Data": "2025-01-01", "Ticker": "VALE3", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "70.30" }
+`.trimStart();
+        }
+
+        function runRV() {
+            const args = [
+                `-format ${argFmt.value}`,
+                `-filter-ticker ${argTicker.value.toUpperCase()}`,
+                `-filter-year ${+argAno.value}`,
+                `-date-format ${argDateFmt.value}`,
+                `${argExact.value === 'exact' ? '-exact-value' : ''}`,
+            ];
+            const res = rvRun(inp.value, args.join(' '));
+            out.value = res.startsWith('error:') ? out.value : res;
+        }
+
+        function copyToClipboard(textareaId, button) {
+            const textarea = document.getElementById(textareaId);
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                const originalIcon = button.innerHTML;
+                button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = originalIcon;
+                }, 1000);
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+            });
+        }
+
+        function handleDBFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const r = new FileReader();
+            r.onload = function (e) {
+                inp.value = e.target.result;
+                runRV();
+            };
+            r.onerror = function (e) {
+                console.error('Erro ao ler o arquivo: ', e);
+                alert('Erro ao ler o arquivo');
+            };
+            r.readAsText(file);
+        }
+
+        async function handlePDFUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+
+                if (!file.name.toLowerCase().endsWith('.pdf')) {
+                    continue;
+                }
+
+                try {
+                    const pdfBytes = await readFileAsBytes(file);
+                    inp.value += rvNota(pdfBytes);
+                } catch (error) {
+                    console.error(`Erro ao processar ${file.name}:`, error);
+                    alert(`Erro ao processar ${file.name}: ${error.message}`);
+                }
+            }
+
+            runRV();
+
+            // Limpar o input para permitir upload do mesmo arquivo novamente
+            event.target.value = '';
+        }
+
+        function readFileAsBytes(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const bytes = new Uint8Array(e.target.result);
+                    resolve(bytes);
+                };
+                reader.onerror = function (error) {
+                    reject(error);
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        function downloadDB() {
+            const content = inp.value;
+            const url = URL.createObjectURL(new Blob([content], { type: 'text/plain' }));
+            download(url, 'db.ndjson');
+        }
+
+        function downloadResult() {
+            const content = out.value;
+            const format = argFmt.value;
+            const filename = format === 'csv' ? 'resultado.csv' : 'resultado.txt';
+            const mimeType = format === 'csv' ? 'text/csv' : 'text/plain';
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            download(url, filename);
+        }
+
+        function download(url, filename) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+
+</html>
