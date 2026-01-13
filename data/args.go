@@ -3,12 +3,12 @@ package data
 import (
 	"flag"
 	"fmt"
-	"os"
+	"io"
 	"strings"
 	"time"
 )
 
-func (c *Carteira) CommandLine() error {
+func (c *Carteira) CommandLine(r io.Reader, w io.Writer) error {
 
 	flag.Usage = func() {
 		fmt.Println()
@@ -32,11 +32,11 @@ func (c *Carteira) CommandLine() error {
 	}
 
 	if *nota {
-		return ImportarNotas(".", os.Stdout)
+		return ImportarNotas(".", w)
 	}
 
-	if isPipe() {
-		if err := c.Read(os.Stdin); err != nil {
+	if r != nil {
+		if err := c.Read(r); err != nil {
 			return err
 		}
 	} else if strings.HasPrefix(*file, "https://") {
@@ -49,12 +49,6 @@ func (c *Carteira) CommandLine() error {
 		return err
 	}
 
-	c.Print(*frmt, os.Stdout)
+	c.Print(*frmt, w)
 	return nil
-}
-
-// Verifica se há dados sendo passados via pipe.
-func isPipe() bool {
-	stat, _ := os.Stdin.Stat()
-	return (stat.Mode() & os.ModeCharDevice) == 0
 }

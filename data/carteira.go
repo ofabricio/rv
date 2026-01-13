@@ -93,10 +93,10 @@ func (c *Carteira) Print(frmt string, w io.Writer) {
 		PrintOperacoesComunsDayTrade(io.Writer)
 	}
 	switch frmt {
-	case "table":
-		p = &PrinterTable{c}
 	case "csv":
 		p = &PrinterCSV{c}
+	default:
+		p = &PrinterTable{c}
 	}
 	p.PrintOperacoesComAcoes(w)
 	p.PrintBensDireitos(w)
