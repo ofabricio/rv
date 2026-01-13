@@ -161,7 +161,7 @@ Usage: rv [flags]
 -exact-value
       mostra valores exatos (ex. 0,14952765 em vez de 0,15) (default false)
 -file string
-      arquivo de operações; pode ser uma URL do Google Drive (default "db.ndjson")
+      arquivo de operações (default "db.ndjson")
 -filter-ticker string
       filtra operações por ticker 
 -filter-year int
@@ -194,19 +194,4 @@ Para exportar o histórico de operações para CSV:
 
 ```sh
 ./rv -format csv
-```
-
-### Usar arquivo db no Google Drive
-
-Para usar um arquivo `db.ndjson` no seu Google Drive, siga os passos abaixo.
-
-1. Abra seu Google Drive e faça o upload do arquivo.
-1. Clique nos três pontinhos do lado direito do arquivo (`More actions`).
-1. No menu, selecione `Share > Share`.
-1. No popup, vá em `General access` e selecione `Anyone with the link`.
-1. Clique no botão `Copy link` e em seguida clique em `Done`.
-1. Execute o comando a seguir, substituindo `<url>` pelo link copiado.
-
-```sh
-./rv -file <url>
 ```
