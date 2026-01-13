@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -16,7 +17,7 @@ func (c *Carteira) CommandLine() error {
 		flag.PrintDefaults()
 	}
 
-	file := flag.String("file", "db.ndjson", "arquivo de operações")
+	file := flag.String("file", "db.ndjson", "arquivo de operações; pode ser uma URL do Google Drive")
 	frmt := flag.String("format", "table", "mostra resultado no formato especificado (table, csv)")
 	nota := flag.Bool("notas", false, "importa notas de corretagem de arquivos pdf que estiverem no diretório corrente")
 	flag.StringVar(&c.Param.FormatoData, "date-format", "2006-01-02", "formato de data (ex. 02/01/2006)")
@@ -38,10 +39,14 @@ func (c *Carteira) CommandLine() error {
 		if err := c.Read(os.Stdin); err != nil {
 			return err
 		}
-	} else {
-		if err := c.Load(*file); err != nil {
+	} else if strings.HasPrefix(*file, "https://") {
+		if r, err := downloadGoogleDriveFileWithURL(*file); err != nil {
+			return err
+		} else if err := c.Read(r); err != nil {
 			return err
 		}
+	} else if err := c.Load(*file); err != nil {
+		return err
 	}
 
 	c.Print(*frmt, os.Stdout)
