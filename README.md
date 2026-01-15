@@ -8,7 +8,7 @@ calcula lucros, prejuízos, impostos, DARF e consolida os dados para meu informe
 ⚠️ Esta ferramenta **não oferece qualquer garantia de exatidão fiscal ou conformidade legal**.
 Seu uso **é de inteira responsabilidade do usuário.**
 
-[![webui](https://img.shields.io/badge/web-ui-blueviolet.svg?logo=github&labelColor=2b3137)](https://ofabricio.github.io/rv/)
+[![webapp](https://img.shields.io/badge/web-app-blueviolet.svg?logo=github&labelColor=2b3137)](https://ofabricio.github.io/rv/)
 
 ## Funcionalidades
 
@@ -69,11 +69,11 @@ docker run --rm -v $(pwd):/src -w /src golang:alpine sh -c "
 
 **Nota:** altere `GOOS=darwin GOARCH=arm64` para os [valores](https://go.dev/doc/install/source#environment) correspondentes ao seu sistema operacional.
 
-## WebUI
+## Web
 
-Para acessar a versão web clique no badge abaixo. Essa versão possui algumas limitações.
+Uma versão online da ferramenta está disponível para uso no navegador. Para acessá-la clique no badge abaixo.
 
-[![webui](https://img.shields.io/badge/web-ui-blueviolet.svg?logo=github&labelColor=2b3137)](https://ofabricio.github.io/rv/)
+[![webapp](https://img.shields.io/badge/web-app-blueviolet.svg?logo=github&labelColor=2b3137)](https://ofabricio.github.io/rv/)
 
 ## Como usar
 
