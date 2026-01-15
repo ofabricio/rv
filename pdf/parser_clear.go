@@ -10,15 +10,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func ParseNota(pdfFile string) (Nota, error) {
-	v, err := Content(pdfFile)
-	if err != nil {
-		return Nota{}, fmt.Errorf("erro ao abrir arquivo %s: %w", pdfFile, err)
-	}
-	return ParseContent(v)
-}
-
-func ParseContent(content string) (Nota, error) {
+func ParseNota(content string) (Nota, error) {
 	if strings.Contains(content, "CLEAR CTVM S/A") {
 		return ParseClear(content)
 	}

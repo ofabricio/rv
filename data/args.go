@@ -31,7 +31,7 @@ func (c *Carteira) CommandLine(r io.Reader, w io.Writer) error {
 	}
 
 	if *nota {
-		return ImportarNotas(".", w)
+		return ImportarNotasDir(".", w)
 	}
 
 	if r != nil {

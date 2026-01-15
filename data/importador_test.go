@@ -69,7 +69,7 @@ func TestImportadorNotasProcessaNota(t *testing.T) {
 	}
 
 	var inp ImportadorNotas
-	got := inp.processaNota(give)
+	got := inp.processar(give)
 
 	then := []Operacao{
 		{

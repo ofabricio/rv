@@ -12,10 +12,29 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func ImportarNotas(dir string, w io.Writer) error {
+func ImportarNotasDir(dir string, w io.Writer) error {
 
 	var inp ImportadorNotas
-	ops, err := inp.Importar(dir)
+	ops, err := inp.ImportarDir(dir)
+	if err != nil {
+		return err
+	}
+
+	for _, op := range ops {
+		if err := json.MarshalWrite(w, &op); err != nil {
+			return err
+		}
+		w.Write([]byte("\n"))
+	}
+
+	return nil
+}
+
+func ImportarNota(pdfData []byte, w io.Writer) error {
+
+	var inp ImportadorNotas
+
+	ops, err := inp.ImportarNota(pdfData)
 	if err != nil {
 		return err
 	}
@@ -32,26 +51,43 @@ func ImportarNotas(dir string, w io.Writer) error {
 
 type ImportadorNotas struct{}
 
-func (t *ImportadorNotas) Importar(dir string) ([]Operacao, error) {
+func (t *ImportadorNotas) ImportarDir(dir string) ([]Operacao, error) {
 
 	files, err := t.getPDFFiles(dir)
 	if err != nil {
 		return nil, err
 	}
 
-	var ops []Operacao
+	var oprs []Operacao
 	for file := range files {
-		nota, err := pdf.ParseNota(file)
+
+		d, err := os.ReadFile(file)
 		if err != nil {
 			return nil, err
 		}
-		ops = append(ops, t.processaNota(nota)...)
+
+		ops, err := t.ImportarNota(d)
+		if err != nil {
+			return nil, err
+		}
+
+		oprs = append(oprs, ops...)
 	}
 
-	return ops, nil
+	return oprs, nil
 }
 
-func (t *ImportadorNotas) processaNota(n pdf.Nota) []Operacao {
+func (t *ImportadorNotas) ImportarNota(pdfData []byte) ([]Operacao, error) {
+
+	nota, err := pdf.ImportarNota(pdfData)
+	if err != nil {
+		return nil, err
+	}
+
+	return t.processar(nota), nil
+}
+
+func (t *ImportadorNotas) processar(n pdf.Nota) []Operacao {
 
 	totalTaxas := n.TotalLiquido.Sub(n.ComprasAVista)
 	somasTaxas := decimal.Zero

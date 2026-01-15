@@ -16,7 +16,7 @@ func TestParseClear(t *testing.T) {
 		panic(err)
 	}
 
-	got, err := ParseContent(string(d))
+	got, err := ParseNota(string(d))
 	if err != nil {
 		t.Fatalf("Erro ao parsear nota: %v", err)
 	}

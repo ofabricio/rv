@@ -2,17 +2,32 @@ package pdf
 
 import (
 	"bytes"
+	"io"
 
 	"github.com/ledongthuc/pdf"
 )
 
-func Content(file string) (string, error) {
+func ImportarNota(pdfData []byte) (Nota, error) {
 
-	f, r, err := pdf.Open(file)
+	v, err := readContent(bytes.NewReader(pdfData), len(pdfData))
+	if err != nil {
+		return Nota{}, err
+	}
+
+	nota, err := ParseNota(v)
+	if err != nil {
+		return Nota{}, err
+	}
+
+	return nota, nil
+}
+
+func readContent(at io.ReaderAt, size int) (string, error) {
+
+	r, err := pdf.NewReader(at, int64(size))
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
 
 	var buf bytes.Buffer
 	b, err := r.GetPlainText()
