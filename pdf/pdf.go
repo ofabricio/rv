@@ -7,14 +7,14 @@ import (
 	"github.com/ledongthuc/pdf"
 )
 
-func ImportarNota(pdfData []byte) (Nota, error) {
+func ParseNotaPDF(pdfData []byte) (Nota, error) {
 
 	v, err := ReadContent(bytes.NewReader(pdfData), len(pdfData))
 	if err != nil {
 		return Nota{}, err
 	}
 
-	nota, err := ParseNota(v)
+	nota, err := ParseNotaContent(v)
 	if err != nil {
 		return Nota{}, err
 	}

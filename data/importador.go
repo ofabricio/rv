@@ -3,9 +3,10 @@ package data
 import (
 	"encoding/json/v2"
 	"io"
-	"iter"
+	"io/fs"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 
@@ -14,66 +15,69 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func ImportarNotasDir(dir string, w io.Writer) error {
+func ProcessarNotasPDF(dir string, w io.Writer) error {
 
-	var inp ImportadorNotas
-	ops, err := inp.ImportarDir(dir)
+	ops, err := ImportarNotasPDF(dir)
 	if err != nil {
 		return err
 	}
 
+	return outputOperacoes(ops, w)
+}
+
+func ProcessarNotaPDF(pdfData []byte, w io.Writer) error {
+
+	ops, err := ImportarNotaPDF(pdfData)
+	if err != nil {
+		return err
+	}
+
+	return outputOperacoes(ops, w)
+}
+
+func outputOperacoes(ops []Operacao, w io.Writer) error {
 	for _, op := range ops {
 		if err := json.MarshalWrite(w, &op); err != nil {
 			return err
 		}
 		w.Write([]byte("\n"))
 	}
-
 	return nil
 }
 
-func ImportarNota(pdfData []byte, w io.Writer) error {
-
-	var inp ImportadorNotas
-
-	ops, err := inp.ImportarNota(pdfData)
-	if err != nil {
-		return err
-	}
-
-	for _, op := range ops {
-		if err := json.MarshalWrite(w, &op); err != nil {
-			return err
-		}
-		w.Write([]byte("\n"))
-	}
-
-	return nil
-}
-
-type ImportadorNotas struct{}
-
-func (t *ImportadorNotas) ImportarDir(dir string) ([]Operacao, error) {
-
-	files, err := t.getPDFFiles(dir)
-	if err != nil {
-		return nil, err
-	}
+func ImportarNotasPDF(dir string) ([]Operacao, error) {
 
 	var oprs []Operacao
-	for file := range files {
 
-		d, err := os.ReadFile(file)
+	walk := func(path string, de fs.DirEntry, err error) error {
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		ops, err := t.ImportarNota(d)
+		if de.IsDir() {
+			return nil
+		}
+
+		if !strings.EqualFold(filepath.Ext(de.Name()), ".pdf") {
+			return nil
+		}
+
+		d, err1 := os.ReadFile(path)
+		if err1 != nil {
+			return err1
+		}
+
+		ops, err := ImportarNotaPDF(d)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		oprs = append(oprs, ops...)
+		return nil
+	}
+
+	if err := filepath.WalkDir(dir, walk); err != nil {
+		return nil, err
 	}
 
 	slices.SortStableFunc(oprs, func(a, b Operacao) int { return a.Data.Compare(b.Data) })
@@ -81,17 +85,17 @@ func (t *ImportadorNotas) ImportarDir(dir string) ([]Operacao, error) {
 	return oprs, nil
 }
 
-func (t *ImportadorNotas) ImportarNota(pdfData []byte) ([]Operacao, error) {
+func ImportarNotaPDF(pdfData []byte) ([]Operacao, error) {
 
-	nota, err := pdf.ImportarNota(pdfData)
+	n, err := pdf.ParseNotaPDF(pdfData)
 	if err != nil {
 		return nil, err
 	}
 
-	return t.processar(nota), nil
+	return ImportarNota(n)
 }
 
-func (t *ImportadorNotas) processar(n pdf.Nota) []Operacao {
+func ImportarNota(n pdf.Nota) ([]Operacao, error) {
 
 	totalTaxas := n.TotalLiquido.Sub(n.ValorLiquidoDasOperacoes)
 	somasTaxas := decimal.Zero
@@ -133,25 +137,5 @@ func (t *ImportadorNotas) processar(n pdf.Nota) []Operacao {
 		slog.Error("Erro ao distribuir taxas proporcionalmente entre ativos", slog.String("taxas", totalTaxas.String()), slog.String("soma", somasTaxas.String()))
 	}
 
-	return ops
-}
-
-func (t *ImportadorNotas) getPDFFiles(dir string) (iter.Seq[string], error) {
-
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return nil, err
-	}
-
-	it := func(yield func(string) bool) {
-		for _, entry := range entries {
-			if strings.HasSuffix(entry.Name(), ".pdf") || strings.HasSuffix(entry.Name(), ".PDF") {
-				if !yield(entry.Name()) {
-					return
-				}
-			}
-		}
-	}
-
-	return it, nil
+	return ops, nil
 }

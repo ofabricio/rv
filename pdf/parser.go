@@ -10,7 +10,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func ParseNota(content string) (Nota, error) {
+func ParseNotaContent(content string) (Nota, error) {
 	if strings.Contains(content, "CLEAR CTVM S/A") {
 		return ParseClear(content)
 	}

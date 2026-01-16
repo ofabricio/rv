@@ -68,8 +68,10 @@ func TestImportadorNotasProcessaNota(t *testing.T) {
 		LiquidoPara:              time.Date(2026, 1, 7, 0, 0, 0, 0, time.UTC),
 	}
 
-	var inp ImportadorNotas
-	got := inp.processar(give)
+	got, err := ImportarNota(give)
+	if err != nil {
+		t.Fatalf("Erro inesperado: %v", err)
+	}
 
 	then := []Operacao{
 		{
