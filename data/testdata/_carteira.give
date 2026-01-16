@@ -1,3 +1,5 @@
+{ "Data": "2026-01-05", "Ticker": "MELK3", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "3.83", "Taxas": "0.11" }
 { "Data": "2026-01-05", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "30.15", "Taxas": "0.90" }
 { "Data": "2026-01-05", "Ticker": "SYNE3", "Tipo": "Compra", "Qtd": "200", "ValorUnitario": "4.71", "Taxas": "0.28" }
-{ "Data": "2026-01-05", "Ticker": "MELK3", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "3.83", "Taxas": "0.11" }
+{ "Data": "2026-01-15", "Ticker": "MELK3", "Tipo": "Compra", "Qtd": "700", "ValorUnitario": "3.7", "Taxas": "0.76" }
+{ "Data": "2026-01-15", "Ticker": "SYNE3", "Tipo": "Compra", "Qtd": "200", "ValorUnitario": "4.83", "Taxas": "0.29" }
