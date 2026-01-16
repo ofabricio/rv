@@ -8,6 +8,8 @@ github.com/mattn/go-runewidth v0.0.16 h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6T
 github.com/mattn/go-runewidth v0.0.16/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
 github.com/ofabricio/bnf v0.0.0-20260112121242-241a991395cf h1:QCfRlBC1B3j7OWcbPZI7zKHD4Q+gcs6V7FEWBs/YqfQ=
 github.com/ofabricio/bnf v0.0.0-20260112121242-241a991395cf/go.mod h1:LpsQvPmQCdC5Ok1P6U4XfNnneE9SZ5715YbCVwqKhwE=
+github.com/ofabricio/bnf v0.0.0-20260116070117-27233bcf429b h1:Bh/mvmIh3cVqzU/RiM6or2I8SH+ckYi7ZIDen91W+GQ=
+github.com/ofabricio/bnf v0.0.0-20260116070117-27233bcf429b/go.mod h1:LpsQvPmQCdC5Ok1P6U4XfNnneE9SZ5715YbCVwqKhwE=
 github.com/ofabricio/scan v0.0.0-20241122215634-a35d2e549c63 h1:DkUFuNvndlNKerBA5WFYVZKXTb2J93XwvIo6X/J/2ko=
 github.com/ofabricio/scan v0.0.0-20241122215634-a35d2e549c63/go.mod h1:1V+jT+s4Hc66+GxylfkZhQltpLML0b4d47JFnYuasPU=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

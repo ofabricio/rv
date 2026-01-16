@@ -9,7 +9,7 @@ import (
 
 func ImportarNota(pdfData []byte) (Nota, error) {
 
-	v, err := readContent(bytes.NewReader(pdfData), len(pdfData))
+	v, err := ReadContent(bytes.NewReader(pdfData), len(pdfData))
 	if err != nil {
 		return Nota{}, err
 	}
@@ -22,7 +22,7 @@ func ImportarNota(pdfData []byte) (Nota, error) {
 	return nota, nil
 }
 
-func readContent(at io.ReaderAt, size int) (string, error) {
+func ReadContent(at io.ReaderAt, size int) (string, error) {
 
 	r, err := pdf.NewReader(at, int64(size))
 	if err != nil {

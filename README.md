@@ -42,6 +42,7 @@ Seu uso **é de inteira responsabilidade do usuário.**
 
 - Importação de Notas de Corretagem
   - [Clear](https://corretora.clear.com.br)
+  - [Inter](https://inter.co/)
 
 - Exportação em CSV
 

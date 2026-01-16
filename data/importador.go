@@ -6,9 +6,11 @@ import (
 	"iter"
 	"log/slog"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/ofabricio/rv/pdf"
+	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 )
 
@@ -74,6 +76,8 @@ func (t *ImportadorNotas) ImportarDir(dir string) ([]Operacao, error) {
 		oprs = append(oprs, ops...)
 	}
 
+	slices.SortStableFunc(oprs, func(a, b Operacao) int { return a.Data.Compare(b.Data) })
+
 	return oprs, nil
 }
 
@@ -89,23 +93,40 @@ func (t *ImportadorNotas) ImportarNota(pdfData []byte) ([]Operacao, error) {
 
 func (t *ImportadorNotas) processar(n pdf.Nota) []Operacao {
 
-	totalTaxas := n.TotalLiquido.Sub(n.ComprasAVista)
+	totalTaxas := n.TotalLiquido.Sub(n.ValorLiquidoDasOperacoes)
 	somasTaxas := decimal.Zero
 
-	var ops []Operacao
-	for _, neg := range n.Negociacoes {
-		if neg.CV == "C" {
-			taxa := totalTaxas.Div(n.ComprasAVista).Mul(neg.ValorTotal).Round(2)
-			somasTaxas = somasTaxas.Add(taxa)
-			ops = append(ops, Operacao{
-				Data:          n.DataPregao,
-				Tipo:          COMPRA,
-				Ticker:        neg.Titulo,
-				Qtd:           neg.Qtd,
-				ValorUnitario: neg.ValorUnitario,
-				Taxas:         taxa,
-			})
+	// Agrupa negociações iguais.
+	var negs []pdf.Negociacao
+	for _, same := range lo.PartitionBy(n.Negociacoes, func(n pdf.Negociacao) string { return n.Titulo + n.CV }) {
+		if len(same) == 1 {
+			negs = append(negs, same...)
+		} else {
+			neg := lo.FirstOrEmpty(same)
+			neg.Qtd = lo.Reduce(same, func(acc decimal.Decimal, n pdf.Negociacao, _ int) decimal.Decimal { return acc.Add(n.Qtd) }, decimal.Zero)
+			neg.ValorUnitario = lo.Reduce(same, func(acc decimal.Decimal, n pdf.Negociacao, _ int) decimal.Decimal { return acc.Add(n.ValorUnitario) }, decimal.Zero)
+			neg.ValorUnitario = neg.ValorUnitario.Div(decimal.NewFromInt(int64(len(same))))
+			neg.ValorTotal = neg.Qtd.Mul(neg.ValorUnitario)
+			negs = append(negs, neg)
 		}
+	}
+
+	var ops []Operacao
+	for _, neg := range negs {
+		tp := COMPRA
+		if neg.CV == "V" {
+			tp = VENDA
+		}
+		taxa := totalTaxas.Div(n.ValorDasOperacoes).Mul(neg.ValorTotal).Round(2)
+		somasTaxas = somasTaxas.Add(taxa)
+		ops = append(ops, Operacao{
+			Data:          n.DataPregao,
+			Tipo:          tp,
+			Ticker:        neg.Titulo,
+			Qtd:           neg.Qtd,
+			ValorUnitario: neg.ValorUnitario,
+			Taxas:         taxa,
+		})
 	}
 
 	if !totalTaxas.Equal(somasTaxas) {
