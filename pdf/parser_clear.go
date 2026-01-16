@@ -58,7 +58,7 @@ func ParseClear(content string) (Nota, error) {
 			titulo = JOIN(ONPN | '\w+'r S TEXT(' ') titulo)
 			  ONPN = 'ON' S TEXT(' ') 'NM'
 				   | 'PN' S TEXT(' ') 'EDJ' S TEXT(' ') 'N2'
-			   obs = '@'
+			   obs = '@' '#'?
 			   qtd = '\d+'r
 				cv = 'C' | 'V'
 				cd = 'C' | 'D'
