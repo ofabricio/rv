@@ -97,9 +97,6 @@ func ImportarNotaPDF(pdfData []byte) ([]Operacao, error) {
 
 func ImportarNota(n pdf.Nota) ([]Operacao, error) {
 
-	totalTaxas := n.TotalLiquido.Sub(n.ValorLiquidoDasOperacoes)
-	somasTaxas := decimal.Zero
-
 	// Agrupa negociações iguais.
 	var negs []pdf.Negociacao
 	for _, same := range lo.PartitionBy(n.Negociacoes, func(n pdf.Negociacao) string { return n.Titulo + n.CV }) {
@@ -115,17 +112,16 @@ func ImportarNota(n pdf.Nota) ([]Operacao, error) {
 		}
 	}
 
+	totalTaxas := n.TotalLiquido.Sub(n.ValorLiquidoDasOperacoes)
+	somasTaxas := decimal.Zero
+
 	var ops []Operacao
 	for _, neg := range negs {
-		tp := COMPRA
-		if neg.CV == "V" {
-			tp = VENDA
-		}
 		taxa := totalTaxas.Div(n.ValorDasOperacoes).Mul(neg.ValorTotal).Round(2)
 		somasTaxas = somasTaxas.Add(taxa)
 		ops = append(ops, Operacao{
 			Data:          n.DataPregao,
-			Tipo:          tp,
+			Tipo:          lo.Ternary(neg.CV == "C", COMPRA, VENDA),
 			Ticker:        neg.Titulo,
 			Qtd:           neg.Qtd,
 			ValorUnitario: neg.ValorUnitario,
@@ -134,7 +130,11 @@ func ImportarNota(n pdf.Nota) ([]Operacao, error) {
 	}
 
 	if !totalTaxas.Equal(somasTaxas) {
-		slog.Error("Erro ao distribuir taxas proporcionalmente entre ativos", slog.String("taxas", totalTaxas.String()), slog.String("soma", somasTaxas.String()))
+		slog.Error("Erro ao distribuir taxas proporcionalmente entre ativos",
+			slog.String("taxas", totalTaxas.String()),
+			slog.String("soma", somasTaxas.String()),
+			slog.String("formula", "TotalTaxas / ValorDasOperacoes * ValorTotalAtivo"),
+		)
 	}
 
 	return ops, nil
