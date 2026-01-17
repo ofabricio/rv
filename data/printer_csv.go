@@ -91,3 +91,5 @@ func (p *PrinterCSV) PrintRendimentosIsentosNaoTributaveis(w io.Writer) {}
 func (p *PrinterCSV) PrintRendimentosSujeitosTributacaoExclusiva(w io.Writer) {}
 
 func (p *PrinterCSV) PrintOperacoesComunsDayTrade(w io.Writer) {}
+
+func (p *PrinterCSV) PrintValorizacao(w io.Writer) {}

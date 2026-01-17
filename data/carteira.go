@@ -7,8 +7,10 @@ import (
 	"maps"
 	"os"
 	"slices"
+	"sync"
 	"time"
 
+	"github.com/ofabricio/rv/repo"
 	"github.com/samber/lo"
 	"github.com/samber/lo/it"
 	"github.com/shopspring/decimal"
@@ -253,4 +255,41 @@ func filterAcoes(ops iter.Seq[OperacaoConsolidada]) iter.Seq[OperacaoConsolidada
 
 func filterOpcao(ops iter.Seq[OperacaoConsolidada]) iter.Seq[OperacaoConsolidada] {
 	return it.Filter(ops, func(o OperacaoConsolidada) bool { return o.IsOpcao() })
+}
+
+func (c *Carteira) Valorizacao() []Valorizacao {
+
+	var vs []Valorizacao
+
+	var wg sync.WaitGroup
+	for _, ticker := range it.PartitionBy(c.Acoes.Iter(), func(o OperacaoConsolidada) string { return o.Ticker }) {
+		if op := lo.LastOrEmpty(ticker); op.Agg.Qtd.IsPositive() {
+			v := Valorizacao{Ticker: op.Ticker, PrecoMedio: op.Agg.PrecoMedio}
+			id := len(vs)
+			wg.Go(func() {
+				res, err := repo.GetTickerInfo(op.Ticker)
+				if err != nil {
+					v.Error = err
+				} else {
+					v.Cotacao = decimal.RequireFromString(res)
+					v.Variacao = v.Cotacao.Div(v.PrecoMedio).Mul(decimal.NewFromInt(100)).Sub(decimal.NewFromInt(100))
+					v.Ganho = v.Cotacao.Sub(v.PrecoMedio).Mul(op.Agg.Qtd)
+					vs[id] = v
+				}
+			})
+			vs = append(vs, v)
+		}
+	}
+	wg.Wait()
+
+	return vs
+}
+
+type Valorizacao struct {
+	Ticker     string
+	PrecoMedio decimal.Decimal
+	Cotacao    decimal.Decimal
+	Variacao   decimal.Decimal
+	Ganho      decimal.Decimal
+	Error      error
 }

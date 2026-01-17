@@ -171,6 +171,8 @@ Usage: rv [flags]
       mostra resultado no formato especificado (table, csv) (default "table")
 -notas
       importa notas de corretagem de arquivos pdf que estiverem no diretório corrente
+-valorizacao
+      mostra a valorização das ações na carteira
 ```
 
 ### Importar notas de corretagem
