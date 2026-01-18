@@ -37,12 +37,19 @@ func ProcessarNotaPDF(pdfData []byte, w io.Writer) error {
 
 func outputOperacoes(ops []Operacao, w io.Writer) error {
 	for _, op := range ops {
-		if err := json.MarshalWrite(w, &op); err != nil {
+		if err := outputOperacao(op, w); err != nil {
 			return err
 		}
-		w.Write([]byte("\n"))
 	}
 	return nil
+}
+
+func outputOperacao(op Operacao, w io.Writer) error {
+	if err := json.MarshalWrite(w, &op); err != nil {
+		return err
+	}
+	_, err := w.Write([]byte("\n"))
+	return err
 }
 
 func ImportarNotasPDF(dir string) ([]Operacao, error) {
