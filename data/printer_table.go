@@ -2,6 +2,7 @@ package data
 
 import (
 	"bytes"
+	"cmp"
 	"fmt"
 	"io"
 	"unicode/utf8"
@@ -274,25 +275,36 @@ func (p *PrinterTable) PrintOperacoesComunsDayTrade(w io.Writer) {
 func (p *PrinterTable) PrintValorizacao(w io.Writer) {
 	t := table.New(w)
 	t.SetRowLines(false)
-	t.SetHeaderColSpans(0, 5)
+	t.SetHeaderColSpans(0, 9)
 	t.AddHeaders("VALORIZAÇÃO")
-	t.AddHeaders("Ticker", "PM", "Cotação", "Variação", "Ganho")
-	t.SetAlignment(table.AlignLeft, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight)
+	t.AddHeaders("Ticker", "Investido", "PM", "Cotação", "Variação", "Valorizado", "Ganho", "Vende", "Compra")
+	t.SetAlignment(table.AlignLeft, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignLeft)
 	vs := p.c.Valorizacao()
-	for _, v := range vs {
+	for _, v := range vs.Tickers {
 		t.AddRow(
 			v.Ticker,
+			p.c.Param.FormatDecimal(v.Investido),
 			p.c.Param.FormatDecimal(v.PrecoMedio),
 			p.c.Param.FormatDecimal(v.Cotacao),
 			fmt.Sprintf("%s%%", p.c.Param.FormatDecimal(v.Variacao)),
+			p.c.Param.FormatDecimal(v.Valorizado),
 			p.c.Param.FormatDecimal(v.Ganho),
+			v.Vende.String(),
+			cmp.Or(v.Compra, "-"),
 		)
 	}
-	total := lo.Reduce(vs, func(a decimal.Decimal, o Valorizacao, _ int) decimal.Decimal { return a.Add(o.Ganho) }, decimal.Zero)
-	t.SetFooterAlignment(table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight)
-	t.AddFooters("", "", "", "Total", p.c.Param.FormatDecimal(total))
+	t.SetFooterAlignment(table.AlignCenter, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignRight, table.AlignLeft)
+	t.AddFooters("Total",
+		p.c.Param.FormatDecimal(vs.TotalInvestido),
+		"", "",
+		fmt.Sprintf("%s%%", p.c.Param.FormatDecimal(vs.TotalVariacao)),
+		p.c.Param.FormatDecimal(vs.TotalValorizado),
+		p.c.Param.FormatDecimal(vs.TotalGanho),
+		vs.TotalVende.String(),
+		vs.TotalCompra,
+	)
 	t.Render()
-	for _, v := range vs {
+	for _, v := range vs.Tickers {
 		if v.Error != nil {
 			fmt.Fprintln(w, "*Error:", v.Ticker, v.Error)
 		}

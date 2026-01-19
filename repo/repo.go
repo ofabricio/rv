@@ -8,6 +8,8 @@ import (
 	"github.com/ofabricio/bnf"
 )
 
+type TickerInfoFunc func(ticker string) (cotacao string, _ error)
+
 func GetTickerInfo(ticker string) (string, error) {
 
 	res, err := http.Get(fmt.Sprintf("https://www.google.com/finance/quote/%s:BVMF", ticker))

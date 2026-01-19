@@ -198,3 +198,29 @@ Para exportar o histórico de operações para CSV:
 ```sh
 ./rv -format csv
 ```
+
+### Tabela de Valorização
+
+```sh
+$ ./rv -valorizacao
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                           VALORIZAÇÃO                                           │
+├────────┬───────────┬───────┬─────────┬──────────┬────────────┬────────┬───────┬─────────────────┤
+│ Ticker │ Investido │  PM   │ Cotação │ Variação │ Valorizado │ Ganho  │ Vende │     Compra      │
+├────────┼───────────┼───────┼─────────┼──────────┼────────────┼────────┼───────┼─────────────────┤
+│ PETR4  │    960,55 │ 32,02 │   33,57 │    4,85% │    1007,10 │  46,55 │     1 │ -               │
+│ VALE3  │    601,10 │ 60,11 │   84,07 │   39,86% │     840,70 │ 239,60 │     2 │ 5 PETR4         │
+├────────┼───────────┼───────┼─────────┼──────────┼────────────┼────────┼───────┼─────────────────┤
+│ Total  │   1561,65 │       │         │   44,71% │    1847,80 │ 286,15 │     3 │ 8 PETR4 3 VALE3 │
+└────────┴───────────┴───────┴─────────┴──────────┴────────────┴────────┴───────┴─────────────────┘
+```
+
+Essa tabela mostra, para cada ativo:
+1. O total `Investido`.
+1. O preço médio (`PM`).
+1. A `Cotação` atual.
+1. Qual o percentual de `Variação` referente ao seu preço médio.
+1. O total `Valorizado`.
+1. Qual o `Ganho` ou perda referente a essa variação.
+1. Quantas cotas é possível vender (`Vende`) para retirar o valor ganho na valorização; e
+1. Quantas cotas é possível comprar (`Compra`) dos outros ativos só com esse ganho.

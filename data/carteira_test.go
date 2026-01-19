@@ -3,6 +3,7 @@ package data
 import (
 	"bytes"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -151,5 +152,51 @@ func TestCarteira(t *testing.T) {
 				t.Errorf("\nFile: %s\nGot:\n%s\nExp:\n%s", tc.Then, got.Bytes(), exp)
 			}
 		})
+	}
+}
+
+func TestCarteiraValorizacao(t *testing.T) {
+
+	r := strings.NewReader(`
+		{ "Data": "2026-01-05", "Ticker": "MELK3", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "3.83", "Taxas": "0.11" }
+		{ "Data": "2026-01-05", "Ticker": "PETR4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "30.15", "Taxas": "0.90" }
+		{ "Data": "2026-01-05", "Ticker": "SYNE3", "Tipo": "Compra", "Qtd": "200", "ValorUnitario": "4.71", "Taxas": "0.28" }
+		{ "Data": "2026-01-15", "Ticker": "MELK3", "Tipo": "Compra", "Qtd": "700", "ValorUnitario": "3.7", "Taxas": "0.76" }
+		{ "Data": "2026-01-15", "Ticker": "SYNE3", "Tipo": "Compra", "Qtd": "200", "ValorUnitario": "4.83", "Taxas": "0.29" }
+	`)
+
+	c := NewCarteira()
+	c.IFunc = func(s string) (string, error) {
+		return map[string]string{
+			"MELK3": "3.61",
+			"PETR4": "32.04",
+			"SYNE3": "4.80",
+		}[s], nil
+	}
+
+	if err := c.Read(r); err != nil {
+		t.Fatalf("failed to read operations: %v", err)
+	}
+
+	var got strings.Builder
+	p := PrinterTable{c}
+	p.PrintValorizacao(&got)
+
+	exp := strings.TrimSpace(`
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                VALORIZAÇÃO                                                │
+├────────┬───────────┬───────┬─────────┬──────────┬────────────┬────────┬───────┬───────────────────────────┤
+│ Ticker │ Investido │  PM   │ Cotação │ Variação │ Valorizado │ Ganho  │ Vende │          Compra           │
+├────────┼───────────┼───────┼─────────┼──────────┼────────────┼────────┼───────┼───────────────────────────┤
+│ MELK3  │   2973,87 │  3,72 │    3,61 │   -2,89% │    2888,00 │ -85,87 │   -23 │ -2 PETR4 -17 SYNE3        │
+│ PETR4  │   3015,90 │ 30,16 │   32,04 │    6,24% │    3204,00 │ 188,10 │     5 │ 44 MELK3 33 SYNE3         │
+│ SYNE3  │   1908,57 │  4,77 │    4,80 │    0,60% │    1920,00 │  11,43 │     2 │ 2 MELK3                   │
+├────────┼───────────┼───────┼─────────┼──────────┼────────────┼────────┼───────┼───────────────────────────┤
+│ Total  │   7898,34 │       │         │    1,44% │    8012,00 │ 113,66 │     7 │ 31 MELK3 3 PETR4 23 SYNE3 │
+└────────┴───────────┴───────┴─────────┴──────────┴────────────┴────────┴───────┴───────────────────────────┘
+	`)
+
+	if strings.TrimSpace(got.String()) != exp {
+		t.Errorf("\nGot:\n%s\nExp:\n%s", got.String(), exp)
 	}
 }

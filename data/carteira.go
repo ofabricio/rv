@@ -2,6 +2,7 @@ package data
 
 import (
 	"cmp"
+	"fmt"
 	"io"
 	"iter"
 	"maps"
@@ -19,12 +20,14 @@ import (
 func NewCarteira() *Carteira {
 	return &Carteira{
 		Param: DefaultParam,
+		IFunc: repo.GetTickerInfo,
 	}
 }
 
 type Carteira struct {
 	Acoes Acoes
 	Param Param
+	IFunc repo.TickerInfoFunc
 }
 
 type Acoes []OperacaoAnual
@@ -257,39 +260,82 @@ func filterOpcao(ops iter.Seq[OperacaoConsolidada]) iter.Seq[OperacaoConsolidada
 	return it.Filter(ops, func(o OperacaoConsolidada) bool { return o.IsOpcao() })
 }
 
-func (c *Carteira) Valorizacao() []Valorizacao {
+func (c *Carteira) Valorizacao() Valorizacao {
 
-	var vs []Valorizacao
+	var vs Valorizacao
 
 	var wg sync.WaitGroup
 	for _, ticker := range it.PartitionBy(c.Acoes.Iter(), func(o OperacaoConsolidada) string { return o.Ticker }) {
 		if op := lo.LastOrEmpty(ticker); op.Agg.Qtd.IsPositive() {
-			v := Valorizacao{Ticker: op.Ticker, PrecoMedio: op.Agg.PrecoMedio}
-			id := len(vs)
+			v := ValorizacaoTicker{Ticker: op.Ticker, PrecoMedio: op.Agg.PrecoMedio}
+			id := len(vs.Tickers)
 			wg.Go(func() {
-				res, err := repo.GetTickerInfo(op.Ticker)
+				cot, err := c.IFunc(op.Ticker)
 				if err != nil {
 					v.Error = err
 				} else {
-					v.Cotacao = decimal.RequireFromString(res)
+					v.Cotacao = decimal.RequireFromString(cot)
+					v.Investido = op.Agg.ValorTotal
+					v.Valorizado = v.Cotacao.Mul(op.Agg.Qtd)
 					v.Variacao = v.Cotacao.Div(v.PrecoMedio).Mul(decimal.NewFromInt(100)).Sub(decimal.NewFromInt(100))
-					v.Ganho = v.Cotacao.Sub(v.PrecoMedio).Mul(op.Agg.Qtd)
-					vs[id] = v
+					v.Ganho = v.Valorizado.Sub(v.Investido)
+					v.Vende = v.Ganho.Div(v.Cotacao).Truncate(0)
+					vs.Tickers[id] = v
 				}
 			})
-			vs = append(vs, v)
+			vs.Tickers = append(vs.Tickers, v)
 		}
 	}
 	wg.Wait()
+
+	for i, v := range vs.Tickers {
+		vs.Tickers[i].Compra = lo.Reduce(vs.Tickers, func(acc string, a ValorizacaoTicker, _ int) string {
+			c := v.Vende.Mul(v.Cotacao).Div(a.Cotacao).Truncate(0)
+			if !c.IsZero() && a.Ticker != v.Ticker {
+				return fmt.Sprintf("%s %s %s", acc, c, a.Ticker)
+			}
+			return acc
+		}, "")
+		vs.TotalGanho = vs.TotalGanho.Add(v.Ganho)
+		vs.TotalInvestido = vs.TotalInvestido.Add(v.Investido)
+		vs.TotalValorizado = vs.TotalValorizado.Add(v.Valorizado)
+		vs.TotalVende = lo.Ternary(v.Vende.IsPositive(), vs.TotalVende.Add(v.Vende), vs.TotalVende)
+	}
+
+	for range vs.Tickers {
+		vs.TotalCompra = lo.Reduce(vs.Tickers, func(acc string, a ValorizacaoTicker, _ int) string {
+			c := vs.TotalGanho.Div(a.Cotacao).Truncate(0)
+			if !c.IsZero() {
+				return fmt.Sprintf("%s %s %s", acc, c, a.Ticker)
+			}
+			return acc
+		}, "")
+	}
+
+	vs.TotalVariacao = vs.TotalGanho.Div(vs.TotalInvestido).Mul(decimal.RequireFromString("100"))
 
 	return vs
 }
 
 type Valorizacao struct {
+	Tickers         []ValorizacaoTicker
+	TotalInvestido  decimal.Decimal
+	TotalValorizado decimal.Decimal
+	TotalVariacao   decimal.Decimal
+	TotalGanho      decimal.Decimal
+	TotalVende      decimal.Decimal
+	TotalCompra     string
+}
+
+type ValorizacaoTicker struct {
 	Ticker     string
 	PrecoMedio decimal.Decimal
 	Cotacao    decimal.Decimal
 	Variacao   decimal.Decimal
 	Ganho      decimal.Decimal
+	Vende      decimal.Decimal
+	Compra     string
 	Error      error
+	Investido  decimal.Decimal
+	Valorizado decimal.Decimal
 }
