@@ -61,6 +61,13 @@ type Config struct {
 	// Boatos afirmam que a maioria prefere a estratégia que reduz o imposto a pagar (true).
 	//
 	// Para nunca ter problemas com a Receita Federal use false, pois você pagará mais impostos.
+	//
+	// Nota do dev:
+	// Não me faz muito sentido não alterar o preço médio, pois se fizermos uma compra
+	// de 1 única cota após uma bonificação o preço médio já será reajustado novamente.
+	// Então parece que não alterar o preço médio teria diferença apenas ao fazer uma
+	// venda imediatamente após a bonificação. E se é esse o caso, poderíamos resolver
+	// comprando uma única cota antes de vender. Não está claro essa lógica.
 	AlterarPrecoMedioNaBonificacao bool
 
 	LimiteVendaIsenta decimal.Decimal
@@ -113,7 +120,7 @@ func (g GrupoCodigo) ID() string {
 }
 
 var DefaultConfig2025 = Config{
-	AlterarPrecoMedioNaBonificacao: false,
+	AlterarPrecoMedioNaBonificacao: true,
 	LimiteVendaIsenta:              decimal.RequireFromString("20000"),
 	SwingTradeIR:                   decimal.RequireFromString("0.15"),
 	SwingTradeIRRF:                 decimal.RequireFromString("0.00005"),
