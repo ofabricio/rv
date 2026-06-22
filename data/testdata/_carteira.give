@@ -8,5 +8,6 @@
 { "Data": "2026-05-20", "Ticker": "PETR4", "Tipo": "JSCP", "Lucro": "25.84" }
 { "Data": "2026-05-20", "Ticker": "PETR4", "Tipo": "Rend. Trib.", "Lucro": "1.28" }
 { "Data": "2026-06-22", "Ticker": "PETR4", "Tipo": "JSCP", "Lucro": "25.84" }
-{ "Data": "2026-06-22", "Ticker": "PETR4", "Tipo": "Rend. Trib.", "Lucro": "1.28" }
+{ "Data": "2026-06-22", "Ticker": "PETR4", "Tipo": "Rend. Trib.", "Lucro": "1.58" }
+{ "Data": "2026-08-20", "Ticker": "PETR4", "Tipo": "JSCP", "Lucro": "28.91" }
 { "Data": "2026-12-31", "Ticker": "MELK3", "Tipo": "Dividendos", "Lucro": "120.44" }
