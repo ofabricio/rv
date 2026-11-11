@@ -121,7 +121,7 @@ func (v *BemDireitoStrategy) VisitBemDireito9907(ano []OperacaoConsolidada) {
 	op := lo.LastOrEmpty(ano)
 	id := op.Ticker + ".jscpnp"
 	v.Curr[id] = BensDireitoTicker{
-		Vencimento:       op.Vencimento,
+		Vencimento:       op.Vencimento.V(),
 		Grupo:            v.g.Grupo,
 		Codigo:           v.g.Codigo,
 		Ticker:           op.Ticker,
@@ -132,7 +132,7 @@ func (v *BemDireitoStrategy) VisitBemDireito9907(ano []OperacaoConsolidada) {
 }
 
 func (v *BemDireitoStrategy) VisitBemDireito0404(ano []OperacaoConsolidada, label string) {
-	f := lo.Filter(ano, func(o OperacaoConsolidada, _ int) bool { return o.Vencimento.Year() > o.Data.Year() })
+	f := lo.Filter(ano, func(o OperacaoConsolidada, _ int) bool { return o.Vencimento.V().Year() > o.Data.V().Year() })
 	for _, ano := range lo.PartitionBy(f, func(o OperacaoConsolidada) string { return o.Serie }) {
 		qt := iterQtd(slices.Values(ano))
 		tt := lo.Reduce(ano, func(agg decimal.Decimal, o OperacaoConsolidada, _ int) decimal.Decimal {
@@ -141,13 +141,13 @@ func (v *BemDireitoStrategy) VisitBemDireito0404(ano []OperacaoConsolidada, labe
 		op := lo.LastOrEmpty(ano)
 		id := op.Serie + ".opcao"
 		v.Curr[id] = BensDireitoTicker{
-			Vencimento:       op.Vencimento,
+			Vencimento:       op.Vencimento.V(),
 			Grupo:            v.g.Grupo,
 			Codigo:           v.g.Codigo,
 			Ticker:           op.Serie,
 			SituacaoAnterior: decimal.Zero,
 			SituacaoCorrente: tt,
-			Discriminacao:    fmt.Sprintf("%s OPÇÕES %s SÉRIE %s VENCIMENTO %s", qt, label, op.Serie, op.Vencimento.Format("02/01/2006")),
+			Discriminacao:    fmt.Sprintf("%s OPÇÕES %s SÉRIE %s VENCIMENTO %s", qt, label, op.Serie, op.Vencimento.V().Format("02/01/2006")),
 		}
 	}
 }

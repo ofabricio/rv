@@ -1,13 +1,11 @@
 package data
 
 import (
-	"time"
-
 	"github.com/shopspring/decimal"
 )
 
 type Operacao struct {
-	Data          time.Time `json:",format:DateOnly"` // Opções: Data de Compra/Venda da opção ou Data de Vencimento ou Data de Encerramento.
+	Data          DateOnly // Opções: Data de Compra/Venda da opção ou Data de Vencimento ou Data de Encerramento.
 	Ticker        string
 	Tipo          Tipo
 	Qtd           decimal.Decimal `json:",omitzero"` // Pode estar fracionada em algumas operações como Bonificação, Grupamento, Desdobramento e Leilão Fração.
@@ -23,7 +21,7 @@ type Operacao struct {
 	Serie          string          `json:",omitempty"`
 	ValorExercicio decimal.Decimal `json:",omitzero"` // Valor da ação no dia do exercício da opção.
 	Premio         decimal.Decimal `json:",omitzero"`
-	Vencimento     time.Time       `json:",omitzero,format:DateOnly"`
+	Vencimento     DateOnly        `json:",omitzero"`
 
 	// DayTrade.
 	DayTrade bool `json:"DayTrade,omitzero"`

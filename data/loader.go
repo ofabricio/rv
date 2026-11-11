@@ -22,7 +22,7 @@ func ReadOperacoes(r io.Reader) ([]OperacaoDesconsolidada, error) {
 	for line := range lines {
 		var tipo struct {
 			Tipo string
-			Data time.Time `json:",format:DateOnly"`
+			Data DateOnly
 		}
 		if err := json.Unmarshal(line, &tipo); err != nil {
 			return nil, fmt.Errorf("error: %s; content: %s", err, line)
@@ -31,7 +31,7 @@ func ReadOperacoes(r io.Reader) ([]OperacaoDesconsolidada, error) {
 		// Isso sobrescreve todas as alterações de configurações definidas
 		// no arquivo fonte, de modo que é necessário repeti-las todo novo
 		// ano para que continuem tendo efeito.
-		if currYear := tipo.Data.Year(); currYear != prevYear {
+		if currYear := time.Time(tipo.Data).Year(); currYear != prevYear {
 			cfg = GetDefaultConfig(currYear, cfg)
 			tfg = GetDefaultTonfig(currYear, tfg)
 			prevYear = currYear
@@ -67,12 +67,12 @@ func ReadLinesSorted(r io.Reader) (iter.Seq[[]byte], error) {
 	var data []Line
 	for line := range lines {
 		var v struct {
-			Data time.Time `json:",format:DateOnly"`
+			Data DateOnly
 		}
 		if err := json.Unmarshal(line, &v); err != nil {
 			return nil, fmt.Errorf("error: %s; content: %s", err, line)
 		}
-		data = append(data, Line{v.Data, line})
+		data = append(data, Line{time.Time(v.Data), line})
 	}
 
 	slices.SortStableFunc(data, func(a, b Line) int { return a.Data.Compare(b.Data) })

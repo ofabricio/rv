@@ -87,7 +87,7 @@ func ImportarNotasPDF(dir string) ([]Operacao, error) {
 		return nil, err
 	}
 
-	slices.SortStableFunc(oprs, func(a, b Operacao) int { return a.Data.Compare(b.Data) })
+	slices.SortStableFunc(oprs, func(a, b Operacao) int { return a.Data.V().Compare(b.Data.V()) })
 
 	return oprs, nil
 }
@@ -127,7 +127,7 @@ func ImportarNota(n pdf.Nota) ([]Operacao, error) {
 		taxa := totalTaxas.Div(n.ValorDasOperacoes).Mul(neg.ValorTotal).Round(2)
 		somasTaxas = somasTaxas.Add(taxa)
 		ops = append(ops, Operacao{
-			Data:          n.DataPregao,
+			Data:          DateOnly(n.DataPregao),
 			Tipo:          lo.Ternary(neg.CV == "C", COMPRA, VENDA),
 			Ticker:        neg.Titulo,
 			Qtd:           neg.Qtd,

@@ -75,7 +75,7 @@ func TestImportadorNotasProcessaNota(t *testing.T) {
 
 	then := []Operacao{
 		{
-			Data:          time.Date(2026, 1, 5, 0, 0, 0, 0, time.UTC),
+			Data:          DateOnly(time.Date(2026, 1, 5, 0, 0, 0, 0, time.UTC)),
 			Tipo:          COMPRA,
 			Ticker:        "MELK3",
 			Qtd:           decimal.RequireFromString("100"),
@@ -83,7 +83,7 @@ func TestImportadorNotasProcessaNota(t *testing.T) {
 			Taxas:         decimal.RequireFromString("0.11"),
 		},
 		{
-			Data:          time.Date(2026, 1, 5, 0, 0, 0, 0, time.UTC),
+			Data:          DateOnly(time.Date(2026, 1, 5, 0, 0, 0, 0, time.UTC)),
 			Tipo:          COMPRA,
 			Ticker:        "PETR4",
 			Qtd:           decimal.RequireFromString("100"),
@@ -91,7 +91,7 @@ func TestImportadorNotasProcessaNota(t *testing.T) {
 			Taxas:         decimal.RequireFromString("0.90"),
 		},
 		{
-			Data:          time.Date(2026, 1, 5, 0, 0, 0, 0, time.UTC),
+			Data:          DateOnly(time.Date(2026, 1, 5, 0, 0, 0, 0, time.UTC)),
 			Tipo:          COMPRA,
 			Ticker:        "SYNE3",
 			Qtd:           decimal.RequireFromString("200"),

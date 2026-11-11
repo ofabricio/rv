@@ -20,7 +20,7 @@ import (
 func NewCarteira() *Carteira {
 	return &Carteira{
 		Param: DefaultParam,
-		IFunc: repo.GetTickerInfo,
+		IFunc: repo.GetTickerInfoInv10,
 	}
 }
 
@@ -67,21 +67,21 @@ func (c *Carteira) Read(r io.Reader) error {
 
 func (c *Carteira) Consolidar(all []OperacaoDesconsolidada) {
 	var con Consolidador
-	for _, year := range lo.PartitionBy(all, func(v OperacaoDesconsolidada) int { return v.Opr.Data.Year() }) {
+	for _, year := range lo.PartitionBy(all, func(v OperacaoDesconsolidada) int { return v.Opr.Data.V().Year() }) {
 		opa := make([]OperacaoMensal, 0, 12)
-		for _, month := range lo.PartitionBy(year, func(o OperacaoDesconsolidada) time.Month { return o.Opr.Data.Month() }) {
+		for _, month := range lo.PartitionBy(year, func(o OperacaoDesconsolidada) time.Month { return o.Opr.Data.V().Month() }) {
 			opm := make([]OperacaoConsolidada, 0, len(month))
 			for _, o := range month {
 				opm = append(opm, con.Consolidar(o))
 			}
 			opa = append(opa, OperacaoMensal{
-				Mes: int(month[0].Opr.Data.Month()),
+				Mes: int(month[0].Opr.Data.V().Month()),
 				Cfg: year[0].Cfg,
 				Ops: opm,
 			})
 		}
 		c.Acoes = append(c.Acoes, OperacaoAnual{
-			Ano: year[0].Opr.Data.Year(),
+			Ano: year[0].Opr.Data.V().Year(),
 			Cfg: year[0].Cfg,
 			Ops: opa,
 		})
@@ -159,7 +159,7 @@ func (a *OperacaoMensal) Iter() iter.Seq[OperacaoConsolidada] {
 
 func LucroIsentoVendaAno(ops iter.Seq[OperacaoConsolidada], limit decimal.Decimal) decimal.Decimal {
 	lucros := decimal.Zero
-	for _, mes := range it.PartitionBy(ops, func(o OperacaoConsolidada) time.Month { return o.Data.Month() }) {
+	for _, mes := range it.PartitionBy(ops, func(o OperacaoConsolidada) time.Month { return o.Data.V().Month() }) {
 		lucros = lucros.Add(LucroIsentoVendaMes(slices.Values(mes), limit))
 	}
 	return lucros

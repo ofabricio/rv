@@ -1,5 +1,10 @@
 package data
 
+import (
+	"encoding/json/v2"
+	"time"
+)
+
 const (
 	COMPRA               Tipo = "Compra"
 	VENDA                Tipo = "Venda"
@@ -32,3 +37,27 @@ const (
 )
 
 type Tipo string
+
+type DateOnly time.Time
+
+func (d DateOnly) V() time.Time {
+	return time.Time(d)
+}
+
+func (d *DateOnly) UnmarshalJSON(b []byte) error {
+	s := string(b)
+	if len(s) >= 2 && s[0] == '"' && s[len(s)-1] == '"' {
+		s = s[1 : len(s)-1]
+	}
+	t, err := time.Parse(time.DateOnly, s)
+	if err != nil {
+		return err
+	}
+	*d = DateOnly(t)
+	return nil
+}
+
+func (d *DateOnly) MarshalJSON() ([]byte, error) {
+	data := d.V().Format(time.DateOnly)
+	return json.Marshal(data)
+}

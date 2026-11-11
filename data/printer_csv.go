@@ -44,9 +44,9 @@ func (p *PrinterCSV) PrintOperacoesComAcoes(w io.Writer) {
 			// Série
 			o.Serie,
 			// Data
-			p.c.Param.FormatDate(o.Data),
+			p.c.Param.FormatDate(o.Data.V()),
 			// Vencimento
-			lo.Ternary(o.Vencimento.IsZero(), "", p.c.Param.FormatDate(o.Vencimento)),
+			lo.Ternary(o.Vencimento.V().IsZero(), "", p.c.Param.FormatDate(o.Vencimento.V())),
 			// Operação
 			string(o.Tipo),
 			// Qtd

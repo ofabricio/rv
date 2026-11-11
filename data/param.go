@@ -47,7 +47,7 @@ func (p *Param) FormatDate(t time.Time) string {
 }
 
 func (p *Param) FilterOperacao(o OperacaoConsolidada) bool {
-	return p.FilterYear(o.Data.Year()) && p.FilterTicker(o.Ticker)
+	return p.FilterYear(o.Data.V().Year()) && p.FilterTicker(o.Ticker)
 }
 
 func (p *Param) FilterYear(year int) bool {
