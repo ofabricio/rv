@@ -12,3 +12,4 @@
 { "Data": "2026-08-20", "Ticker": "PETR4", "Tipo": "JSCP", "Lucro": "28.91" }
 { "Data": "2026-09-21", "Ticker": "PETR4", "Tipo": "JSCP", "Lucro": "28.91" }
 { "Data": "2026-11-12", "Ticker": "MELK3", "Tipo": "Compra", "Qtd":"700", "ValorUnitario":"2.10", "Taxas":"0.42" }
+{ "Data": "2026-11-17", "Ticker": "VALE3", "Tipo": "Compra", "Qtd":"10", "ValorUnitario": "60.90", "Taxas":"0.17" }
