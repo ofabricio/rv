@@ -37,7 +37,7 @@ func ParseClear(content string) (Nota, error) {
 		negociacao = GROUP( q S neg S cv:CV S merc S prazo S titulo:Titulo S obs S qtd:Qtd S preco:ValorUnitario S preco:ValorTotal S cd:CD )
 				 q = TEXT()
 			   neg = '1-BOVESPA'
-			  merc = 'VISTA'
+			  merc = 'VISTA' | 'FRACIONARIO'
 			 prazo = TEXT()
 			titulo = JOIN(ONPN | '\w+'r S TEXT(' ') titulo)
 			  ONPN = 'ON' S TEXT(' ') 'NM'

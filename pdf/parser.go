@@ -125,4 +125,5 @@ var mapTituloTicker = map[string]string{
 	"SANEPAR PN N2":       "SAPR4",
 	"SYN PROP TEC ON NM":  "SYNE3",
 	"TAESA UNT N2":        "TAEE11",
+	"VALE ON NM":          "VALE3",
 }
