@@ -17,3 +17,4 @@
 { "Data": "2026-11-19", "Ticker": "BBDC3", "Tipo": "Compra", "Qtd": "10", "ValorUnitario": "12.81", "Taxas": "0.04" }
 { "Data": "2026-11-19", "Ticker": "BBAS3", "Tipo": "Compra", "Qtd": "10", "ValorUnitario": "14.16", "Taxas": "0.04" }
 { "Data": "2026-11-19", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "3.36", "Taxas": "0.09" }
+{ "Data": "2026-11-23", "Ticker": "PETR4", "Tipo": "JSCP", "Lucro": "55.61" }
