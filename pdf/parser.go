@@ -112,6 +112,8 @@ type Negociacao struct {
 }
 
 var mapTituloTicker = map[string]string{
+	"BBSEGURIDADE ON NM":  "BBSE3",
+	"BRADESCO ON N1":      "BBDC3",
 	"BRASIL ON NM":        "BBAS3",
 	"GERDAU MET PN N1":    "GOAU4",
 	"GERDAU MET PN N2":    "GOAU4",

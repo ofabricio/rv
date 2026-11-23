@@ -39,9 +39,9 @@ func ParseClear(content string) (Nota, error) {
 			   neg = '1-BOVESPA'
 			  merc = 'VISTA' | 'FRACIONARIO'
 			 prazo = TEXT()
-			titulo = JOIN(ONPN | '\w+'r S TEXT(' ') titulo)
-			  ONPN = 'ON' S TEXT(' ') 'NM'
-				   | 'PN' S TEXT(' ') 'EDJ' S TEXT(' ') 'N2'
+			titulo = JOIN(ONPN | ('S/A' | '\w+'r) S TEXT(' ') titulo)
+			  ONPN = 'ON' S TEXT(' ') ( 'NM' | 'N1' )
+				   | 'PN' S TEXT(' ') ('EDJ' S TEXT(' '))? 'N2'
 			   obs = '@' '#'?
 			   qtd = '\d+'r
 				cv = 'C' | 'V'
