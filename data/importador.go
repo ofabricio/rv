@@ -113,7 +113,7 @@ func ImportarNota(n pdf.Nota) ([]Operacao, error) {
 			neg := lo.FirstOrEmpty(same)
 			neg.Qtd = lo.Reduce(same, func(acc decimal.Decimal, n pdf.Negociacao, _ int) decimal.Decimal { return acc.Add(n.Qtd) }, decimal.Zero)
 			neg.ValorUnitario = lo.Reduce(same, func(acc decimal.Decimal, n pdf.Negociacao, _ int) decimal.Decimal { return acc.Add(n.ValorUnitario) }, decimal.Zero)
-			neg.ValorUnitario = neg.ValorUnitario.Div(decimal.NewFromInt(int64(len(same))))
+			neg.ValorUnitario = neg.ValorUnitario.Div(decimal.NewFromInt(int64(len(same)))).Round(2)
 			neg.ValorTotal = neg.Qtd.Mul(neg.ValorUnitario)
 			negs = append(negs, neg)
 		}
