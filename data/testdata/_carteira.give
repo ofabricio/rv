@@ -18,3 +18,8 @@
 { "Data": "2026-11-19", "Ticker": "BBAS3", "Tipo": "Compra", "Qtd": "10", "ValorUnitario": "14.16", "Taxas": "0.04" }
 { "Data": "2026-11-19", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "3.36", "Taxas": "0.09" }
 { "Data": "2026-11-23", "Ticker": "PETR4", "Tipo": "JSCP", "Lucro": "55.61" }
+{ "Data": "2026-11-23", "Ticker": "BBSE3", "Tipo": "Compra", "Qtd": "10", "ValorUnitario": "36.39", "Taxas": "0.11" }
+{ "Data": "2026-11-23", "Ticker": "BBDC3", "Tipo": "Compra", "Qtd": "20", "ValorUnitario": "12.63", "Taxas": "0.07" }
+{ "Data": "2026-11-23", "Ticker": "BBAS3", "Tipo": "Compra", "Qtd": "10", "ValorUnitario": "14.42", "Taxas": "0.04" }
+{ "Data": "2026-11-23", "Ticker": "ITSA4", "Tipo": "Compra", "Qtd": "20", "ValorUnitario": "12.96", "Taxas": "0.07" }
+{ "Data": "2026-11-23", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "3.32", "Taxas": "0.10" }
