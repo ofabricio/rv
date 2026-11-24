@@ -119,6 +119,7 @@ var mapTituloTicker = map[string]string{
 	"GERDAU MET PN N2":    "GOAU4",
 	"ISHARES BOVA CI":     "BOVA11",
 	"IT NOW IDIV CI":      "DIVO11",
+	"ITAUSA PN N1":        "ITSA4",
 	"KLABIN S/A PN ED N2": "KLBN4",
 	"KLABIN S/A PN N2":    "KLBN4",
 	"MARFRIG ON NM":       "MBRF3",

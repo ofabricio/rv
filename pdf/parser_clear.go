@@ -41,7 +41,7 @@ func ParseClear(content string) (Nota, error) {
 			 prazo = TEXT()
 			titulo = JOIN(ONPN | ('S/A' | '\w+'r) S TEXT(' ') titulo)
 			  ONPN = 'ON' S TEXT(' ') ( 'NM' | 'N1' )
-				   | 'PN' S TEXT(' ') ('EDJ' S TEXT(' '))? 'N2'
+				   | 'PN' S TEXT(' ') ('EDJ' S TEXT(' '))? ( 'N2' | 'N1' )
 			   obs = '@' '#'?
 			   qtd = '\d+'r
 				cv = 'C' | 'V'
