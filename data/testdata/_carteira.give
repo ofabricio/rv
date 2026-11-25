@@ -23,3 +23,4 @@
 { "Data": "2026-11-23", "Ticker": "BBAS3", "Tipo": "Compra", "Qtd": "10", "ValorUnitario": "14.42", "Taxas": "0.04" }
 { "Data": "2026-11-23", "Ticker": "ITSA4", "Tipo": "Compra", "Qtd": "20", "ValorUnitario": "12.96", "Taxas": "0.07" }
 { "Data": "2026-11-23", "Ticker": "KLBN4", "Tipo": "Compra", "Qtd": "100", "ValorUnitario": "3.32", "Taxas": "0.10" }
+{ "Data": "2026-11-24", "Ticker": "VALE3", "Tipo": "Compra", "Qtd": "10", "ValorUnitario": "55.70", "Taxas": "0.15" }
